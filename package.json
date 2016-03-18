@@ -14,8 +14,6 @@
     "jade": "~1.11.0",
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
-    "prompt": "^1.0.0",
-    "kerberos": "~0.0.17",
-    "mongodb": "~2.0.33"
+    "prompt": "^1.0.0"
   }
 }
