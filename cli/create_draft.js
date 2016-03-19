@@ -6,39 +6,39 @@ var prompt = require('prompt');
 var schema = {
     properties: {
         season: {
-            description: "Season",
-            validator: /^(summer|winter)$/i,
-            warning: '"summer" or "winter"',
+            description: "Season (Summer/Winter)",
+            pattern: /^(summer|winter)$/i,
+            message: '"summer" or "winter"',
             required: true
         },
         year: {
             description: "Year (YYYY)",
-            validator: /^20\d{2}$/,
-            warning: "Four digit year only",
+            pattern: /^20\d{2}$/,
+            message: "Four digit year only",
             required: true
         },
         draft_start: {
             description: "Drafting Starts (YYYYMMDD)",
-            validator: /^20\d{6}$/,
-            warning: "YYYYMMDD format.",
+            pattern: /^20\d{6}$/,
+            message: "YYYYMMDD format.",
             required: true
         },
         draft_end: {
             description: "Drafting Ends (YYYYMMDD)",
-            validator: /^20\d{6}$/,
-            warning: "YYYYMMDD format.",
+            pattern: /^20\d{6}$/,
+            message: "YYYYMMDD format.",
             required: true
         },
         season_start: {
             description: "Season Starts (YYYYMMDD)",
-            validator: /^20\d{6}$/,
-            warning: "YYYYMMDD format.",
+            pattern: /^20\d{6}$/,
+            message: "YYYYMMDD format.",
             required: true
         },
         season_end: {
             description: "Season Ends (YYYYMMDD)",
-            validator: /^20\d{6}$/,
-            warning: "YYYYMMDD format.",
+            pattern: /^20\d{6}$/,
+            message: "YYYYMMDD format.",
             required: true
         }
     }
