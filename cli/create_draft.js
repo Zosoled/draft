@@ -9,7 +9,10 @@ var schema = {
             description: "Season (Summer/Winter)",
             pattern: /^(summer|winter)$/i,
             message: '"summer" or "winter"',
-            required: true
+            required: true,
+            before: function (input) {
+                return input.toLowerCase();
+            }
         },
         year: {
             description: "Year (YYYY)",
