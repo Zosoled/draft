@@ -1,5 +1,17 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+    div#body_left
+        h2 Movies
+        table
+            tr
+                th Title
+                th Release Date
+                th Gross
+    div#body_right
+        h2 Teams
+        table
+            tr
+                th Name
+                th Members
+                th Leader
