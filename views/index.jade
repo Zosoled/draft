@@ -4,10 +4,17 @@ block content
     div#body_left
         h2 Movies
         table
-            tr
-                th Title
-                th Release Date
-                th Gross
+            thead
+                tr
+                    th Title
+                    th Release Date
+                    th Gross
+            tbody
+                each movie in movies
+                    tr
+                        td #{movie.title}
+                        td #{movie.release_date}
+                        td $1234
     div#body_right
         h2 Teams
         table
