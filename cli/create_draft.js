@@ -60,9 +60,6 @@ prompt.get(schema, function(err,result) {
     db.find({ season: result.season, year: result.year }, function (err, docs) {
         if (err) { console.log("Unable to get search database",err); process.exit(1); };
 
-        // add a movies array which we'll populate in another script
-        result.movies = [];
-
         // check to see if there's aleady a draft for this season and year
         if (docs.length != 0) {
             console.log("There is already a draft for this season and year. Overwrite (and lose movie list) (y/N)");
