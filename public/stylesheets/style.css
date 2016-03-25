@@ -1,8 +1,31 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #8EC641;
 }
 
 a {
   color: #00B7FF;
+}
+
+th {
+    background-color: #263D8C;
+    color: #FFF;
+    padding: 3px;
+}
+td {
+    background-color: #FFF;
+    padding: 3px;
+}
+
+#body_container {
+    width: 100%;
+}
+#body_left {
+    float: left;
+    width: 600px
+}
+#body_right {
+    float: left;
+    width: 600px
 }
