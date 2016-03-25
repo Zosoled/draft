@@ -7,14 +7,25 @@ block content
             thead
                 tr
                     th Title
+                    th &nbsp;
+                    th &nbsp;
                     th Release Date
                     th Gross
             tbody
                 each movie in movies
                     tr
-                        td #{movie.title}
-                        td #{movie.release_date}
-                        td $1234
+                        td #{movie.name}
+                        td
+                            a(href='http://www.imdb.com/title/#{movie.imdb_id}/' target='_blank')
+                                img(src='/public/images/imdb.png' width=32 height=32 border=0)
+                        td
+                            a(href='http://www.boxofficemojo.com/movies/?id=#{movie.bom_id}' target='_blank')
+                                img(src='/public/images/bom.jpg' width=32 height=32 border=0)
+                        td #{prettyDate(movie.release_date)}
+                        if movie.gross
+                            td $#{movie.gross}
+                        else
+                            td $0
     div#body_right
         h2 Teams
         table

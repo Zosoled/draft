@@ -1,20 +1,18 @@
 var express = require('express');
 var router = express.Router();
-var Datastore = require('nedb')
-  , db = new Datastore({ filename: 'data/draft.nedb', autoload: true });
+var Datastore = require('nedb');
+var db = new Object;
+db.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true });
+db.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true });
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    var movies= [];
 
-    db.find({}, function(err, docs) {
-        if (err) { console.log("Unable to get draft documents",err); process.exit(1); };
-console.log(docs);
-        //if (docs.length !== 1) { console.log("Found an inappropriate number of documents: "+docs.length); process.exit(1); };
+    db['movie'].find({ season: 'summer', year: '2016' }).sort({ release_date: 1 }).exec( function(err, docs) {
+        if (err) { console.log("Unable to get movie documents",err); process.exit(1); };
 
-        movies = docs.movies;
+        res.render('index', { title: 'IDX Movie Draft', movies: docs });
     });
-    res.render('index', { title: 'IDX Movie Draft', movies: movies });
 });
 
 module.exports = router;
