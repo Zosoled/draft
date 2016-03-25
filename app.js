@@ -19,7 +19,12 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
+app.use('/public', express.static(__dirname + "/public"));
+
+app.locals.prettyDate = function(d) {
+    return d.substr(4,2)+"/"+d.substr(6,2)+"/"+d.substr(0,4);
+}
 
 app.use('/', routes);
 
