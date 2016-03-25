@@ -1,5 +1,6 @@
-var Datastore = require('nedb')
-  , db = new Datastore({ filename: '../data/draft.nedb', autoload: true });
+var Datastore = require('nedb'),
+    db = new Datastore({ filename: '../data/movie.nedb', autoload: true }),
+    draftDb = new Datastore({ filename: '../data/draft.nedb', autoload: true});
 var prompt = require('prompt');
 var async = require("async");
 
@@ -42,16 +43,15 @@ var movie_schema = {
             message: "BOM IDs end in .htm",
             required: true
         },
-        trailer_url: {
-            description: "URL for Trailer",
-            pattern: /^http.+$/,
-            message: "Full URL please",
+        imdb_id: {
+            description: "IMDB ID",
+            pattern: /^tt/,
+            message: "IMDB IDs start with tt",
             required: true
         },
-        poster_url: {
-            description: "Poster URL",
-            pattern: /^http.+$/,
-            message: "Full URL please",
+        yt_id: {
+            description: "Youtube trailer ID",
+            required: true
         },
         done: {
             description: "Finished (y/N)",
@@ -75,43 +75,81 @@ prompt.get(draft_schema, function(err,draft) {
     if (err) { console.log("Unable to get prompt response",err); process.exit(1); };
 
     // look up the draft document
-    db.find({ season: draft.season, year: draft.year }, function (err, docs) {
+    draftDb.count({ season: draft.season, year: draft.year }, function (err, count) {
         if (err) { console.log("Unable to get search database",err); process.exit(1); };
         
         // if there are no docs the error out
-        if (docs.length !== 1) {
-            console.log("Unable to find appropriate draft. Please use the create_draft script first");
+        if (count !== 1) {
+            console.log("Unable to find appropriate draft. Please use the create_draft script first. Docs found: "+count);
             process.exit(1);
         }
 
-        // loop until we're have our done criteria
-        // then run the callback to write the info to the movie doc
-        async.until(
-            function() {
-                return entry_done;
-            }, function(callback) {
-                prompt.get(movie_schema, function (err,movie) {
-                    if (err) { callback("Unable to get search database - "+err,null); };
-       
-                    if (movie.done == 'y' || movie.done == 'Y')
-                        entry_done = true;
-
-                    delete movie.done;
-                    movies.push(movie);
-
-                    // a little formatting and output
-                    console.log("    -Movies so far: "+movies.length+"\n");
-
-                    callback(null,movies);
-                });
-            }, function(err,res) {
-                console.log("callback called")
-                // add the movies to the existing doc
-                docs[0].movies = movies;
-                console.log(docs[0]);
-
-                //db.insert(doc)
-            }
-        );
+        // because I don't have time to write a full management system ATM we just delete all existing movies in this draft
+        db.remove({ season: draft.season, year: draft.year}, { multi: true }, function (err, count) {
+            if (err) { console.log("Unable to remove old movies",err); process.exit(1); };
+        });
     });
+
+    // loop until we're have our done criteria
+    // then run the callback to write the info to the movie doc
+    async.until(
+        function() {
+            return entry_done;
+        }, function(callback) {
+            prompt.get(movie_schema, function (err,movie) {
+                if (err) { callback("Unable to get search database - "+err,null); };
+       
+                if (movie.done == 'y' || movie.done == 'Y')
+                    entry_done = true;
+
+                // remove the done mark
+                delete movie.done;
+
+                // add the season and year
+                movie.season = draft.season;
+                movie.year = draft.year;
+
+                // predicable id
+                movie._id = draft.season+"-"+draft.year+"-"+movie.bom_id;
+
+                // add the movie to the movies array
+                movies.push(movie);
+
+                // a little formatting and output
+                console.log("    -Movies so far: "+movies.length+"\n");
+
+                callback(null,movies);
+            });
+        }, function(err,res) {
+            // add order to movies array
+            var movie_order = new Array;
+            for (var i = 0; i < res.length; i++) {
+                movie_order.push(i);
+            }
+            movie_order = shuffle(movie_order);
+            
+            for (var i = 0; i < res.length; i++) {
+                res[i].order = movie_order[i];
+            }
+
+
+            db.insert(movies, function(err) {
+                if (err) { console.log("Unable to insert into draft db",err); process.exit(1); };
+
+                console.log("Movies added to draft.");
+            });
+        }
+    );
 });
+
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i -= 1) {
+        j = Math.floor(Math.random() * i);
+        x = a[i - 1];
+        a[i - 1] = a[j];
+        a[j] = x;
+    }
+
+    return a;
+}
