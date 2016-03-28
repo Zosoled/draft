@@ -22,10 +22,6 @@ app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
 app.use('/public', express.static(__dirname + "/public"));
 
-app.locals.prettyDate = function(d) {
-    return d.substr(4,2)+"/"+d.substr(6,2)+"/"+d.substr(0,4);
-}
-
 app.use('/', routes);
 
 // catch 404 and forward to error handler
@@ -58,6 +54,10 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+app.locals.prettyDate = function(d) {
+    return d.substr(4,2)+"/"+d.substr(6,2)+"/"+d.substr(0,4);
+}
 
 
 module.exports = app;
