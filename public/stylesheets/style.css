@@ -1,5 +1,5 @@
 body {
-  padding: 50px;
+  padding: 10px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background-color: #8EC641;
 }
@@ -20,12 +20,17 @@ td {
 
 #body_container {
     width: 100%;
+    overflow: auto;
 }
 #body_left {
     float: left;
-    width: 600px
+    width: 600px;
 }
 #body_right {
     float: left;
-    width: 600px
+    width: 600px;
+}
+
+.team_label {
+    width: 270px;
 }
