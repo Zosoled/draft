@@ -15,4 +15,10 @@ router.get('/', function(req, res, next) {
     });
 });
 
+/* team addtions page */
+router.get('/add_team', function(req, res, next) {
+
+    res.render('add_team', {title: 'Add a drafting team' });
+});
+
 module.exports = router;
