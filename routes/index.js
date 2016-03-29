@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var Datastore = require('nedb');
-var db = new Object;
 db.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true });
 db.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true });
 
