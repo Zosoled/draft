@@ -5,6 +5,10 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+// figure out the root path and set it global
+var path = require('path');
+global.appRoot = path.resolve(__dirname);
+
 var routes = require('./routes/index');
 
 var app = express();
@@ -62,15 +66,6 @@ app.use(function(err, req, res, next) {
 // format a YYYYMMDD string to a human friendly date
 app.locals.prettyDate = function(d) {
     return d.substr(4,2)+"/"+d.substr(6,2)+"/"+d.substr(0,4);
-}
-
-// get the current date in YYYYMMDD format
-app.locals.currentDate = function() {
-    return (new Date()).toISOString().slice(0,10).replace(/-/g,"");
-}
-
-app.locals.currentDraft = function() {
-    return { season: "summer", year: "2016" };
 }
 
 module.exports = app;
