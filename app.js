@@ -9,6 +9,10 @@ var routes = require('./routes/index');
 
 var app = express();
 
+// set up the database connection
+var Datastore = require('nedb');
+var db = new Object;
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -55,9 +59,18 @@ app.use(function(err, req, res, next) {
   });
 });
 
+// format a YYYYMMDD string to a human friendly date
 app.locals.prettyDate = function(d) {
     return d.substr(4,2)+"/"+d.substr(6,2)+"/"+d.substr(0,4);
 }
 
+// get the current date in YYYYMMDD format
+app.locals.currentDate = function() {
+    return (new Date()).toISOString().slice(0,10).replace(/-/g,"");
+}
+
+app.locals.currentDraft = function() {
+    return { season: "summer", year: "2016" };
+}
 
 module.exports = app;
