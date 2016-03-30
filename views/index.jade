@@ -8,11 +8,11 @@ block content
         div#body_right
             div#current_draft
                 h2 Current Draft
-                p Summer 2016
+                p #{current_draft.season.charAt(0).toUpperCase()+current_draft.season.slice(1)} #{current_draft.year}
                 ul
-                    li Starts:
-                    li Ends:
-                    li Draft Period:
+                    li Starts: #{prettyDate(current_draft.draft_start)}
+                    li Ends: #{prettyDate(current_draft.draft_end)}
+                    li Draft Period: #{prettyDate(current_draft.season_start)} -- #{prettyDate(current_draft.season_end)}
             div#team_list
                 h2 Teams
                 table
