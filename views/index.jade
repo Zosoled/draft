@@ -6,19 +6,44 @@ block content
             h2 Movies
             include movie_table.jade
         div#body_right
-            div#current_draft
-                h2 Current Draft
-                p #{current_draft.season.charAt(0).toUpperCase()+current_draft.season.slice(1)} #{current_draft.year}
-                ul
-                    li Starts: #{prettyDate(current_draft.draft_start)}
-                    li Ends: #{prettyDate(current_draft.draft_end)}
-                    li Draft Period: #{prettyDate(current_draft.season_start)} -- #{prettyDate(current_draft.season_end)}
             div#team_list
                 h2 Teams
                 table
                     tr
                         th Name
                         th Members
+                        th Status
                         th Leader
             div#team_action
-                a#team_button(href='/add_team') Add Team
+                a#add_team_button(href='/add_team') Add Team
+            div#draft_details
+                h2 Draft Details
+                div#previous_draft
+                    h3 Previous Draft
+                    if (typeof previous_draft == "object")
+                        p #{previous_draft.season.charAt(0).toUpperCase()+previous_draft.season.slice(1)} #{previous_draft.year}
+                        ul
+                            li Starts: #{prettyDate(previous_draft.draft_start)}
+                            li Ends: #{prettyDate(previous_draft.draft_end)}
+                            li Draft Period: #{prettyDate(previous_draft.season_start)} -- #{prettyDate(previous_draft.season_end)}
+                    else
+                        p
+                            i Not Found
+                div#current_draft
+                    h3 Current Draft
+                    p #{current_draft.season.charAt(0).toUpperCase()+current_draft.season.slice(1)} #{current_draft.year}
+                    ul
+                        li Starts: #{prettyDate(current_draft.draft_start)}
+                        li Ends: #{prettyDate(current_draft.draft_end)}
+                        li Draft Period: #{prettyDate(current_draft.season_start)} -- #{prettyDate(current_draft.season_end)}
+                div#next_draft
+                    h3 Next Draft
+                    if (typeof next_draft == "object")
+                        p #{next_draft.season.charAt(0).toUpperCase()+next_draft.season.slice(1)} #{next_draft.year}
+                        ul
+                            li Starts: #{prettyDate(next_draft.draft_start)}
+                            li Ends: #{prettyDate(next_draft.draft_end)}
+                            li Draft Period: #{prettyDate(next_draft.season_start)} -- #{prettyDate(next_draft.season_end)}
+                    else
+                        p
+                            i TBD
