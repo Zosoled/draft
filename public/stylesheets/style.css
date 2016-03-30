@@ -34,3 +34,7 @@ td {
 .team_label {
     width: 270px;
 }
+
+.required {
+    border: 1px #f00 solid;
+}

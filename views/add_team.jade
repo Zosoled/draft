@@ -4,14 +4,20 @@ block content
     div#body_container
         h2 Add Drafting Team
         h3 #{current_draft.season.charAt(0).toUpperCase()+current_draft.season.slice(1)} #{current_draft.year}
+        p At least three (3) members are required.
         
         form(method='post')
             input(type='hidden', name='season', value= current_draft.season)
             input(type='hidden', name='year', value= current_draft.year)
             div#team_name_input
                 label.team_label Team Name: &nbsp;
-                    input(name='team_name')
+                    input(name='team_name', class= highlight_required == true ? "required" : "")
                 - var i = 0
+                while i < 3
+                    - i++
+                        div(id= 'member_input_' + i)
+                            label.team_label Member #{i}: &nbsp;
+                                input(name='member_name_#{i}', class= highlight_required == true ? "required" : "")
                 while i < 6
                     - i++
                         div(id= 'member_input_' + i)

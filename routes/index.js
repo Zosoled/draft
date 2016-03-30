@@ -29,14 +29,38 @@ router.get('/', function(req, res, next) {
     });
 });
 
-/* team addtions page */
+// team addtions page
 router.get('/add_team', function(req, res, next) {
+    console.log(req.query);
     var current_draft = helper.currentDraft();
     if (typeof current_draft == 'object') {
         var selection_draft = current_draft;
     }
 
-    res.render('add_team', {title: 'Add a drafting team', current_draft: selection_draft});
+    // create a bool to decide if required fields should be highlighted
+    if (req.query.hasOwnProperty("required")) {
+        var highlight_required = true;
+    } else {
+        var highlight_required = false;
+    }
+
+    res.render('add_team', {title: 'Add a drafting team', current_draft: selection_draft, highlight_required: highlight_required});
+});
+
+// add_team processor
+router.post('/add_team', function(req, res, next) {
+    var required = [
+        'team_name',
+        'member_name_1',
+        'member_name_2',
+        'member_name_2'
+    ].forEach(function (elm) {
+        if (typeof req.body[elm] != "string" || req.body[elm].length == 0) {
+            res.status(200).redirect("/add_team?required");
+        }
+    });
+
+    res.status(200).redirect("/");
 });
 
 module.exports = router;
