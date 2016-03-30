@@ -49,12 +49,12 @@ router.get('/add_team', function(req, res, next) {
 // add_team processor
 router.post('/add_team', function(req, res, next) {
     var required = [
-        'team_name',
-        'member_name_1',
-        'member_name_2',
-        'member_name_3'
+        req.body.team_name,
+        req.body.member[0],
+        req.body.member[1],
+        req.body.member[2]
     ].forEach(function (elm) {
-        if (typeof req.body[elm] != "string" || req.body[elm].length == 0) {
+        if (typeof elm != "string" || elm.length == 0) {
             res.status(200).redirect("/add_team?required");
         }
     });
@@ -63,12 +63,18 @@ router.post('/add_team', function(req, res, next) {
 
     req.body._id = req.body.season + "-" + req.body.year + "-" + req.body.team_name.replace(/\s+/g,"_").replace(/![a-zA-Z0-9_]/,"");
 
-    db.team = new Datastore({ filename: 'data/team.nedb', autoload: true });
+    console.log(req.body);
+    // make the members into objects
+    for (var i = 0; i < 8; i++) {
+        req.body.member[i] = { name: req.body.member[i] };
+    }
+
+    /*db.team = new Datastore({ filename: 'data/team.nedb', autoload: true });
     db['team'].insert(req.body, function(err) {
         if (err) { console.log("Unable to insert into team db.",err); process.exit(1); }
 
         res.status(200).redirect("/");
-    });
+    });*/
 
 });
 
