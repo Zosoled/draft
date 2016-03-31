@@ -6,12 +6,13 @@ var Datastore = require('nedb');
 var db = new Object;
 db.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true });
 db.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true });
+db.team = new Datastore({ filename: 'data/team.nedb', autoload: true });
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    var current_draft = helpers.currentDraft();
-    if (typeof current_draft == 'object') {
-        var selection_draft = current_draft;
+    var current_info = helpers.currentDraft();
+    if (typeof current_info == 'object') {
+        var selection_draft = current_info;
     }
 
     db['movie'].find( selection_draft ).sort({ release_date: 1 }).exec( function(err, movie_docs) {
@@ -20,12 +21,20 @@ router.get('/', function(req, res, next) {
         // get the draft details as well
         db['draft'].findOne( selection_draft ).exec(function(err, draft_doc) {
             if (err) { console.log("Unable to get movie documents",err); process.exit(1); };
-            selection_draft.draft_start = draft_doc.draft_start;
-            selection_draft.draft_end = draft_doc.draft_end;
-            selection_draft.season_start = draft_doc.season_start;
-            selection_draft.season_end = draft_doc.season_end;
 
-            res.render('index', { title: 'IDX Movie Draft', movies: movie_docs, current_draft: selection_draft });
+            var current_draft = {};
+            current_draft.season= selection_draft.season;
+            current_draft.year = selection_draft.year;
+            current_draft.draft_start = draft_doc.draft_start;
+            current_draft.draft_end = draft_doc.draft_end;
+            current_draft.season_start = draft_doc.season_start;
+            current_draft.season_end = draft_doc.season_end;
+
+            db['team'].find( selection_draft ).exec(function(err, team_docs) {
+                //console.log(selection_draft);
+                //console.log(team_docs);
+                res.render('index', { title: 'IDX Movie Draft', movies: movie_docs, current_draft: current_draft, teams: team_docs });
+            });
         });
     });
 });
@@ -62,8 +71,8 @@ router.post('/add_team', function(req, res, next) {
 
     // there's a number of steps we want to do in series
     async.waterfall([
-        async.apply(checkName,req.body),
-        makeID,
+        async.apply(makeID,req.body),
+        checkName,
         translateMembers,
         insertTeam
     ],
@@ -75,13 +84,7 @@ router.post('/add_team', function(req, res, next) {
         }
     });
 
-
-    // check to see if the name is taken
-    function checkName (body, callback) {
-        callback(null,body);
-    }
-
-    // add the body
+    // make the teams ID and add it to the body
     function makeID (body, callback) {
         body._id = helpers.makeID([ body.season, body.year, body.team_name ]);
 
@@ -93,28 +96,43 @@ router.post('/add_team', function(req, res, next) {
         }
     }
 
+    // check to see if the name is taken
+    function checkName (body, callback) {
+        db['team'].count({ _id: body._id }).exec(function(err, count) {
+            if (err) {
+                callback(err,null);
+            }
+            else if (count !== 0) {
+                callback("team name already exits",null);
+            }
+            else {
+                callback(null,body);
+            }
+        })
+    }
+
     // turn the members array into an object
     function translateMembers (body, callback) {
         // make the members into objects
+        var members = [];
         for (var i = 0; i < 8; i++) {
-            body.member[i] = { name: body.member[i] };
+            // remove empty elements
+            if (typeof body.member[i] == 'string' && body.member[i].length != 0) {
+                members.push( { _id: helpers.makeID(body.member[i]), name: body.member[i], movies: []} );
+            }
         }
-
+        body.member = members;
         callback(null,body);
     }
 
     // insert into the database
     function insertTeam(body, callback) {
+        db['team'].insert(req.body, function(err) {
+            if (err) { callback("Unable to insert into team db. "+err,null); process.exit(1); }
+        });
+            
         callback(null,body);
     }
-
-    /*db.team = new Datastore({ filename: 'data/team.nedb', autoload: true });
-    db['team'].insert(req.body, function(err) {
-        if (err) { console.log("Unable to insert into team db.",err); process.exit(1); }
-
-        res.status(200).redirect("/");
-    });*/
-
 });
 
 module.exports = router;
