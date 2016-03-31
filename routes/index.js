@@ -1,6 +1,7 @@
+var async = require('async');
 var express = require('express');
 var router = express.Router();
-var helper = require(global.appRoot + '/modules/helpers.js');
+var helpers = require(global.appRoot + '/modules/helpers.js');
 var Datastore = require('nedb');
 var db = new Object;
 db.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true });
@@ -8,7 +9,7 @@ db.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true });
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    var current_draft = helper.currentDraft();
+    var current_draft = helpers.currentDraft();
     if (typeof current_draft == 'object') {
         var selection_draft = current_draft;
     }
@@ -31,7 +32,7 @@ router.get('/', function(req, res, next) {
 
 // team addtions page
 router.get('/add_team', function(req, res, next) {
-    var current_draft = helper.currentDraft();
+    var current_draft = helpers.currentDraft();
     if (typeof current_draft == 'object') {
         var selection_draft = current_draft;
     }
@@ -59,14 +60,52 @@ router.post('/add_team', function(req, res, next) {
         }
     });
 
-    // check to see if name is taken
+    // there's a number of steps we want to do in series
+    async.waterfall([
+        async.apply(checkName,req.body),
+        makeID,
+        translateMembers,
+        insertTeam
+    ],
+    function (errs,final_res) {
+        if (errs) { console.log("An error has occured ",errs); process.exit(1); } 
 
-    req.body._id = req.body.season + "-" + req.body.year + "-" + req.body.team_name.replace(/\s+/g,"_").replace(/![a-zA-Z0-9_]/,"");
+        if (typeof final_res == "object") {
+            res.status(200).redirect("/");
+        }
+    });
 
-    console.log(req.body);
-    // make the members into objects
-    for (var i = 0; i < 8; i++) {
-        req.body.member[i] = { name: req.body.member[i] };
+
+    // check to see if the name is taken
+    function checkName (body, callback) {
+        callback(null,body);
+    }
+
+    // add the body
+    function makeID (body, callback) {
+        body._id = helpers.makeID([ body.season, body.year, body.team_name ]);
+
+        if (typeof body._id != "string") {
+            callback("Did not get string from makeID",null);
+        }
+        else {
+            callback(null,body);
+        }
+    }
+
+    // turn the members array into an object
+    function translateMembers (body, callback) {
+        // make the members into objects
+        for (var i = 0; i < 8; i++) {
+            body.member[i] = { name: body.member[i] };
+        }
+
+        callback(null,body);
+    }
+
+    // insert into the database
+    function insertTeam(body, callback) {
+        callback(null,body);
     }
 
     /*db.team = new Datastore({ filename: 'data/team.nedb', autoload: true });
