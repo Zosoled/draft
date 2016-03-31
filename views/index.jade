@@ -9,11 +9,19 @@ block content
             div#team_list
                 h2 Teams
                 table
-                    tr
-                        th Name
-                        th Members
-                        th Status
-                        th Leader
+                    thead
+                        tr
+                            th Name
+                            th Members
+                            th Status
+                            th Leader
+                    tbody
+                        each team in teams
+                            tr
+                                td #{team.team_name}
+                                td #{team.member.length}
+                                td active
+                                td None
             div#team_action
                 a#add_team_button(href='/add_team') Add Team
             div#draft_details
