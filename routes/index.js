@@ -31,10 +31,28 @@ router.get('/', function(req, res, next) {
             current_draft.season_end = draft_doc.season_end;
 
             db['team'].find( selection_draft ).exec(function(err, team_docs) {
-                //console.log(selection_draft);
-                //console.log(team_docs);
                 res.render('index', { title: 'IDX Movie Draft', movies: movie_docs, current_draft: current_draft, teams: team_docs });
             });
+        });
+    });
+});
+
+// team addtions page
+router.get('/team/' + ':id', function(req, res, next) {
+    var selection_draft = helpers.currentDraft();
+    var team_id = req.params.id;
+
+    db['movie'].find( selection_draft ).sort({ release_date: 1 }).exec( function(err, movie_docs) {
+        db['team'].findOne({ _id: team_id }).sort({ release_date: 1 }).exec( function(err, team_doc) {
+            if (team_doc === null) {
+                var found = false;
+                var title = "Team not found";
+            }
+            else {
+                var found = true;
+                var title = team_doc.team_name
+            }
+            res.render('team', {title: title, found: found, team: team_doc, movies: movie_docs });
         });
     });
 });
