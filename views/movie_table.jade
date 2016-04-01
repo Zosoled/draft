@@ -5,8 +5,13 @@ block movie_table
                 th Title
                 th &nbsp;
                 th &nbsp;
+                if found === true
+                    th Owner
+                    th Cost
                 th Release Date
                 th Gross
+                if found === true
+                    th Efficency
         tbody
             each movie in movies
                 tr
@@ -18,9 +23,13 @@ block movie_table
                     td
                         a(href='http://www.boxofficemojo.com/movies/?id=#{movie.bom_id}' target='_blank')
                             img(src='/public/images/bom.jpg' width=32 height=32 border=0)
+                    if found == true
+                        td Derek
+                        td $1
                     td #{prettyDate(movie.release_date)}
                     if movie.gross
                         td $#{movie.gross}
                     else
                         td $0
-
+                    if found == true
+                        td $100,000,000
