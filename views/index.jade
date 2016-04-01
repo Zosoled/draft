@@ -18,7 +18,8 @@ block content
                     tbody
                         each team in teams
                             tr
-                                td #{team.team_name}
+                                td
+                                    a(href="/team/#{team._id}") #{team.team_name}
                                 td #{team.member.length}
                                 td active
                                 td None
