@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    div#body_container
+        if found == false
+            h1 Team Not Found
+            a(href="/") Back Home
+        else
+            h2 Progress of team "#{team.team_name}"
+            include movie_table.jade
