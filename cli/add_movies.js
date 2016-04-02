@@ -80,7 +80,7 @@ prompt.get(draft_schema, function(err,draft) {
     if (err) { console.log("Unable to get prompt response",err); process.exit(1); };
 
     // look up the draft document
-    draftDb.count({ season: draft.season, year: draft.year }, function (err, count) {
+    draftDb.count( draft, function (err, count) {
         if (err) { console.log("Unable to get search database",err); process.exit(1); };
         
         // if there are no docs the error out
@@ -90,7 +90,7 @@ prompt.get(draft_schema, function(err,draft) {
         }
 
         // because I don't have time to write a full management system ATM we just delete all existing movies in this draft
-        db.remove({ season: draft.season, year: draft.year}, { multi: true }, function (err, count) {
+        db.remove(draft, { multi: true }, function (err, count) {
             if (err) { console.log("Unable to remove old movies",err); process.exit(1); };
         });
     });
@@ -115,7 +115,7 @@ prompt.get(draft_schema, function(err,draft) {
                 movie.year = draft.year;
 
                 // predicable id
-                movie._id = helpers.makeID([ draft.season, draft.year, movie.bom_id ]);
+                movie._id = helpers.makeID([ draft.season, draft.year, movie.name ]);
 
                 // add the movie to the movies array
                 movies.push(movie);
