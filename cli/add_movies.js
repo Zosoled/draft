@@ -3,6 +3,7 @@ var Datastore = require('nedb'),
     draftDb = new Datastore({ filename: '../data/draft.nedb', autoload: true});
 var prompt = require('prompt');
 var async = require("async");
+var helpers = require("../modules/helpers");
 
 // this governs the user prompts and valid responses
 var draft_schema = {
@@ -114,7 +115,7 @@ prompt.get(draft_schema, function(err,draft) {
                 movie.year = draft.year;
 
                 // predicable id
-                movie._id = draft.season+"-"+draft.year+"-"+movie.bom_id;
+                movie._id = helpers.makeID([ draft.season, draft.year, movie.bom_id ]);
 
                 // add the movie to the movies array
                 movies.push(movie);
