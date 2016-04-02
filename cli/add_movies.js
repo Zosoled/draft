@@ -125,18 +125,10 @@ prompt.get(draft_schema, function(err,draft) {
 
                 callback(null,movies);
             });
-        }, function(err,res) {
+        }, function(err,movies) {
             // add order to movies array
-            var movie_order = new Array;
-            for (var i = 0; i < res.length; i++) {
-                movie_order.push(i);
-            }
-            movie_order = shuffle(movie_order);
-            
-            for (var i = 0; i < res.length; i++) {
-                res[i].order = movie_order[i];
-            }
-
+            movies = helpers.addRandomOrderElement(movies);
+            console.log(movies);
 
             db.insert(movies, function(err) {
                 if (err) { console.log("Unable to insert into draft db",err); process.exit(1); };
@@ -146,15 +138,3 @@ prompt.get(draft_schema, function(err,draft) {
         }
     );
 });
-
-function shuffle(a) {
-    var j, x, i;
-    for (i = a.length; i; i -= 1) {
-        j = Math.floor(Math.random() * i);
-        x = a[i - 1];
-        a[i - 1] = a[j];
-        a[j] = x;
-    }
-
-    return a;
-}
