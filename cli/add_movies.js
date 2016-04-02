@@ -49,6 +49,10 @@ var movie_schema = {
             message: "IMDB IDs start with tt",
             required: true
         },
+        poster_url: {
+            description: "Poster URL",
+            required: true
+        },
         yt_id: {
             description: "Youtube trailer ID",
             required: true
