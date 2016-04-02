@@ -15,3 +15,22 @@ A movie draft is something like a fantasy sports draft... or so I'm told. Genera
 * impliment actual error/exception handling
 * make it not look like a 3rd grader wrote the stylesheet
 * implement ajax form handling
+
+# Installation
+```
+git clone <...>
+cd draft
+npm install
+```
+
+# Setup
+Right now inserting draft and movie information is done through cli scripts
+
+## create_draft.js
+This creates a draft. You'll need to enter the season (summer or winter), the year, and the dates that the different phases start and stop.
+
+## add_movies.js
+This adds all the movies to the draft you created above. This is the most time consuming. Eventually I would like to at least add some hints to the process. You'll need to know each film's title, release date, imdb id, box office mojo id, the yourube id for the film's trailer, and a url for the poster (I recomment using "orginal" sized posters from themoviedb).
+
+## edit_movies.js
+Similar to add_moves.js but this will have movies that are already in a given draft prepopulated as default values in the prompts.
