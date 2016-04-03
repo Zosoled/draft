@@ -39,13 +39,22 @@ td {
     border-bottom: 1px solid #333333;
     border-left: 1px solid #CCCCCC;
 }
+#movie_display {
+    width: 100%;
+}
 #movie_poster {
     width: 400px;
     float: left;
+    position: relative;
 }
 #movie_poster img {
     width: 100%;
     height: auto;
+}
+#movie_info {
+    width: 392px;
+    padding: 0 0 0 8px;
+    float: left;
 }
 
 .team_label {
@@ -54,4 +63,32 @@ td {
 
 .required {
     border: 1px #f00 solid;
+}
+
+.play_circle{
+    background: red;
+    border-radius: 18px;
+    height: 50px;
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 70px;
+    margin: -25px 0 0 -25px;
+}
+.play_circle_inner{
+    position: relative;
+    height: 100%;
+}
+.play_circle_inner:before{
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 0 10px 20px;
+    border-color: transparent transparent transparent #ffffff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -7px;
 }

@@ -9,13 +9,19 @@ block content
             div#movie_display
                 div#movie_title
                     h1 #{movie.name}
+                    h3 Release Date: #{prettyDate(movie.release_date)}
                 div#movie_poster
-                    img(src= movie.poster_url)
+                    a(href='https://www.youtube.com/embed/#{movie.yt_id}' target='_blank')
+                        img(src= movie.poster_url, border=0)
+                        div.play_circle
+                            div.play_circle_inner
                 div#movie_info
-                    p Relase Date
-                    p IMDB
-                    p Box Office Mojo
-                    p Trailer
+                    table
+                        thead
+                            th Member
+                            th Movies Owned
+                            th Remaining Bux
+                        tbody
 
                     form
                         label Winner
