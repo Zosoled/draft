@@ -57,6 +57,38 @@ router.get('/team/' + ':id', function(req, res, next) {
     });
 });
 
+// this is a seqential route used for drafting
+router.get('/draft/' + ':team_id' + '/' + ':movie_number', function(req, res, next) {
+    var info = req.params.team_id.split('-');
+    var draft_season = info[0];
+    var draft_year = info[1];
+    var team_id = req.params.team_id;
+    var movie_number = parseInt(req.params.movie_number);
+    var not_found = [];
+
+    // get the draft doc and make sure it's drafting time
+    db['draft'].findOne({ season: draft_season, year: draft_year }).exec(function (err, draft_doc) {
+        if (draft_doc === null) {
+            res.render('draft', { title: 'Drafting: Draft Not Found', not_found: 'draft' });
+        } else {
+            db['team'].findOne({ _id: team_id }).exec(function (err, team_doc) {
+                if (team_doc === null) {
+                    res.render('draft', { title: 'Drafting: Team Not Found', not_found: 'team' });
+                } else {
+                    db['movie'].findOne({ season: draft_season, year: draft_year, order: movie_number }).exec(function (err, movie_doc) {
+                        console.log(movie_doc);
+                        if (movie_doc === null) {
+                            res.render('draft', { title: 'Drafting: Movie Not Found', not_found: 'movie' });
+                        } else {
+                            res.render('draft', { title: 'Drafting: '+movie_doc.name, movie: movie_doc, team: team_doc, not_found: null });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
 // team addtions page
 router.get('/add_team', function(req, res, next) {
     var current_draft = helpers.currentDraft();
@@ -145,7 +177,11 @@ router.post('/add_team', function(req, res, next) {
 
     // insert into the database
     function insertTeam(body, callback) {
-        db['team'].insert(req.body, function(err) {
+        // one last set, adding draft tracking
+        body.draft_position = 0;
+        body.draft_complete = false;
+
+        db['team'].insert(body, function(err) {
             if (err) { callback("Unable to insert into team db. "+err,null); process.exit(1); }
         });
             
