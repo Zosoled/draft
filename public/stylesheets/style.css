@@ -39,6 +39,14 @@ td {
     border-bottom: 1px solid #333333;
     border-left: 1px solid #CCCCCC;
 }
+#movie_poster {
+    width: 400px;
+    float: left;
+}
+#movie_poster img {
+    width: 100%;
+    height: auto;
+}
 
 .team_label {
     width: 270px;
