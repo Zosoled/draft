@@ -34,3 +34,20 @@ This adds all the movies to the draft you created above. This is the most time c
 
 ## edit_movies.js
 Similar to add_moves.js but this will have movies that are already in a given draft prepopulated as default values in the prompts.
+
+#### Special Note
+NEDB persists in memory so you may need to restart the app (provided it was running) after using this CLI scripts.
+
+# Running
+You can launch the server using
+
+```
+npm start
+```
+
+This is an app build on express so like most express apps it defaults to port 3000 for development. To run on port 80 for prod you'll need to be root and run the server as
+```
+PORT=80 npm start
+```
+
+I also recommend using nodemon to keep the app running and automatically restarting when monitored files are edited.
