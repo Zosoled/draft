@@ -114,8 +114,6 @@ prompt.get(draft_schema, function(err,draft) {
                     // add the random order to the records
                     edited_movies = helpers.addRandomOrderElement(edited_movies);
 
-                    console.log(edited_movies);
-
                     // once removal is done add the edited movies back in
                     db.insert(edited_movies, function(err) {
                         if (err) { console.log("Unable to insert into draft db",err); process.exit(1); };
