@@ -6,7 +6,7 @@ block content
         h3 #{current_draft.season.charAt(0).toUpperCase()+current_draft.season.slice(1)} #{current_draft.year}
         p At least three (3) members are required.
         
-        form(method='post')
+        form(method='post', id='add_team_form')
             input(type='hidden', name='season', value= current_draft.season)
             input(type='hidden', name='year', value= current_draft.year)
             div#team_name_input
@@ -27,3 +27,10 @@ block content
                                 input(name='member')
                 div#submit_form
                     input(type='submit',value='Add Team')
+
+        script.
+            $(document).ready() {
+                $("#add_team_form").submit(function( event ){
+                    event.preventDefault();
+                });
+            }
