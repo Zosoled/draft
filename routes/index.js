@@ -71,14 +71,20 @@ router.get('/draft/' + ':team_id' + '/' + ':movie_number', function(req, res, ne
         if (draft_doc === null) {
             res.render('draft', { title: 'Drafting: Draft Not Found', not_found: 'draft' });
         } else {
+            // if we have a valid draft
+            // find the requested team
             db['team'].findOne({ _id: team_id }).exec(function (err, team_doc) {
                 if (team_doc === null) {
                     res.render('draft', { title: 'Drafting: Team Not Found', not_found: 'team' });
                 } else {
+                    // if we have a valif team
+                    // get the requested movie
                     db['movie'].findOne({ season: draft_season, year: draft_year, order: movie_number }).exec(function (err, movie_doc) {
                         console.log(movie_doc);
                         if (movie_doc === null) {
                             res.render('draft', { title: 'Drafting: Movie Not Found', not_found: 'movie' });
+                        // if we have a valid movie
+                        // render the full page content
                         } else {
                             res.render('draft', { title: 'Drafting: '+movie_doc.name, movie: movie_doc, team: team_doc, not_found: null });
                         }
