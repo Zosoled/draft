@@ -70,7 +70,7 @@ td {
 
 .play_circle{
     background: red;
-    border-radius: 18px;
+    border-radius: 12px;
     height: 50px;
     position: absolute;
     bottom: 6px;

@@ -21,7 +21,17 @@ block content
                                 td
                                     a(href="/team/#{team._id}") #{team.team_name}
                                 td #{team.member.length}
-                                td active
+                                if team.draft_complete === false
+                                    if team.draft_position == 0
+                                        td
+                                            a(href="/draft/#{team._id}/0/") Not Started
+                                    else
+                                        td
+                                            - var page = team.draft_position + 1;
+                                            a(href="/draft/#{team._id}/#{page}/") Incomplete
+                                else
+                                    td
+                                        a(href="/draft/#{team._id}/0/") Draft Ready
                                 td None
             div#team_action
                 a#add_team_button(href='/add_team') Add Team
