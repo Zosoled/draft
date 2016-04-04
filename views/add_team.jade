@@ -10,23 +10,23 @@ block content
             input(type='hidden', name='season', value= current_draft.season)
             input(type='hidden', name='year', value= current_draft.year)
             div#team_name_input
-                label.team_label Team Name: &nbsp;
-                    input(name='team_name', class= highlight_required == true ? "required" : "")
+                label(for="team_name") Team Name: &nbsp;
+                input(name='team_name', class= highlight_required == true ? "required" : "")
                 - var i = 0
                 while i < 3
                     - j = i
                     - i++
                         div(id= 'member_input_' + i)
-                            label.team_label Member #{i}: &nbsp;
-                                input(name='member', class= highlight_required == true ? "required" : "") 
+                            label Member #{i}: &nbsp;
+                            input(name='member', class= highlight_required == true ? "required" : "") 
                 while i < 8
                     - j = i
                     - i++
                         div(id= 'member_input_' + i)
-                            label.team_label Member #{i}: &nbsp;
-                                input(name='member')
+                            label Member #{i}: &nbsp;
+                            input(name='member')
                 div#submit_form
-                    input(type='submit',value='Add Team')
+                    input(class="submit_button",type='submit',value='Add Team')
 
         script.
             $(document).ready() {

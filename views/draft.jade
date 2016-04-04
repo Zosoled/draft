@@ -31,14 +31,16 @@ block content
                     div#set_price
                         h3 Finalize Price
                         form
-                            label Winner
-                                select(name="winner")
-                                    option(value="", disabled, selected)
-                                    each member in team.member
-                                        option(value= member._id) #{member.name}
-                            label Bid
-                                input(name="bid", size="3")
-                            label Percentage
-                                input(name="percent", size="3", value="100", disabled)
-                            button(id="set_price", value="Set Price", type="button")
-                            button(id="set_price_next", value="Set Price &amp; Next",type="button")
+                            label(for="winner") Winner
+                            select(name="winner")
+                                option(value="", disabled, selected)
+                                each member in team.member
+                                    option(value= member._id) #{member.name}
+                            br
+                            label(for="bid") Bid
+                            input(name="bid", size="3")
+                            br
+                            label(for="percent") Percentage
+                            input(name="percent", size="3", value="100", disabled)
+                            br
+                            input(class="submit_button",type='submit',value='Add Team')

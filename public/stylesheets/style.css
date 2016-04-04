@@ -17,6 +17,13 @@ td {
     background-color: #FFF;
     padding: 3px;
 }
+label {
+    display: inline-block;
+    width: 100px;
+}
+.submit_button {
+    margin-left: 100px;
+}
 
 #body_container {
     width: 100%;
@@ -58,10 +65,6 @@ td {
     width: 392px;
     padding: 0 0 0 8px;
     float: left;
-}
-
-.team_label {
-    width: 270px;
 }
 
 .required {
