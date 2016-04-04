@@ -16,17 +16,29 @@ block content
                         div.play_circle
                             div.play_circle_inner
                 div#movie_info
-                    table
-                        thead
-                            th Member
-                            th Movies Owned
-                            th Remaining Bux
-                        tbody
-
-                    form
-                        label Winner
-                            select(name="winner")
-                        label Bid
-                            input(name="bid")
-                        label Percentage
-                            input(name="percent", size="3")
+                    div#members
+                        table
+                            thead
+                                th Member
+                                th Movies Owned
+                                th Remaining Bux
+                            tbody
+                                each member in team.member
+                                    tr
+                                        td #{member.name}
+                                        td #{member.movies.length}
+                                        td $5
+                    div#set_price
+                        h3 Finalize Price
+                        form
+                            label Winner
+                                select(name="winner")
+                                    option(value="", disabled, selected)
+                                    each member in team.member
+                                        option(value= member._id) #{member.name}
+                            label Bid
+                                input(name="bid", size="3")
+                            label Percentage
+                                input(name="percent", size="3", value="100", disabled)
+                            button(id="set_price", value="Set Price", type="button")
+                            button(id="set_price_next", value="Set Price &amp; Next",type="button")

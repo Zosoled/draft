@@ -51,6 +51,9 @@ td {
     width: 100%;
     height: auto;
 }
+#members table {
+    width: 100%;
+}
 #movie_info {
     width: 392px;
     padding: 0 0 0 8px;
