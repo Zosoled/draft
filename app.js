@@ -68,4 +68,14 @@ app.locals.prettyDate = function(d) {
     return d.substr(4,2)+"/"+d.substr(6,2)+"/"+d.substr(0,4);
 }
 
+// function to total up movie spend for a member
+app.locals.totalMemberMovies = function(movies) {
+    var total = 0;
+    for (var i = 0; i < movies.length; i++) {
+       total += parseInt(movies[i].bid); 
+    }
+
+    return total;
+}
+
 module.exports = app;
