@@ -41,9 +41,10 @@ block content
                     if (typeof previous_draft == "object")
                         p #{previous_draft.season.charAt(0).toUpperCase()+previous_draft.season.slice(1)} #{previous_draft.year}
                         ul
-                            li Starts: #{prettyDate(previous_draft.draft_start)}
-                            li Ends: #{prettyDate(previous_draft.draft_end)}
-                            li Draft Period: #{prettyDate(previous_draft.season_start)} -- #{prettyDate(previous_draft.season_end)}
+                            li Drafting Started: #{prettyDate(previous_draft.draft_start)}
+                            li Drafting Ended: #{prettyDate(previous_draft.draft_end)}
+                            li First Movie Opened: #{prettyDate(previous_draft.season_start)}
+                            li Game Ended: #{prettyDate(previous_draft.season_end)}
                     else
                         p
                             i Not Found
@@ -51,17 +52,19 @@ block content
                     h3 Current Draft
                     p #{current_draft.season.charAt(0).toUpperCase()+current_draft.season.slice(1)} #{current_draft.year}
                     ul
-                        li Starts: #{prettyDate(current_draft.draft_start)}
-                        li Ends: #{prettyDate(current_draft.draft_end)}
-                        li Draft Period: #{prettyDate(current_draft.season_start)} -- #{prettyDate(current_draft.season_end)}
+                        li Drafting Starts: #{prettyDate(current_draft.draft_start)}
+                        li Drafting Ends: #{prettyDate(current_draft.draft_end)}
+                        li First Movie Opens: #{prettyDate(current_draft.season_start)}
+                        li End of Game: #{prettyDate(current_draft.season_end)}
                 div#next_draft
                     h3 Next Draft
                     if (typeof next_draft == "object")
                         p #{next_draft.season.charAt(0).toUpperCase()+next_draft.season.slice(1)} #{next_draft.year}
                         ul
-                            li Starts: #{prettyDate(next_draft.draft_start)}
-                            li Ends: #{prettyDate(next_draft.draft_end)}
-                            li Draft Period: #{prettyDate(next_draft.season_start)} -- #{prettyDate(next_draft.season_end)}
+                            li Drafting Starts: #{prettyDate(next_draft.draft_start)}
+                            li Drafting Ends: #{prettyDate(next_draft.draft_end)}
+                            li First Movie Opens: #{prettyDate(next_draft.season_start)}
+                            li End of Game #{prettyDate(next_draft.season_end)}
                     else
                         p
                             i TBD
