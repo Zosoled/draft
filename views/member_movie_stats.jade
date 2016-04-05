@@ -9,5 +9,5 @@ block member_movie_stats
                 - var remaining = 100 - totalMemberMovies(member.movies)
                 tr
                     td #{member.name}
-                    td #{member.movies.length}
-                    td $#{remaining}
+                    td(align="right") #{member.movies.length}
+                    td(align="right") $#{remaining}
