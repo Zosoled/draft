@@ -101,13 +101,20 @@ block content
                 // if everything checks out then proceed
                 else {
                     var json_data = $("#set_price_form").serializeArray();
-                    $.post('/draft', json_data, function(res,stat,xhr) {
-                        if (stat == "success") {
+                    $.ajax({
+                        type: "POST",
+                        url: '/draft',
+                        data: json_data,
+                        success: function() {
                             var team_id = json_data[1].value;
                             var next_movie = parseInt(json_data[2].value) + 1;
                             var new_url = '/draft/'+team_id+'/'+next_movie+'/';
                             window.location.replace(new_url);
-                        }
-                    }, 'json');
+                        },
+                        error: function() {
+                            alert('An error occured processing this request.');
+                        },
+                        dataType: 'json'
+                    });
                 }
             });
