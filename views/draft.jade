@@ -30,17 +30,81 @@ block content
                                         td $5
                     div#set_price
                         h3 Finalize Price
-                        form
+                        form#set_price_form
+                            input(type="hidden", name="movie_id", value="#{movie._id}")
+                            input(type="hidden", name="team_id", value="#{team._id}")
+                            input(type="hidden", name="movie_number", value="#{movie.order}")
                             label(for="winner") Winner
-                            select(name="winner")
+                            select(id="set_price_form_winner", name="winner")
                                 option(value="", disabled, selected)
                                 each member in team.member
                                     option(value= member._id) #{member.name}
                             br
                             label(for="bid") Bid
-                            input(name="bid", size="3")
+                            input(name="bid", id="set_price_form_bid" size="3", class="numbers_only")
+                            small (Valid Bids: 1 to 100 Bux)
                             br
                             label(for="percent") Percentage
-                            input(name="percent", size="3", value="100", disabled)
+                            input(name="percent", id="set_price_form_percent" size="3", value="100", disabled, class="numbers_only")
                             br
                             input(class="submit_button",type='submit',value='Add Team')
+
+        script.
+            // strip non numeric characters as they're typed
+            $(".numbers_only").keyup(function() {
+                this.value = this.value.replace(/[^0-9]/,'');
+
+                if (this.id == "set_price_form_bid") {
+                    if (this.value == 100) {
+                        $("#set_price_form_percent").prop('disabled', false);
+                    }
+                    else {
+                        $("#set_price_form_percent").prop('disabled', true);
+                    }
+                }
+            });
+
+            // handle form submits
+            $("#set_price_form").submit(function(e) {
+                e.preventDefault();
+
+                function testNumbers(number) {
+                    if (isNaN(number)) {
+                        // not a number
+                        return false;
+                    } else if (number % 1 !== 0) {
+                        // not a whole number
+                        return false;
+                    } else if (number < 1 || number > 100) {
+                        // less than 1 or greater than 100
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+
+                // if no winner is selected
+                if ($("#set_price_form_winner option:selected").text().length == 0) {
+                    alert("Please select a winner");
+                }
+                // if the bid is invalid
+                else if (!testNumbers($("#set_price_form_bid").val())){
+                    alert("Bid value invalid: "+$("#set_price_form_bid").val());
+                }
+                // if the percent is invalid
+                else if (!testNumbers($("#set_price_form_percent").val())){
+                    alert("Percent value invalid: "+$("#set_price_form_percent").val());
+                }
+                // if everything checks out then proceed
+                else {
+                    var json_data = $("#set_price_form").serializeArray();
+                    $.post('/draft', json_data, function(res,stat,xhr) {
+                        if (stat == "success") {
+                            var team_id = json_data[1].value;
+                            var next_movie = parseInt(json_data[2].value) + 1;
+                            var new_url = '/draft/'+team_id+'/'+next_movie+'/';
+                            window.location.replace(new_url);
+                        }
+                    }, 'json');
+                }
+            });

@@ -57,6 +57,15 @@ router.get('/team/' + ':id', function(req, res, next) {
     });
 });
 
+// process form submit from the draft page
+router.post('/draft', function(req, res, next) {
+    console.log(req);
+
+    res.statusCode = 200;
+    res.send({});
+    //res.send(JSON.stringify(res));
+});
+
 // this is a seqential route used for drafting
 router.get('/draft/' + ':team_id' + '/' + ':movie_number', function(req, res, next) {
     var info = req.params.team_id.split('-');
