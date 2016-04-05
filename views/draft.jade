@@ -85,14 +85,17 @@ block content
 
                 // if no winner is selected
                 if ($("#set_price_form_winner option:selected").text().length == 0) {
+                    $("#set_price_form_winner").addClass('required');
                     alert("Please select a winner");
                 }
                 // if the bid is invalid
                 else if (!testNumbers($("#set_price_form_bid").val())){
+                    $("#set_price_form_bid").addClass('required');
                     alert("Bid value invalid: "+$("#set_price_form_bid").val());
                 }
                 // if the percent is invalid
                 else if (!testNumbers($("#set_price_form_percent").val())){
+                    $("#set_price_form_percent").addClass('required');
                     alert("Percent value invalid: "+$("#set_price_form_percent").val());
                 }
                 // if everything checks out then proceed
