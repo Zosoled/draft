@@ -1,0 +1,13 @@
+block member_movie_stats
+    table
+        thead
+            th Member
+            th Movies Owned
+            th Remaining Bux
+        tbody
+            each member in team.member
+                - var remaining = 100 - totalMemberMovies(member.movies)
+                tr
+                    td #{member.name}
+                    td #{member.movies.length}
+                    td $#{remaining}

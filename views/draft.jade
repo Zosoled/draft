@@ -17,18 +17,7 @@ block content
                             div.play_circle_inner
                 div#movie_info
                     div#members
-                        table
-                            thead
-                                th Member
-                                th Movies Owned
-                                th Remaining Bux
-                            tbody
-                                each member in team.member
-                                    - var remaining = 100 - totalMemberMovies(member.movies)
-                                    tr
-                                        td #{member.name}
-                                        td #{member.movies.length}
-                                        td $#{remaining}
+                        include member_movie_stats.jade
 
                     div#set_price
                         if team.draft_position > movie_number
@@ -64,7 +53,7 @@ block content
                                 label(for="percent") Percentage
                                 input(name="percent", id="set_price_form_percent" size="3", value="100", disabled, class="numbers_only")
                                 br
-                                input(class="submit_button",type='submit',value='Add Team')
+                                input(class="submit_button",type='submit',value='Complete Purchase')
 
         script.
             // strip non numeric characters as they're typed
