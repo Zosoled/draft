@@ -24,30 +24,47 @@ block content
                                 th Remaining Bux
                             tbody
                                 each member in team.member
+                                    - var remaining = 100 - totalMemberMovies(member.movies)
                                     tr
                                         td #{member.name}
                                         td #{member.movies.length}
-                                        td $5
+                                        td $#{remaining}
+
                     div#set_price
-                        h3 Finalize Price
-                        form#set_price_form
-                            input(type="hidden", name="movie_id", value="#{movie._id}")
-                            input(type="hidden", name="team_id", value="#{team._id}")
-                            input(type="hidden", name="movie_number", value="#{movie.order}")
-                            label(for="winner") Winner
-                            select(id="set_price_form_winner", name="winner")
-                                option(value="", disabled, selected)
-                                each member in team.member
-                                    option(value= member._id) #{member.name}
+                        if team.draft_position > movie_number
+                            - var next_movie = movie_number + 1
+                            h3 Final Stats
+                            table
+                                thead
+                                    th Winner
+                                    th Bid
+                                    th Percentage
+                                tbody
+                                    td Do I
+                                    td have this
+                                    td information
                             br
-                            label(for="bid") Bid
-                            input(name="bid", id="set_price_form_bid" size="3", class="numbers_only")
-                            small (Valid Bids: 1 to 100 Bux)
-                            br
-                            label(for="percent") Percentage
-                            input(name="percent", id="set_price_form_percent" size="3", value="100", disabled, class="numbers_only")
-                            br
-                            input(class="submit_button",type='submit',value='Add Team')
+                            a(href="/draft/#{team._id}/#{next_movie}/") Next Movie
+                        else
+                            h3 Finalize Price
+                            form#set_price_form
+                                input(type="hidden", name="movie_id", value="#{movie._id}")
+                                input(type="hidden", name="team_id", value="#{team._id}")
+                                input(type="hidden", name="movie_number", value="#{movie.order}")
+                                label(for="winner") Winner
+                                select(id="set_price_form_winner", name="winner")
+                                    option(value="", disabled, selected)
+                                    each member in team.member
+                                        option(value= member._id) #{member.name}
+                                br
+                                label(for="bid") Bid
+                                input(name="bid", id="set_price_form_bid" size="3", class="numbers_only")
+                                small (Valid Bids: 1 to 100 Bux)
+                                br
+                                label(for="percent") Percentage
+                                input(name="percent", id="set_price_form_percent" size="3", value="100", disabled, class="numbers_only")
+                                br
+                                input(class="submit_button",type='submit',value='Add Team')
 
         script.
             // strip non numeric characters as they're typed
