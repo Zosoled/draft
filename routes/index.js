@@ -89,16 +89,31 @@ router.post('/draft', function(req, res, next) {
 
                     // find the winning member
                     var winner_found = false;
+                    var has_bux = false;
                     for (var i = 0; i < team_doc.member.length; i++) {
                         if (team_doc.member[i]._id == req.body.winner) {
-                            team_doc.member[i].movies.push({ movie_id: req.body.movie_id, bid: req.body.bid, percent: percent });
                             winner_found = true;
+
+                            // total the existing bids for this member make sure it's greater than or equal to the bid
+                            var total_bux = 100;
+                            for (var m = 0; m < team_doc.member[i].movies.length; m++) {
+                                total_bux -= parseInt(team_doc.member[i].movies[m].bid);
+                            }
+
+                            if (total_bux >= parseInt(req.body.bid)) {
+                                team_doc.member[i].movies.push({ movie_id: req.body.movie_id, bid: req.body.bid, percent: percent });
+                                has_bux = true;
+                            }
                         }
                     }
                     
-                    // no winner found
+                    // no winner found or winner doesn't have enough money
                     if (!winner_found) {
-                        res.statusCode = 400;
+                        res.statusCode = 404;
+                        res.send({});
+                    }
+                    else if (!has_bux) {
+                        res.statusCode = 402;
                         res.send({});
                     }
                     // winner found
