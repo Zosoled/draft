@@ -21,6 +21,10 @@ label {
     display: inline-block;
     width: 100px;
 }
+small {
+    font-size: .7em;
+    color: #333;
+}
 .submit_button {
     margin-left: 100px;
 }
