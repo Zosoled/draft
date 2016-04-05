@@ -59,11 +59,66 @@ router.get('/team/' + ':id', function(req, res, next) {
 
 // process form submit from the draft page
 router.post('/draft', function(req, res, next) {
-    console.log(req);
+    var team_id = req.body.team_id;
+    var info = team_id.split('-');
+    var draft_season = info[0];
+    var draft_year = info[1];
+    
+    // lets double check that we're in a valid draft
+    db['draft'].findOne({ season: draft_season, year: draft_year }).exec(function(err, draft_doc) {
+        if (draft_doc == null) {
+            res.statusCode = 400;
+            res.send({});
+        }
+        // check to make sure we're in the current drafting period
+        else if (false) {
+        }
+        // draft valid
+        else {
+            // get team from the information
+            db['team'].findOne({ _id: team_id }).exec(function(err, team_doc) {
+                if (team_doc == null) {
+                    res.statusCode = 400;
+                    res.send({});
+                }
+                else {
+                    team_doc.draft_position = parseInt(team_doc.draft_position) + 1;
 
-    res.statusCode = 200;
-    res.send({});
-    //res.send(JSON.stringify(res));
+                    // make sure we have a valid percentage
+                    var percent = (req.body.hasOwnProperty(percent)) ? req.body.percent : 100;
+
+                    // find the winning member
+                    var winner_found = false;
+                    for (var i = 0; i < team_doc.member.length; i++) {
+                        if (team_doc.member[i]._id == req.body.winner) {
+                            team_doc.member[i].movies.push({ movie_id: req.body.movie_id, bid: req.body.bid, percent: percent });
+                            winner_found = true;
+                        }
+                    }
+                    
+                    // no winner found
+                    if (!winner_found) {
+                        res.statusCode = 400;
+                        res.send({});
+                    }
+                    // winner found
+                    else {
+                        db['team'].update({ _id: team_doc._id }, team_doc, function(err) {
+                            if (err) {
+                                console.log(err);
+                                res.statusCode = 400;
+                                res.send({});
+                            }
+                            else {
+                                res.statusCode = 200;
+                                res.send({});
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
 });
 
 // this is a seqential route used for drafting
@@ -89,13 +144,12 @@ router.get('/draft/' + ':team_id' + '/' + ':movie_number', function(req, res, ne
                     // if we have a valif team
                     // get the requested movie
                     db['movie'].findOne({ season: draft_season, year: draft_year, order: movie_number }).exec(function (err, movie_doc) {
-                        console.log(movie_doc);
                         if (movie_doc === null) {
                             res.render('draft', { title: 'Drafting: Movie Not Found', not_found: 'movie' });
                         // if we have a valid movie
                         // render the full page content
                         } else {
-                            res.render('draft', { title: 'Drafting: '+movie_doc.name, movie: movie_doc, team: team_doc, not_found: null });
+                            res.render('draft', { title: 'Drafting: '+movie_doc.name, movie: movie_doc, team: team_doc, not_found: null, movie_number: movie_number });
                         }
                     });
                 }
