@@ -29,6 +29,33 @@ small {
     margin-left: 100px;
 }
 
+#full_screen_window {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 99%;
+    height: 100%;
+    display: none;
+    z-index: 1;
+}
+#full_screen_close {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    color: #8EC641;
+    background-color: #FFF;
+    font-size: 14px;
+    line-height: 16px;
+    font-weight: bold;
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: none;
+    text-align: center;
+    margin: 0 auto;
+    z-index: 2;
+    cursor: pointer;
+}
 #body_container {
     width: 100%;
     overflow: auto;

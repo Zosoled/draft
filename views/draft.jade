@@ -2,6 +2,8 @@ extends layout
 
 block content
     div#body_container
+        iframe#full_screen_window
+        div#full_screen_close X
         if not_found !== null
             h2 Not Found
             p We were unable to find this #{not_found}
@@ -11,7 +13,7 @@ block content
                     h1 #{movie.name}
                     h3 Release Date: #{prettyDate(movie.release_date)}
                 div#movie_poster
-                    a(href='https://www.youtube.com/embed/#{movie.yt_id}' target='_blank')
+                    a.yt_link(yt_id= movie.yt_id, href='#')
                         img(src= movie.poster_url, border=0)
                         div.play_circle
                             div.play_circle_inner

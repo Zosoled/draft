@@ -1,12 +1,36 @@
 doctype html
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/public/stylesheets/style.css')
-    script(src='https://code.jquery.com/jquery-2.2.2.min.js')
-  body
-    block content
-    #footer
-        p &copy; #{new Date().getFullYear()}
-        p
-            a(href='https://github.com/Bishma/draft' target='_blank') Github
+    head
+        title= title
+        link(rel='stylesheet', href='/public/stylesheets/style.css')
+        script(src='https://code.jquery.com/jquery-2.2.2.min.js')
+    body
+        block content
+        #footer
+            p &copy; #{new Date().getFullYear()} - 
+                a(href='https://github.com/Bishma/draft' target='_blank') Github
+        script.
+            $(document).ready(function() {
+                $('.yt_link').click(function() {
+                    var yt_url = 'https://www.youtube.com/embed/' + $(this).attr('yt_id');
+                    open_yt(yt_url);
+                });
+                $('#full_screen_close').click(function() {
+                    close_yt();
+                });
+                $(window, $('iframe#full_screen_window')).keyup(function(e) {
+                    if (e.keyCode == 27) { // Esc
+                        close_yt();
+                    }
+                });
+                function open_yt(yt_url) {
+                    $('#full_screen_window').attr('src', yt_url);
+                    $('#full_screen_window').css('display','block');
+                    $('#full_screen_close').css('display','block');
+                }
+                function close_yt() {
+                    $('#full_screen_window').attr('src', "");
+                    $('#full_screen_window').css('display','none');
+                    $('#full_screen_close').css('display','none');
+                }
+            });
