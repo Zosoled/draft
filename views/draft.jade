@@ -42,6 +42,7 @@ block content
                                 input(type="hidden", name="movie_id", value="#{movie._id}")
                                 input(type="hidden", name="team_id", value="#{team._id}")
                                 input(type="hidden", name="movie_number", value="#{movie.order}")
+                                input(type="hidden", name="final_movie", value="#{final_movie}")
                                 label(for="winner") Winner
                                 select(id="set_price_form_winner", name="winner")
                                     option(value="", disabled, selected)
@@ -116,7 +117,13 @@ block content
                         success: function() {
                             var team_id = json_data[1].value;
                             var next_movie = parseInt(json_data[2].value) + 1;
-                            var new_url = '/draft/'+team_id+'/'+next_movie+'/';
+                            console.log(json_data);
+                            if (json_data[3].value != 1) {
+                                var new_url = '/draft/'+team_id+'/'+next_movie+'/';
+                            }
+                            else {
+                                var new_url = '/';
+                            }
                             window.location.replace(new_url);
                         },
                         error: function() {

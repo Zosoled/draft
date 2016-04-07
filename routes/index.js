@@ -106,6 +106,11 @@ router.post('/draft', function(req, res, next) {
                             }
                         }
                     }
+
+                    // if final movie then set the team doc value
+                    if (parseInt(req.body.final_movie) == 1) {
+                        team_doc.draft_complete = true;
+                    }
                     
                     // no winner found or winner doesn't have enough money
                     if (!winner_found) {
@@ -156,16 +161,31 @@ router.get('/draft/' + ':team_id' + '/' + ':movie_number', function(req, res, ne
                 if (team_doc === null) {
                     res.render('draft', { title: 'Drafting: Team Not Found', not_found: 'team' });
                 } else {
-                    // if we have a valif team
-                    // get the requested movie
-                    db['movie'].findOne({ season: draft_season, year: draft_year, order: movie_number }).exec(function (err, movie_doc) {
-                        if (movie_doc === null) {
+                    // if we have a valid team
+                    // count the total movies this draft
+                    db['movie'].count({ season: draft_season, year: draft_year }, function (err, count) {
+                        if (err) {
                             res.render('draft', { title: 'Drafting: Movie Not Found', not_found: 'movie' });
-                        // if we have a valid movie
-                        // render the full page content
-                        } else {
-                            res.render('draft', { title: 'Drafting: '+movie_doc.name, movie: movie_doc, team: team_doc, not_found: null, movie_number: movie_number });
                         }
+
+                        var last_movie = count - 1;
+                        if (movie_number != last_movie) {
+                            var final_movie = 0;
+                        }
+                        else {
+                            var final_movie = 1;
+                        }
+
+                        // get the requested movie
+                        db['movie'].findOne({ season: draft_season, year: draft_year, order: movie_number }).exec(function (err, movie_doc) {
+                            if (movie_doc === null) {
+                                res.render('draft', { title: 'Drafting: Movie Not Found', not_found: 'movie' });
+                            // if we have a valid movie
+                            // render the full page content
+                            } else {
+                                res.render('draft', { title: 'Drafting: '+movie_doc.name, movie: movie_doc, team: team_doc, not_found: null, movie_number: movie_number, final_movie: final_movie });
+                            }
+                        });
                     });
                 }
             });
