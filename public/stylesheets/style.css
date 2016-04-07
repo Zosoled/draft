@@ -89,13 +89,19 @@ small {
     width: 100%;
     height: auto;
 }
-#members table {
+#movie_info table {
     width: 100%;
 }
 #movie_info {
     width: 392px;
     padding: 0 0 0 8px;
     float: left;
+}
+#movie_info h3 {
+    margin-top: 0px;
+}
+#movie_info form {
+    margin-bottom: 15px;
 }
 
 .required {

@@ -18,13 +18,11 @@ block content
                         div.play_circle
                             div.play_circle_inner
                 div#movie_info
-                    div#members
-                        include member_movie_stats.jade
 
                     div#set_price
                         if team.draft_position > movie_number
                             - var next_movie = movie_number + 1
-                            h3 Final Stats
+                            h3 Movie Stats
                             table
                                 thead
                                     th Winner
@@ -38,7 +36,6 @@ block content
                                                 td #{this_movie.bid}
                                                 td #{this_movie.percent}
                             br
-                            a(href="/draft/#{team._id}/#{next_movie}/") Next Movie
                         else
                             h3 Finalize Price
                             form#set_price_form
@@ -60,6 +57,13 @@ block content
                                 input(name="percent", id="set_price_form_percent" size="3", value="100", disabled, class="numbers_only")
                                 br
                                 input(class="submit_button",type='submit',value='Complete Purchase')
+                    div#members
+                        h3 Overall Stats
+                        include member_movie_stats.jade
+
+                        if team.draft_position > movie_number
+                            p
+                                a(href="/draft/#{team._id}/#{next_movie}/") Next Movie
 
         script.
             // strip non numeric characters as they're typed
