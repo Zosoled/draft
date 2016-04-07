@@ -31,9 +31,12 @@ block content
                                     th Bid
                                     th Percentage
                                 tbody
-                                    td Do I
-                                    td have this
-                                    td information
+                                    each member in team.member
+                                        each this_movie in member.movies
+                                            if this_movie.movie_id == movie._id
+                                                td #{member.name}
+                                                td #{this_movie.bid}
+                                                td #{this_movie.percent}
                             br
                             a(href="/draft/#{team._id}/#{next_movie}/") Next Movie
                         else
