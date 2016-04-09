@@ -11,14 +11,14 @@ block content
             input(type='hidden', name='year', value= current_draft.year)
             div#team_name_input
                 label(for="team_name") Team Name: &nbsp;
-                input(name='team_name', class= highlight_required == true ? "required" : "")
+                input(id='team_name', name='team_name', class= highlight_required == true ? "required" : "")
                 - var i = 0
                 while i < 3
                     - j = i
                     - i++
-                        div(id= 'member_input_' + i)
+                        div(id= 'member_' + i)
                             label Member #{i}: &nbsp;
-                            input(name='member', class= highlight_required == true ? "required" : "") 
+                            input(id= 'member_input_' + i, name='member', class= highlight_required == true ? "required" : "") 
                 while i < 8
                     - j = i
                     - i++
@@ -28,9 +28,26 @@ block content
                 div#submit_form
                     input(class="submit_button",type='submit',value='Add Team')
 
-        script.
-            $(document).ready() {
-                $("#add_team_form").submit(function( event ){
-                    event.preventDefault();
-                });
-            }
+block script
+    script.
+        $(document).ready(function() {
+            $("#add_team_form").submit(function(e){
+                e.preventDefault();
+
+                var min_members = 3;
+                var required_ids = [{ _id: 'team_name', type: 'string' }];
+                for (var i = 1; i <= min_members; i++) {
+                    required_ids.push({ _id: 'member_input_'+i, type: 'string' });
+                }
+                console.log(required_ids);
+
+                required = required_fields(required_ids);
+                if (typeof required == 'string') {
+                    $('#'+required).addClass('required');
+                }
+                else {
+                    var json_data = $("#set_team_form").serializeArray();
+                    alert(json_data);
+                }
+            });
+        });

@@ -11,6 +11,8 @@ html
                 a(href='https://github.com/Bishma/draft' target='_blank') Github
         script.
             $(document).ready(function() {
+                // this block is a simple handler for ifram display
+                // to be used for youtube links
                 $('.yt_link').click(function() {
                     var yt_url = 'https://www.youtube.com/embed/' + $(this).attr('yt_id');
                     open_yt(yt_url);
@@ -33,4 +35,24 @@ html
                     $('#full_screen_window').css('display','none');
                     $('#full_screen_close').css('display','none');
                 }
+
             });
+
+            // simple function for checking required fields
+            function required_fields(f_array) {
+                for (var i = 0; i < f_array.length; i++) {
+                    if (f_array[i].type == 'number') {
+                        if (isNaN($('#'+f_array[i]._id).val())) {
+                            return f_array[i]._id;
+                        }    
+                    }
+                    else if (f_array[i].type == 'string') {
+                        if ($('#'+f_array[i]._id).val() == '') {
+                            return f_array[i]._id;
+                        }
+                    }
+                } 
+                return true;
+            }
+
+        block script
