@@ -219,7 +219,8 @@ router.post('/add_team', function(req, res, next) {
         req.body.member[2]
     ].forEach(function (elm) {
         if (typeof elm != "string" || elm.length == 0) {
-            res.status(200).redirect("/add_team?required");
+            res.statusCode = 400;
+            res.send({});
         }
     });
 
@@ -234,7 +235,8 @@ router.post('/add_team', function(req, res, next) {
         if (errs) { console.log("An error has occured ",errs); process.exit(1); } 
 
         if (typeof final_res == "object") {
-            res.status(200).redirect("/");
+            res.statusCode = 200;
+            res.send({});
         }
     });
 

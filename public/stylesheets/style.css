@@ -29,6 +29,9 @@ small {
     margin-left: 100px;
 }
 
+#success_section {
+    display: none;
+}
 #full_screen_window {
     position: absolute;
     top: 0;

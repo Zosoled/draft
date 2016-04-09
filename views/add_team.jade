@@ -2,31 +2,42 @@ extends layout
 
 block content
     div#body_container
-        h2 Add Drafting Team
-        h3 #{current_draft.season.charAt(0).toUpperCase()+current_draft.season.slice(1)} #{current_draft.year}
-        p At least three (3) members are required.
+        div#add_team_section
+            h2 Add Drafting Team
+            h3 #{current_draft.season.charAt(0).toUpperCase()+current_draft.season.slice(1)} #{current_draft.year}
+            p At least three (3) members are required.
         
-        form(method='post', id='add_team_form')
-            input(type='hidden', name='season', value= current_draft.season)
-            input(type='hidden', name='year', value= current_draft.year)
-            div#team_name_input
-                label(for="team_name") Team Name: &nbsp;
-                input(id='team_name', name='team_name', class= highlight_required == true ? "required" : "")
-                - var i = 0
-                while i < 3
-                    - j = i
-                    - i++
-                        div(id= 'member_' + i)
-                            label Member #{i}: &nbsp;
-                            input(id= 'member_input_' + i, name='member', class= highlight_required == true ? "required" : "") 
-                while i < 8
-                    - j = i
-                    - i++
-                        div(id= 'member_input_' + i)
-                            label Member #{i}: &nbsp;
-                            input(name='member')
-                div#submit_form
-                    input(class="submit_button",type='submit',value='Add Team')
+            form(method='post', id='add_team_form')
+                input(type='hidden', name='season', value= current_draft.season)
+                input(type='hidden', name='year', value= current_draft.year)
+                div#team_name_input
+                    label(for="team_name") Team Name: &nbsp;
+                    input(id='team_name', name='team_name', class= highlight_required == true ? "required" : "")
+                    - var i = 0
+                    while i < 3
+                        - j = i
+                        - i++
+                            div(id= 'member_' + i)
+                                label Member #{i}: &nbsp;
+                                input(id= 'member_input_' + i, name='member', class= highlight_required == true ? "required" : "") 
+                    while i < 8
+                        - j = i
+                        - i++
+                            div(id= 'member_input_' + i)
+                                label Member #{i}: &nbsp;
+                                input(name='member')
+                    div#submit_form
+                        input(class="submit_button",type='submit',value='Add Team')
+        div#success_section
+            h2 Success
+            h3 Team Added
+            p
+                a#draft_url Start Draft
+            p
+                a(href="/") Back to Home Page
+
+
+
 
 block script
     script.
@@ -39,15 +50,35 @@ block script
                 for (var i = 1; i <= min_members; i++) {
                     required_ids.push({ _id: 'member_input_'+i, type: 'string' });
                 }
-                console.log(required_ids);
 
                 required = required_fields(required_ids);
                 if (typeof required == 'string') {
                     $('#'+required).addClass('required');
                 }
                 else {
-                    var json_data = $("#set_team_form").serializeArray();
-                    alert(json_data);
+                    var json_data = $("#add_team_form").serializeArray();
+                    $.ajax({
+                        type: "POST",
+                        url: '/add_team',
+                        data: json_data,
+                        success: function() {
+                            var elms = new Array;
+                            for (var i = 0; i <= 2; i++) {
+                                elms.push(json_data[i].value.replace(/\s+/g,"_").replace(/[^a-zA-Z0-9_]/,""));
+                            }
+                            var draft_url = "/draft/"+elms.join('-')+"/0/";
+                            $('#draft_url').prop('href',draft_url);
+                            $('#add_team_section').css('display','none');
+                            $('#success_section').css('display','block');
+                        },
+                        error: function() {
+                            alert('An error occured processing this request.');
+                            for (var i; i <= required_ids.length; i++) {
+                                $('#'+required_id[i]).addClass('required');    
+                            }
+                        },
+                        dataType: 'json'
+                    });
                 }
             });
         });

@@ -65,78 +65,81 @@ block content
                             p
                                 a(href="/draft/#{team._id}/#{next_movie}/") Next Movie
 
-        script.
-            // strip non numeric characters as they're typed
-            $(".numbers_only").keyup(function() {
-                this.value = this.value.replace(/[^0-9]/,'');
 
-                if (this.id == "set_price_form_bid") {
-                    if (this.value == 100) {
-                        $("#set_price_form_percent").prop('disabled', false);
-                    }
-                    else {
-                        $("#set_price_form_percent").prop('disabled', true);
-                    }
-                }
-            });
 
-            // handle form submits
-            $("#set_price_form").submit(function(e) {
-                e.preventDefault();
+block script
+    script.
+        // strip non numeric characters as they're typed
+        $(".numbers_only").keyup(function() {
+            this.value = this.value.replace(/[^0-9]/,'');
 
-                function testNumbers(number) {
-                    if (isNaN(number)) {
-                        // not a number
-                        return false;
-                    } else if (number % 1 !== 0) {
-                        // not a whole number
-                        return false;
-                    } else if (number < 1 || number > 100) {
-                        // less than 1 or greater than 100
-                        return false;
-                    } else {
-                        return true;
-                    }
+            if (this.id == "set_price_form_bid") {
+                if (this.value == 100) {
+                    $("#set_price_form_percent").prop('disabled', false);
                 }
-
-                // if no winner is selected
-                if ($("#set_price_form_winner option:selected").text().length == 0) {
-                    $("#set_price_form_winner").addClass('required');
-                    alert("Please select a winner");
-                }
-                // if the bid is invalid
-                else if (!testNumbers($("#set_price_form_bid").val())){
-                    $("#set_price_form_bid").addClass('required');
-                    alert("Bid value invalid: "+$("#set_price_form_bid").val());
-                }
-                // if the percent is invalid
-                else if (!testNumbers($("#set_price_form_percent").val())){
-                    $("#set_price_form_percent").addClass('required');
-                    alert("Percent value invalid: "+$("#set_price_form_percent").val());
-                }
-                // if everything checks out then proceed
                 else {
-                    var json_data = $("#set_price_form").serializeArray();
-                    $.ajax({
-                        type: "POST",
-                        url: '/draft',
-                        data: json_data,
-                        success: function() {
-                            var team_id = json_data[1].value;
-                            var next_movie = parseInt(json_data[2].value) + 1;
-                            console.log(json_data);
-                            if (json_data[3].value != 1) {
-                                var new_url = '/draft/'+team_id+'/'+next_movie+'/';
-                            }
-                            else {
-                                var new_url = '/';
-                            }
-                            window.location.replace(new_url);
-                        },
-                        error: function() {
-                            alert('An error occured processing this request.');
-                        },
-                        dataType: 'json'
-                    });
+                    $("#set_price_form_percent").prop('disabled', true);
                 }
-            });
+            }
+        });
+
+        // handle form submits
+        $("#set_price_form").submit(function(e) {
+            e.preventDefault();
+
+            function testNumbers(number) {
+                if (isNaN(number)) {
+                    // not a number
+                    return false;
+                } else if (number % 1 !== 0) {
+                    // not a whole number
+                    return false;
+                } else if (number < 1 || number > 100) {
+                    // less than 1 or greater than 100
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            // if no winner is selected
+            if ($("#set_price_form_winner option:selected").text().length == 0) {
+                $("#set_price_form_winner").addClass('required');
+                alert("Please select a winner");
+            }
+            // if the bid is invalid
+            else if (!testNumbers($("#set_price_form_bid").val())){
+                $("#set_price_form_bid").addClass('required');
+                alert("Bid value invalid: "+$("#set_price_form_bid").val());
+            }
+            // if the percent is invalid
+            else if (!testNumbers($("#set_price_form_percent").val())){
+                $("#set_price_form_percent").addClass('required');
+                alert("Percent value invalid: "+$("#set_price_form_percent").val());
+            }
+            // if everything checks out then proceed
+            else {
+                var json_data = $("#set_price_form").serializeArray();
+                $.ajax({
+                    type: "POST",
+                    url: '/draft',
+                    data: json_data,
+                    success: function() {
+                        var team_id = json_data[1].value;
+                        var next_movie = parseInt(json_data[2].value) + 1;
+                        console.log(json_data);
+                        if (json_data[3].value != 1) {
+                            var new_url = '/draft/'+team_id+'/'+next_movie+'/';
+                        }
+                        else {
+                            var new_url = '/';
+                        }
+                        window.location.replace(new_url);
+                    },
+                    error: function() {
+                        alert('An error occured processing this request.');
+                    },
+                    dataType: 'json'
+                });
+            }
+        });
