@@ -1,19 +1,49 @@
 body {
-  padding: 10px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background-color: #8EC641;
+    padding: 0;
+    margin: 0;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+#header {
+    width: 100%;
+    background-color: #8EC641;
+    padding: 10px;
+    overflow: hidden;
+}
+#header_img {
+    float: left;
+    margin: 0 20px 0 0;
+}
+#header_title {
+    float: left;
+}
+#header_title h1 {
+    font-size: 42px;
+    line-height: 72px;
 }
 
+#body_container {
+    margin: 5px auto;
+    max-width: 1200px;
+}
+
+a, a:link, a:active, a:visited {
+    color: #263D8C;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+table {
+    border-collapse: collapse;
+}
 th {
     background-color: #263D8C;
     color: #FFF;
     padding: 3px;
 }
 td {
+    border: 1px solid #8EC641;
     background-color: #FFF;
     padding: 3px;
 }
@@ -25,6 +55,10 @@ small {
     font-size: .7em;
     color: #333;
 }
+td a:link, td a:active, td a:visited {
+  color: #00B7FF;
+}
+
 .submit_button {
     margin-left: 100px;
 }
@@ -74,11 +108,12 @@ small {
 #add_team_button {
     text-decoration: none;
     background-color: #263D8C;
-    padding: 2px 6px 2px 6px;
+    padding: 4px 8px 4px 8px;
     border-top: 1px solid #CCCCCC;
     border-right: 1px solid #333333;
     border-bottom: 1px solid #333333;
     border-left: 1px solid #CCCCCC;
+    color: #FFF;
 }
 #movie_display {
     width: 100%;

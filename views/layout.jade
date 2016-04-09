@@ -5,6 +5,12 @@ html
         link(rel='stylesheet', href='/public/stylesheets/style.css')
         script(src='https://code.jquery.com/jquery-2.2.2.min.js')
     body
+        div#header
+            div#header_img
+                a(href="/", width=134, height=120)
+                    img(border=0, src="/public/images/draft-logo.png")
+            div#header_title
+                h1 #{title}
         block content
         #footer
             p &copy; #{new Date().getFullYear()} - 
