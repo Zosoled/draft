@@ -8,6 +8,7 @@ block content
             h2 Not Found
             p We were unable to find this #{not_found}
         else
+            - var c_date = ymd();
             div#movie_display
                 div#movie_title
                 div#movie_poster
@@ -19,42 +20,49 @@ block content
 
                     div#set_price
                         if team.draft_position > movie_number
-                            - var next_movie = movie_number + 1
-                            h3 Movie Stats
-                            table
-                                thead
-                                    th Winner
-                                    th Bid
-                                    th Percentage
-                                tbody
-                                    each member in team.member
-                                        each this_movie in member.movies
-                                            if this_movie.movie_id == movie._id
-                                                td #{member.name}
-                                                td #{this_movie.bid}
-                                                td #{this_movie.percent}
-                            br
+                            if c_date >= draft.draft_start && c_date <= draft.draft_end
+                                h3 Sale information redacted until the draft period ends
+                            else
+                                - var next_movie = movie_number + 1
+                                h3 Movie Stats
+                                table
+                                    thead
+                                        th Winner
+                                        th Bid
+                                        th Percentage
+                                    tbody
+                                        each member in team.member
+                                            each this_movie in member.movies
+                                                if this_movie.movie_id == movie._id
+                                                    td #{member.name}
+                                                    td #{this_movie.bid}
+                                                    td #{this_movie.percent}
+                                br
                         else
-                            h3 Finalize Price
-                            form#set_price_form
-                                input(type="hidden", name="movie_id", value="#{movie._id}")
-                                input(type="hidden", name="team_id", value="#{team._id}")
-                                input(type="hidden", name="movie_number", value="#{movie.order}")
-                                input(type="hidden", name="final_movie", value="#{final_movie}")
-                                label(for="winner") Winner
-                                select(id="set_price_form_winner", name="winner")
-                                    option(value="", disabled, selected)
-                                    each member in team.member
-                                        option(value= member._id) #{member.name}
-                                br
-                                label(for="bid") Bid
-                                input(name="bid", id="set_price_form_bid" size="3", class="numbers_only")
-                                small (Valid Bids: 1 to 100 Bux)
-                                br
-                                label(for="percent") Percentage
-                                input(name="percent", id="set_price_form_percent" size="3", value="100", disabled, class="numbers_only")
-                                br
-                                input(class="submit_button",type='submit',value='Complete Purchase')
+                            if c_date >= draft.draft_start && c_date <= draft.draft_end
+                                h3 Finalize Price
+                                form#set_price_form
+                                    input(type="hidden", name="movie_id", value="#{movie._id}")
+                                    input(type="hidden", name="team_id", value="#{team._id}")
+                                    input(type="hidden", name="movie_number", value="#{movie.order}")
+                                    input(type="hidden", name="final_movie", value="#{final_movie}")
+                                    label(for="winner") Winner
+                                    select(id="set_price_form_winner", name="winner")
+                                        option(value="", disabled, selected)
+                                        each member in team.member
+                                            option(value= member._id) #{member.name}
+                                    br
+                                    label(for="bid") Bid
+                                    input(name="bid", id="set_price_form_bid" size="3", class="numbers_only")
+                                    small (Valid Bids: 1 to 100 Bux)
+                                    br
+                                    label(for="percent") Percentage
+                                    input(name="percent", id="set_price_form_percent" size="3", value="100", disabled, class="numbers_only")
+                                    br
+                                    input(class="submit_button",type='submit',value='Complete Purchase')
+                            else
+                                h3 Form Unavailable
+                                h4 Not in the current draft period
                     div#more_info
                         h3 More Info
                         ul
