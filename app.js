@@ -84,7 +84,7 @@ app.locals.ymd = function() {
     var y = date.getFullYear().toString();
     var mm = (date.getMonth()+1).toString();
     var dd = date.getDate().toString();
-    return y + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]);
+    return parseInt(y + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]));
 }
 
 module.exports = app;
