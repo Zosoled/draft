@@ -19,10 +19,10 @@ block movie_table
                         a.yt_link(yt_id= movie.yt_id, href='#') #{movie.name}
                     td
                         a(href='http://www.imdb.com/title/#{movie.imdb_id}/' target='_blank')
-                            img(src='/public/images/imdb.png' width=32 height=32 border=0)
+                            img(src='/public/images/imdb_sm.png' width=30 height=14 border=0)
                     td
                         a(href='http://www.boxofficemojo.com/movies/?id=#{movie.bom_id}' target='_blank')
-                            img(src='/public/images/bom.jpg' width=32 height=32 border=0)
+                            img(src='/public/images/bom_sm.png' width=30 height=14 border=0)
                     if found == true
                         td Derek
                         td $1
