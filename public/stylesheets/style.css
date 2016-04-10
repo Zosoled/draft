@@ -41,11 +41,15 @@ th {
     background-color: #263D8C;
     color: #FFF;
     padding: 3px;
+    font-size: 16px;
+    line-height: 20px;
 }
 td {
     border: 1px solid #8EC641;
     background-color: #FFF;
     padding: 3px;
+    font-size: 14px;
+    line-height: 16px;
 }
 label {
     display: inline-block;
