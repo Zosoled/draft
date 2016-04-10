@@ -24,12 +24,18 @@ block movie_table
                         a(href='http://www.boxofficemojo.com/movies/?id=#{movie.bom_id}' target='_blank')
                             img(src='/public/images/bom_sm.png' width=30 height=14 border=0)
                     if found == true
-                        td Derek
-                        td $1
+                        if winner_info.hasOwnProperty(movie._id)
+                            td #{winner_info[movie._id].member_name}
+                            td #{winner_info[movie._id].bid}
+                        else
+                            td
+                                i None
+                            td
+                                i N/A
                     td #{prettyDate(movie.release_date)}
                     if movie.gross
                         td $#{movie.gross}
                     else
                         td $0
                     if found == true
-                        td $100,000,000
+                        td TBD

@@ -51,8 +51,20 @@ router.get('/team/' + ':id', function(req, res, next) {
             else {
                 var found = true;
                 var title = team_doc.team_name
+
+                var owner_list = {};
+                for (var i = 0; i < team_doc.member.length; i++) {
+                    if (team_doc.member[i].hasOwnProperty('movies')) {
+                        for (var j = 0; j < team_doc.member[i].movies.length; j++) {
+                            owner_list[team_doc.member[i].movies[j].movie_id] = { 
+                                member_name: team_doc.member[i].name,
+                                bid: team_doc.member[i].movies[j].bid
+                            }
+                        }
+                    }
+                }
             }
-            res.render('team', {title: title, found: found, team: team_doc, movies: movie_docs });
+            res.render('team', {title: title, found: found, team: team_doc, movies: movie_docs, winner_info: owner_list });
         });
     });
 });
