@@ -25,7 +25,7 @@ block content
                                 td #{team.member.length}
                                 if team.draft_complete === false
                                     - var c_date = ymd();
-                                    if c_date >= current_draft.draft_start && c_date <= current_draft.draft_end_ 
+                                    if c_date >= current_draft.draft_start && c_date <= current_draft.draft_end 
                                         if team.draft_position == 0
                                             td
                                                 a(href="/draft/#{team._id}/0/") Not Started
@@ -38,9 +38,11 @@ block content
                                     td
                                         a(href="/draft/#{team._id}/0/") Draft Complete
                                 td None
-            div#team_action
-                br
-                a#add_team_button(href='/add_team') Add Team
+
+            if c_date >= current_draft.draft_start && c_date <= current_draft.draft_end 
+                div#team_action
+                    br
+                    a#add_team_button(href='/add_team') Add Team
             div#draft_details
                 h2 Draft Details
                 div#previous_draft
