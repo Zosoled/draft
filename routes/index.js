@@ -42,30 +42,37 @@ router.get('/team/' + ':id', function(req, res, next) {
     var selection_draft = helpers.currentDraft();
     var team_id = req.params.id;
 
-    db['movie'].find( selection_draft ).sort({ release_date: 1 }).exec( function(err, movie_docs) {
-        db['team'].findOne({ _id: team_id }).sort({ release_date: 1 }).exec( function(err, team_doc) {
-            if (team_doc === null) {
-                var found = false;
-                var title = "Team not found";
-            }
-            else {
-                var found = true;
-                var title = team_doc.team_name
+    db['draft'].findOne( selection_draft ).exec(function (err, draft_doc) {
+        if (draft_doc === null) {
+            res.render('team', { title: 'Team not found', found: false });
+        }
+        else {
+            db['movie'].find( selection_draft ).sort({ release_date: 1 }).exec( function(err, movie_docs) {
+                db['team'].findOne({ _id: team_id }).sort({ release_date: 1 }).exec( function(err, team_doc) {
+                    if (team_doc === null) {
+                        var found = false;
+                        var title = "Team not found";
+                    }
+                    else {
+                        var found = true;
+                        var title = team_doc.team_name
 
-                var owner_list = {};
-                for (var i = 0; i < team_doc.member.length; i++) {
-                    if (team_doc.member[i].hasOwnProperty('movies')) {
-                        for (var j = 0; j < team_doc.member[i].movies.length; j++) {
-                            owner_list[team_doc.member[i].movies[j].movie_id] = { 
-                                member_name: team_doc.member[i].name,
-                                bid: team_doc.member[i].movies[j].bid
+                        var owner_list = {};
+                        for (var i = 0; i < team_doc.member.length; i++) {
+                            if (team_doc.member[i].hasOwnProperty('movies')) {
+                                for (var j = 0; j < team_doc.member[i].movies.length; j++) {
+                                    owner_list[team_doc.member[i].movies[j].movie_id] = { 
+                                        member_name: team_doc.member[i].name,
+                                        bid: team_doc.member[i].movies[j].bid
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
-            res.render('team', {title: title, found: found, team: team_doc, movies: movie_docs, winner_info: owner_list });
-        });
+                    res.render('team', {title: title, found: found, draft: draft_doc, team: team_doc, movies: movie_docs, winner_info: owner_list });
+                });
+            });
+        }
     });
 });
 
