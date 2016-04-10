@@ -17,11 +17,11 @@ html
                 a(href='https://github.com/Bishma/draft' target='_blank') Github
         script.
             $(document).ready(function() {
-                // this block is a simple handler for ifram display
+                // this block is a simple handler for iframe display
                 // to be used for youtube links
                 $('.yt_link').click(function() {
                     var yt_url = 'https://www.youtube.com/embed/' + $(this).attr('yt_id');
-                    open_yt(yt_url);
+                    open_info(yt_url);
                 });
                 $('#full_screen_close').click(function() {
                     close_yt();
@@ -31,8 +31,8 @@ html
                         close_yt();
                     }
                 });
-                function open_yt(yt_url) {
-                    $('#full_screen_window').attr('src', yt_url);
+                function open_info(url) {
+                    $('#full_screen_window').attr('src', url);
                     $('#full_screen_window').css('display','block');
                     $('#full_screen_close').css('display','block');
                 }
