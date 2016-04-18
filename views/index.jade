@@ -1,6 +1,7 @@
 extends layout
 
 block content
+    - var c_date = ymd();
     div#body_container
         div#body_left
             h2 Movies
@@ -22,7 +23,6 @@ block content
                                     a(href="/team/#{team._id}") #{team.team_name}
                                 td #{team.member.length}
                                 if team.draft_complete === false
-                                    - var c_date = ymd();
                                     if c_date >= current_draft.draft_start && c_date <= current_draft.draft_end 
                                         if team.draft_position == 0
                                             td
