@@ -1,6 +1,7 @@
 extends layout
 
 block content
+    - var next_movie = movie_number + 1
     div#body_container
         if not_found !== null
             h2 Not Found
@@ -21,7 +22,6 @@ block content
                             if c_date >= draft.draft_start && c_date <= draft.draft_end
                                 h3 Sale information redacted until the draft period ends
                             else
-                                - var next_movie = movie_number + 1
                                 h3 Movie Stats
                                 table
                                     thead
