@@ -1,4 +1,5 @@
 block movie_table
+    - var c_date = ymd();
     table#movie_table
         thead
             tr
@@ -24,10 +25,9 @@ block movie_table
                         a(href='http://www.boxofficemojo.com/movies/?id=#{movie.bom_id}' target='_blank')
                             img(src='/public/images/bom_sm.png' width=30 height=14 border=0)
                     if found == true
-                        - var c_date = ymd;
                         if winner_info.hasOwnProperty(movie._id)
                             td #{winner_info[movie._id].member_name}
-                            if c_date <= draft.draft_start || c_date >= draft.draft_end
+                            if c_date < draft.draft_start || c_date > draft.draft_end
                                 td #{winner_info[movie._id].bid}
                             else
                                 td redacted
