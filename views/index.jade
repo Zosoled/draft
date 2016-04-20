@@ -33,8 +33,11 @@ block content
                                     else
                                         td Incomplete
                                 else
-                                    td
-                                        a(href="/draft/#{team._id}/0/") Draft Complete
+                                        if c_date > current_draft.draft_end 
+                                            td
+                                                a(href="/draft/#{team._id}/0/") Draft Complete
+                                        else
+                                            td Draft Complete
                                 td None
 
             if c_date >= current_draft.draft_start && c_date <= current_draft.draft_end 
