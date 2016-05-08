@@ -17,6 +17,7 @@
     "morgan": "~1.6.1",
     "nedb": "^1.8.0",
     "prompt": "^1.0.0",
-    "serve-favicon": "~2.3.0"
+    "serve-favicon": "~2.3.0",
+    "sprintf": "^0.1.5"
   }
 }
