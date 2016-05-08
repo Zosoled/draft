@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var sprintf = require('sprintf');
 
 // figure out the root path and set it global
 var path = require('path');
@@ -85,6 +86,12 @@ app.locals.ymd = function() {
     var mm = (date.getMonth()+1).toString();
     var dd = date.getDate().toString();
     return parseInt(y + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]));
+}
+
+app.locals.h_num = function(number) {
+    number = Math.round(Number(number));
+    
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 module.exports = app;
