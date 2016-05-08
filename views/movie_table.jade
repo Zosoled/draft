@@ -9,12 +9,14 @@ block movie_table
                 if found === true
                     th Owner
                     th Cost
+                    th Percentage
                 th Release Date
-                th Gross
+                th Adjusted Gross
                 if found === true
                     th Efficency
         tbody
             each movie in movies
+                - var adj_gross = movie.last_gross * (winner_info[movie._id].percent / 100)
                 tr
                     td
                         a.yt_link(yt_id= movie.yt_id, href='#') #{movie.name}
@@ -29,7 +31,9 @@ block movie_table
                             td #{winner_info[movie._id].member_name}
                             if c_date < draft.draft_start || c_date > draft.draft_end
                                 td #{winner_info[movie._id].bid}
+                                td #{winner_info[movie._id].percent}
                             else
+                                td redacted
                                 td redacted
                         else
                             td
@@ -38,11 +42,11 @@ block movie_table
                                 i N/A
                     td #{prettyDate(movie.release_date)}
                     if movie.last_gross
-                        td $#{h_num(movie.last_gross)}
+                        td $#{h_num(adj_gross)}
                     else
                         td $0
                     if found == true && movie.last_gross
-                        - var eff = movie.last_gross / winner_info[movie._id].bid
+                        - var eff = adj_gross / winner_info[movie._id].bid
                         td #{h_num(eff)}
                     else if found == true
                         td TBD

@@ -64,7 +64,8 @@ router.get('/team/' + ':id', function(req, res, next) {
                                 for (var j = 0; j < team_doc.member[i].movies.length; j++) {
                                     owner_list[team_doc.member[i].movies[j].movie_id] = { 
                                         member_name: team_doc.member[i].name,
-                                        bid: team_doc.member[i].movies[j].bid
+                                        bid: team_doc.member[i].movies[j].bid,
+                                        percent: team_doc.member[i].movies[j].percent
                                     }
                                 }
                             }
