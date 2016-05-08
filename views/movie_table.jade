@@ -37,9 +37,12 @@ block movie_table
                             td
                                 i N/A
                     td #{prettyDate(movie.release_date)}
-                    if movie.gross
-                        td $#{movie.gross}
+                    if movie.last_gross
+                        td $#{h_num(movie.last_gross)}
                     else
                         td $0
-                    if found == true
+                    if found == true && movie.last_gross
+                        - var eff = movie.last_gross / winner_info[movie._id].bid
+                        td #{h_num(eff)}
+                    else if found == true
                         td TBD
