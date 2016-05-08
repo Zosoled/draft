@@ -7,6 +7,7 @@ var db = new Object;
 db.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true });
 db.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true });
 db.team = new Datastore({ filename: 'data/team.nedb', autoload: true });
+db.value = new Datastore({ filename: 'data/value.nedb', autoload: true });
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
