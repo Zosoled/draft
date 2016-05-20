@@ -3,6 +3,7 @@ var helpers = require('../modules/helpers.js');
 var async = require('async');
 var Datastore = require('nedb');
 var db = new Object;
+var fs = require('fs');
 db.draft = new Datastore({ filename: '../data/draft.nedb', autoload: true })
 db.movie = new Datastore({ filename: '../data/movie.nedb', autoload: true });
 db.value = new Datastore({ filename: '../data/value.nedb', autoload: true });
@@ -88,6 +89,12 @@ db['movie'].find(current_draft, function(err,movies) {
                                             if (err) { console.log('Unable to update the last scrape date',err), process.exit(1); }
 
                                             console.log('Updated '+num_updated+' movie documents');
+
+                                            // we write a tracking file. This will automatically cause the server to restart if using nodemon - this is desired behavior
+                                            fs.writeFile("../modules/scrape_track.js", "var scrape_track = {}; scrape_track.last_scrape = "+current_date+"; module.exports = scrape_track;", function(err) {
+                                                if (err) { console.log(err); }
+                                                else { console.log("tracking file updated"); }
+                                            });
                                         });
                                     }
                                 })(movie);
