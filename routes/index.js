@@ -82,7 +82,7 @@ router.get('/team/' + ':id', function(req, res, next) {
                             }
                         }
                     }
-                    res.render('team', {title: title, found: found, draft: draft_doc, team: team_doc, movies: movie_docs, winner_info: owner_list });
+                    res.render('team', {title: title, found: found, draft: draft_doc, team: team_doc, movies: movie_docs, winner_info: owner_list, show_gross: true });
                 });
             });
         }
@@ -215,7 +215,7 @@ router.get('/draft/' + ':team_id' + '/' + ':movie_number', function(req, res, ne
                             // if we have a valid movie
                             // render the full page content
                             } else {
-                                res.render('draft', { title: 'Drafting: '+movie_doc.name, draft: draft_doc, movie: movie_doc, team: team_doc, not_found: null, movie_number: movie_number, final_movie: final_movie });
+                                res.render('draft', { title: 'Drafting: '+movie_doc.name, draft: draft_doc, movie: movie_doc, team: team_doc, not_found: null, movie_number: movie_number, final_movie: final_movie, show_gross: false });
                             }
                         });
                     });
