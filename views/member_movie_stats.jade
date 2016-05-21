@@ -4,6 +4,7 @@ block member_movie_stats
             th Member
             th Movies Owned
             th Remaining Bux
+            th Total Grosses
         tbody
             each member in team.member
                 - var remaining = 100 - totalMemberMovies(member.movies)
@@ -11,3 +12,4 @@ block member_movie_stats
                     td #{member.name}
                     td(align="right") #{member.movies.length}
                     td(align="right") $#{remaining}
+                    td(align="right") $#{h_num(member.total_gross)}

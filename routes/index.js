@@ -7,6 +7,7 @@ var db = new Object;
 db.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true });
 db.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true });
 db.team = new Datastore({ filename: 'data/team.nedb', autoload: true });
+db.value = new Datastore({ filename: 'data/value.nedb', autoload: true });
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -59,8 +60,19 @@ router.get('/team/' + ':id', function(req, res, next) {
 
                         var owner_list = {};
                         for (var i = 0; i < team_doc.member.length; i++) {
+                            // compute total gross for each person in the team
+                            team_doc.member[i].total_gross = 0;
+
                             if (team_doc.member[i].hasOwnProperty('movies')) {
                                 for (var j = 0; j < team_doc.member[i].movies.length; j++) {
+                                    for (var k = 0; k < movie_docs.length; k++) {
+                                        if (movie_docs[k]._id == team_doc.member[i].movies[j].movie_id) {
+                                            if (movie_docs[k].hasOwnProperty('last_gross')) {
+                                                team_doc.member[i].total_gross += parseInt(movie_docs[k].last_gross);
+                                            }
+                                        }
+                                    }
+
                                     owner_list[team_doc.member[i].movies[j].movie_id] = { 
                                         member_name: team_doc.member[i].name,
                                         bid: team_doc.member[i].movies[j].bid,
