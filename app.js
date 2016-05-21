@@ -14,10 +14,6 @@ var routes = require('./routes/index');
 
 var app = express();
 
-// set up the database connection
-var Datastore = require('nedb');
-var db = new Object;
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
