@@ -11,12 +11,17 @@ block movie_table
                     th Cost
                     th Percentage
                 th Release Date
-                th Adjusted Gross
                 if found === true
+                    th Adjusted Gross
                     th Efficency
+                else
+                    th Gross
         tbody
             each movie in movies
-                - var adj_gross = movie.last_gross * (winner_info[movie._id].percent / 100)
+                if found == true
+                    - var adj_gross = movie.last_gross * (winner_info[movie._id].percent / 100)
+                else
+                    - var adj_gross = movie.last_gross
                 tr
                     td
                         a.yt_link(yt_id= movie.yt_id, href='#') #{movie.name}
