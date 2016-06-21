@@ -80,9 +80,21 @@ db['movie'].find(current_draft, function(err,movies) {
                                             gross: gross
                                         }
 
-                                        db['value'].insert(movie_doc, function(err,newDoc) {
+                                        db['value'].count({ _id: movie_doc._id }, function (err, count) {
                                             if (err) { console.log('Unable to insert value doc',err); process.exit(1); }
-                                            console.log('Value document inserted');
+
+                                            if (count > 0) {
+                                                db['value'].update( { _id: movie_doc._id }, { $set: { gross: gross }}, {}, function(err, num_updated) {
+                                                    if (err) { console.log('Unable to update the last scrape date',err), process.exit(1); }
+                                                    console.log('Updated the gross for '+num_updated+' value documents');
+                                                })
+                                            }
+                                            else {
+                                                db['value'].insert(movie_doc, function(err,newDoc) {
+                                                    if (err) { console.log('Unable to insert value doc',err); process.exit(1); }
+                                                    console.log('Value document inserted');
+                                                });
+                                            }
                                         });
 
                                         db['movie'].update( { _id: movie._id }, { $set: { last_gross: gross }}, {}, function(err, num_updated) {
