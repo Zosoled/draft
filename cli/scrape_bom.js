@@ -1,4 +1,4 @@
-var http = require('http');
+var https = require('https');
 var helpers = require('../modules/helpers.js');
 var async = require('async');
 var Datastore = require('nedb');
@@ -57,11 +57,10 @@ db['movie'].find(current_draft, function(err,movies) {
                     var options = {
                         host: 'www.boxofficemojo.com',
                         headers: {'user-agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'},
-                        port: 80,
                         path: movie_path
                     }
 
-                    http.get(options, function(res) {
+                    https.get(options, function(res) {
                         res.setEncoding('utf8');
                         res.on('data', function (body) {
                             var lines = body.split(/\r?\n/);
