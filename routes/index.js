@@ -2,12 +2,21 @@ var async = require('async');
 var express = require('express');
 var router = express.Router();
 var helpers = require(global.appRoot + '/modules/helpers.js');
+
+/* Initialize NeDB database */
 var Datastore = require('nedb');
 var db = new Object;
 db.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true });
 db.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true });
 db.team = new Datastore({ filename: 'data/team.nedb', autoload: true });
 db.value = new Datastore({ filename: 'data/value.nedb', autoload: true });
+
+/* Initialize Postgres database */
+const { Postgres } = require('pg');
+const pg = new Postgres({
+	connectionString: process.env.DATABASE_URL,
+	ssl: true
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
