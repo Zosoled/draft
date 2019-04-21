@@ -1,6 +1,6 @@
 {
-  "name": "draft",
-  "description": "For chosing movies for a movie draft",
+  "name": "movie-draft",
+  "description": "Build a roster of upcoming films and compete for the highest gross earnings.",
   "version": "0.0.0",
   "private": true,
   "scripts": {
