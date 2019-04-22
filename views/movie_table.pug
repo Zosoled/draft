@@ -18,7 +18,7 @@ block movie_table
                     th Gross
         tbody
             each movie in movies
-                if found == true
+                if found == true && winner_info[movie._id]
                     - var adj_gross = movie.last_gross * (winner_info[movie._id].percent / 100)
                 else
                     - var adj_gross = movie.last_gross
@@ -40,9 +40,12 @@ block movie_table
                             else
                                 td redacted
                                 td redacted
+                                td redacted
                         else
                             td
                                 i None
+                            td
+                                i N/A
                             td
                                 i N/A
                     td #{prettyDate(movie.release_date)}
