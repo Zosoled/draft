@@ -6,7 +6,7 @@ var prompt = require('prompt');
 var schema = {
     properties: {
         season: {
-            description: "Season (Summer/Winter)",
+            description: "Season (summer/winter)",
             pattern: /^(summer|winter)$/i,
             message: '"summer" or "winter"',
             required: true,
@@ -62,7 +62,7 @@ prompt.get(schema, function(err,result) {
 
         // check to see if there's aleady a draft for this season and year
         if (docs.length != 0) {
-            console.log("There is already a draft for this season and year. Overwrite (and lose movie list) (y/N)");
+            console.log("There is already a draft for this season and year. Overwrite (and lose movie list)? (Y/N)");
 
             // prompt to see if we should overwrite the existing season information
             prompt.get(['overwrite'], function (err,ynresp) {
