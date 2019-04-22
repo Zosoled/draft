@@ -8,7 +8,7 @@ db.draft = new Datastore({ filename: '../data/draft.nedb', autoload: true })
 db.movie = new Datastore({ filename: '../data/movie.nedb', autoload: true });
 db.value = new Datastore({ filename: '../data/value.nedb', autoload: true });
 
-var current_draft = helpers.currentDraft(); 
+var current_draft = helpers.currentDraft();
 var current_date = helpers.currentDate();
 
 db['movie'].find(current_draft, function(err,movies) {
