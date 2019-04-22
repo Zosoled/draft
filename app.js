@@ -4,7 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var sprintf = require('sprintf');
 
 // figure out the root path and set it global
 var path = require('path');
