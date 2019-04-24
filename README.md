@@ -5,7 +5,7 @@ This is meant to be a user friendly app to help groups draft movies. It's meant 
 ## What is a movie draft
 First, full credit to [Night Attack/NSFW Show](http://nightattack.tv/), [Diamond Club](http://diamondclub.tv/), and [Chat Relm](http://chatrelm.net). The idea of a movie draft is not my own I simply wrote some software to help my coworkers and I conduct our own.
 
-A movie draft is something like a fantasy sports draft... or so I'm told. Generally there are two drafts per year, the Summer Block Buster Season and the Winter Oscar Bait Season. A group of people get together with equal amounts of fake money to "buy" movies in the upsoming season. Roughly 30 movies are generally included in the draft and the group bids to own them. The goal is, two weeks after the last movies is released, to have the highest income from your owned movies using US domestic grosses.
+A movie draft is something like a fantasy sports draft... or so I'm told. Generally there are two drafts per year, the Summer Block Buster Season and the Winter Oscar Bait Season. A group of people get together with equal amounts of fake money to "buy" movies in the upcoming season. Roughly 30 movies are generally included in the draft and the group bids to own them. The goal is, two weeks after the last movies is released, to have the highest income from your owned movies using US domestic grosses.
 
 ## General Info
 * There are 2 drafts per year
@@ -32,11 +32,9 @@ This is rare.
 * If multiple teams end up playing (each an independent draft) the winners of each group will be compared by their efficiency (total Adjusted Gross per IDX Buck spent). The team winner with the best efficiency will get bragging rights.
 * If a large group (8 - 12) wants to participate people could split into pairs
 
-## TODO
-* impliment actual error/exception handling especially in the cli scripts
-* make it not look like a 3rd grader wrote the stylesheet
-
 # Installation
+Install Node.js
+Fork the repo
 ```
 git clone <...>
 cd draft
@@ -44,28 +42,38 @@ npm install
 ```
 
 # Setup
-Right now inserting draft and movie information is done through cli scripts
+Insert draft and movie information into the database with cli scripts prior to running the server.
+Example:
+```
+cd draft/cli
+node create_draft.js
+```
 
 ## create_draft.js
-This creates a draft. You'll need to enter the season (summer or winter), the year, and the dates that the different phases start and stop.
+Inserts a movie draft game in the database. You'll need to enter the season (summer or winter), the year, and the dates that the different phases start and stop.
 
 ## add_movies.js
-This adds all the movies to the draft you created above. This is the most time consuming. Eventually I would like to at least add some hints to the process. You'll need to know each film's title, release date, imdb id, box office mojo id, the yourube id for the film's trailer, and a url for the poster (I recomment using "orginal" sized posters from themoviedb).
+Adds movies to an existing draft. This is the most time consuming part. You'll need to have the following for each film:
+* Title
+* Release date
+* Box Office Mojo ID
+* IMDb id
+* YouTube ID for the film's trailer
+* Poster image URL
 
 ## edit_movies.js
-Similar to add_moves.js but this will have movies that are already in a given draft prepopulated as default values in the prompts.
+Prompts for an existing draft, then cycles through its movies and their info, one field at a time, to make changes if desired.
 
 #### Special Note
-NEDB persists in memory so you may need to restart the app (provided it was running) after using this CLI scripts.
+NeDB persists in memory. so you may need to restart the app (provided it was running) after using this CLI scripts.
 
 # Running
-You can launch the server using
-
+Launch the server:
 ```
 npm start
 ```
 
-This is an app build on express so like most express apps it defaults to port 3000 for development. To run on port 80 for prod you'll need to be root and run the server as
+This is an app build on [Express](http://expressjs.com/). Like most Express apps, it defaults to port 3000 for development. To run on port 80 for production, you'll need to have root permissions and run the server with the port environment variable:
 ```
 PORT=80 npm start
 ```
