@@ -12,11 +12,21 @@ db.team = new Datastore({ filename: 'data/team.nedb', autoload: true });
 db.value = new Datastore({ filename: 'data/value.nedb', autoload: true });
 
 /* Initialize Postgres database */
-const { Postgres } = require('pg');
-const pg = new Postgres({
-	connectionString: process.env.DATABASE_URL,
-	ssl: true
+const { Pool } = require('pg');
+const pg = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: true
 });
+try {
+    const client = pg.connect();
+    //const result = await client.query('SELECT * FROM test_table');
+    //const results = { 'results': (result) ? result.rows : null};
+    console.log("postgres connect success");
+    client.end();
+} catch (e) {
+    console.log(e);
+}
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
