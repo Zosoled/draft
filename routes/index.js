@@ -17,14 +17,16 @@ const pg = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: true
 });
-try {
-    const client = pg.connect();
-    //const result = await client.query('SELECT * FROM test_table');
-    //const results = { 'results': (result) ? result.rows : null};
-    console.log("postgres connect success");
-    client.end();
-} catch (e) {
-    console.log(e);
+async (req, res) => {
+    try {
+        const client = await pg.connect();
+        //const result = await client.query('SELECT * FROM test_table');
+        //const results = { 'results': (result) ? result.rows : null};
+        console.log("postgres connect success");
+        client.end();
+    } catch (e) {
+        console.log(e);
+	}
 }
 
 
