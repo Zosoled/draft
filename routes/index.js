@@ -1,7 +1,7 @@
-var async = require('async');
-var express = require('express');
-var router = express.Router();
-var helpers = require(global.appRoot + '/modules/helpers.js');
+var async	= require('async');
+var express	= require('express');
+var router	= express.Router();
+var helpers	= require(global.appRoot + '/modules/helpers.js');
 
 /* Initialize NeDB database */
 var Datastore = require('nedb');
@@ -12,23 +12,45 @@ db.team = new Datastore({ filename: 'data/team.nedb', autoload: true });
 db.value = new Datastore({ filename: 'data/value.nedb', autoload: true });
 
 /* Initialize Postgres database */
-const { Pool } = require('pg');
-const pg = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: true
-});
-async (req, res) => {
-    try {
-        const client = await pg.connect();
-        //const result = await client.query('SELECT * FROM test_table');
-        //const results = { 'results': (result) ? result.rows : null};
-        console.log("postgres connect success");
-        client.end();
-    } catch (e) {
-        console.log(e);
-	}
-}
+let pg_user = 'jcfdytkfjfekdz';
+let pg_pw = 'dd9e14615e59b7153495f9d4aee8e1e512d0855d15610f5e67c7d003c2d6c41d';
+let pg_host = 'ec2-54-225-242-183.compute-1.amazonaws.com';
+let pg_port = '5432';
+let pg_db = 'dftp19h0fcneq7';
+let pg_uri = 'postgres://' + pg_user + ':' + pg_pw + '@' + pg_host + ':' + pg_port + '/' + pg_db;
 
+const { Pool, Client } = require('pg');
+const pool = new Pool({
+	connectionString: process.env.DATABASE_URL || pg_uri,
+	ssl: true
+});
+(async () => {
+	const client = await pool.connect();
+	try {
+		await client.query('BEGIN');
+		//const result = await client.query('SELECT * FROM test_table');
+		//const results = { 'results': (result) ? result.rows : null};
+		const { rows } = await client.query(
+			'CREATE TABLE Draft(' +
+				'season			varchar(6),' +
+				'year			int,' +
+				'draft_start	date,' +
+				'draft_end		date,' +
+				'season_start	date,' +
+				'season_end		date,' +
+				'_id			varchar(16)' +
+			');'
+		);
+		await client.query('COMMIT');
+	} catch (e) {
+		await client.query('ROLLBACK');
+		console.log(e);
+		throw e;
+	} finally {
+		client.release()
+	}
+})().catch(e => console.error(e.stack));
+pool.end();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
