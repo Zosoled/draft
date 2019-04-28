@@ -17,12 +17,15 @@ db['movie'].find(current_draft, function(err,movies) {
         async.apply(determineOpenMovies, movies),
         scrape
     ], function (err, result) {
-        if (err) { console.log("waterfall error: ",err); }
-        
+        if (err) {
+            console.log("waterfall error: ", err);
+        }
+        setMovieTotals(movies);
         db['draft'].update( current_draft, { $set: { last_scrape: current_date }}, {}, function(err, num_updated) {
-            if (err) { console.log('Unable to update the last scrape date',err), process.exit(1); }
-
-            console.log('Updated '+num_updated+' draft documents');
+            if (err) {
+                console.log('Unable to update the last scrape date', err), process.exit(1);
+            }
+            console.log('Updated ' + num_updated + ' draft documents');
         });
     });
 
