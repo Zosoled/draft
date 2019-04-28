@@ -125,3 +125,44 @@ db['movie'].find(current_draft, function(err,movies) {
         callback(null,null);
     }
 });
+
+
+/* From a list of movies, return the ones which are currently open */
+function getOpenMovies(movies) {
+	let open_movies = new Array;
+	for (let i = 0; i < movies.length; i++) {
+		if (movies[i].release_date < current_date) {
+			open_movies.push(movies[i]);
+		}
+	}
+	return open_movies;
+}
+
+/* Fetch domestic gross total for each movie using Box Office Mojo JS API */
+function setMovieTotals(movies) {
+	for (let i = 0; i < movies.length; i++) {
+		setMovieTotal(movies[i]);
+	}
+}
+
+/* This SHOULD be a function of a Movie class, to obey IoC principles */
+function setMovieTotal(movie) {
+	let options = {
+		hostname: 'www.boxofficemojo.com',
+		path: '/data/js/moviegross.php?id=' + movie.bom_id,
+		port: 443
+	};
+	https.get(options, (res) => {
+		res.on('data', (d) => {
+			movie.gross = parseTotal(d);
+		});
+		res.on('error', (e) => {
+			console.error(e);
+		});
+	});
+}
+
+/* Depends on Box Office Mojo JS API response format */
+function parseTotal(res) {
+	return String(res).split('class=mojo_row><b>')[1].split('</b>')[0];
+}
