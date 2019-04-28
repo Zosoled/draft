@@ -33,7 +33,7 @@ db['movie'].find(current_draft, function(err,movies) {
         for (var i = 0; i < movies.length; i++) {
             if (current_date >= movies[i].release_date) {
                 open_movies.push(movies[i]);
-            } 
+            }
         }
 
         console.log('Found '+open_movies.length+' movies to scrape');
