@@ -27,7 +27,7 @@ const pool = new Pool({
 /* Build table creation query strings */
 let pg_schema = new Array();
 pg_schema.push(
-	'CREATE TABLE Draft(' +
+	'CREATE TABLE draft(' +
 		'id				char(16)	primary key,' +
 		'season			text,' +
 		'year			int,' +
@@ -38,7 +38,7 @@ pg_schema.push(
 	');'
 );
 pg_schema.push(
-	'CREATE TABLE Movie(' +
+	'CREATE TABLE movie(' +
 		'id				char(16)	primary key,' +
 		'draft_id		char(16)	references Draft(id),' +
 		'name			text,' +
@@ -51,24 +51,22 @@ pg_schema.push(
 	');'
 );
 pg_schema.push(
-	'CREATE TABLE Player(' +
+	'CREATE TABLE player(' +
 		'id			char(16)	primary key,' +
-		'movies		char(16)[]	references Movie(id),' +
+		'movies		movie[],' +
 		'name		text' +
 	');'
 );
 pg_schema.push(
-	'CREATE TABLE Team(' +
+	'CREATE TABLE team(' +
 		'id					char(16)	primary key,' +
 		'draft_id			char(16)	references Draft(id),' +
-		'players			char(16)[]	references Player(id),' +
-		'team_name			text,' +
+		'players			player[],' +
+		'name				text,' +
 		'draft_position		int,' +
 		'draft_complete		bool' +
 	');'
 );
-
-console.log(pg_schema);
 
 /* Iterate over and insert tables */
 (async () => {
@@ -89,7 +87,7 @@ console.log(pg_schema);
 })().catch(e => console.error(e.stack));
 //const result = await client.query('SELECT * FROM test_table');
 //const results = { 'results': (result) ? result.rows : null};
-pool.end();
+//pool.end();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
