@@ -11,18 +11,15 @@ helpers.currentDraft = function() {
 }
 
 // take an array, make them id/url friendly, then concat with a hyphen
-helpers.makeID = function(thing) {
-    if (typeof thing == "string") {
-        thing = [ thing ];
-    }
-    else if (!Array.isArray(thing)) {
-        return false;
+helpers.makeID = function ( array ) {
+    if ( ! Array.isArray( array ) ) {
+        throw "Parameter is not an array";
     }
 
-    for (var i = 0; i < thing.length; i++) {
-        thing[i] = thing[i].replace(/\s+/g,"_").replace(/[^a-zA-Z0-9_]/,"");
+    for ( let i = 0; i < array.length; i++ ) {
+        array[ i ] = encodeURIComponent( array[ i ] );
     }
-    return thing.join('-');
+    return array.join( '-' );
 }
 
 helpers.addRandomOrderElement = function (movies) {
