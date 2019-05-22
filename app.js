@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 // figure out the root path and set it global
-var path = require('path');
 global.appRoot = path.resolve(__dirname);
 
 var routes = require('./routes/index');
