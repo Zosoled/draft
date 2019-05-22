@@ -1,9 +1,9 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var express			= require('express');
+var path			= require('path');
+var favicon			= require('serve-favicon');
+var logger			= require('morgan');
+var cookieParser	= require('cookie-parser');
+var bodyParser		= require('body-parser');
 
 // figure out the root path and set it global
 global.appRoot = path.resolve(__dirname);
