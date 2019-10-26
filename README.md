@@ -1,5 +1,5 @@
 # Movie Draft Happy Fun Time <>
-__Build a roster of upcoming films and compete for the highest gross earnings.__
+_Build a roster of upcoming films and compete for the highest gross earnings._
 
 ## What is a movie draft?
 First, full credit to [Night Attack/NSFW Show](http://nightattack.tv/), [Diamond Club](http://diamondclub.tv/), and [Chat Relm](http://chatrelm.net). The idea of a movie draft is not my own; I simply wrote some software to help my coworkers and I conduct our own.
@@ -11,14 +11,13 @@ A movie draft is something like a fantasy sports draft… or so I’m told. Gene
   * Summer Blockbuster: Usually kicking off in May
   * Winter Oscar Bait: Usually kicking off in October
 * Approximately 30 movies should be chosen per draft.
-* Teams of 4–6 are best given that number of movies.
-* Drafting takes 2-3 hours and should occur sometime during the 2 weeks prior to the first film’s release.
+* Groups of 4–6 players are best, given the number of movies.
 * The order of movies is randomized prior to drafting.
-* Each week the (domestic) film grosses is updated using Box Office Mojo.
+* Each week the (domestic) film grosses are updated using Box Office Mojo.
 * The game ends 14 days after the final movie is released.
 
 ## Rules Per Team
-* Teams should expect the drafting to take 60–90 minutes
+* Drafting takes 1-2 hours and should occur sometime during the 2 weeks prior to the first film’s release.
 * Each player gets 100 “Draft Bucks” used to bid on a major film studio release from the current season.
   * Each player has at most $100 to spend on all their combined purchases; they may not exceed $100.
 * Films are put up for auction one at a time in random order to all players.
