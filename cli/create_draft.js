@@ -70,12 +70,14 @@ prompt.get(schema, function(err,result) {
 
                 // if we got a yes prompt then add the ID we found so the DB knows to replace instead of add new
                 if (ynresp.overwrite === 'y' || ynresp.overwrite === 'Y') {
-                    result['_id'] = docs['_id'];
-                    db.insert(result,function(err,resp) {
-                        if (err) { console.log("Unable to get insert new draft",err); process.exit(1); };
-        
-                        console.log("Draft replaced. God speed. You'll need it.");
-                    });
+					db.remove({season:result.season,year:result.year},{multi:true},function(err,numRemoved) {
+						if (err || !numRemoved) {console.log("Unable to remove old draft",err?err:"");process.exit(1);}
+						db.persistence.compactDatafile();
+						db.insert(result,function(err,resp) {
+							if (err) {console.log("Unable to get insert new draft",err);process.exit(1);}
+						});
+					});
+					console.log("Draft replaced. God speed. You'll need it.");
                 } else {
                     // if we got something other than a yes response then we stop insertion
                     console.log("Draft creation halted.");
