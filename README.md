@@ -17,7 +17,7 @@ A movie draft is something like a fantasy sports draft… or so I’m told. Gene
 * The game ends 14 days after the final movie is released.
 
 ## Rules Per Team
-* Drafting takes 1-2 hours and should occur sometime during the 2 weeks prior to the first film’s release.
+* Drafting takes 1–2 hours and should occur sometime during the 2 weeks prior to the first film’s release.
 * Each player gets 100 “Draft Bucks” used to bid on a major film studio release from the current season.
   * Each player has at most $100 to spend on all their combined purchases; they may not exceed $100.
 * Films are put up for auction one at a time in random order to all players.
