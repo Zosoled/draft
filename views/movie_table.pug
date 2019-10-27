@@ -29,7 +29,7 @@ block movie_table
                         a(href="http://www.imdb.com/title/" + movie.imdb_id + "/" target='_blank')
                             img(src='/public/images/imdb_sm.png' width=30 height=14 border=0)
                     td
-                        a(href="http://www.boxofficemojo.com/movies/?id=" + movie.bom_id target='_blank')
+                        a(href="http://www.boxofficemojo.com/title/" + movie.imdb_id + "/" target='_blank')
                             img(src='/public/images/bom_sm.png' width=30 height=14 border=0)
                     if found == true
                         if winner_info.hasOwnProperty(movie._id)
