@@ -15,6 +15,7 @@ router.get('/', function(req, res, next) {
 
     db['movie'].find( selection_draft ).sort({ release_date: 1 }).exec( function(err, movie_docs) {
         if (err) { console.log("Unable to get movie documents",err); process.exit(1); };
+        console.log(movie_docs);
 
         // get the draft details as well
         db['draft'].findOne( selection_draft ).exec(function(err, draft_doc) {
@@ -62,10 +63,11 @@ router.get('/team/' + ':id', function(req, res, next) {
 
                             if (team_doc.member[i].hasOwnProperty('movies')) {
                                 for (var j = 0; j < team_doc.member[i].movies.length; j++) {
+                                    console.log(team_doc.member[i].movies);
                                     for (var k = 0; k < movie_docs.length; k++) {
                                         if (movie_docs[k]._id == team_doc.member[i].movies[j].movie_id) {
                                             if (movie_docs[k].hasOwnProperty('last_gross')) {
-                                                team_doc.member[i].total_gross += parseInt(movie_docs[k].last_gross);
+                                                team_doc.member[i].total_gross += parseInt(movie_docs[k].last_gross * (team_doc.member[i].movies[j].percent / 100));
                                             }
                                         }
                                     }
@@ -114,7 +116,7 @@ router.post('/draft', function(req, res, next) {
                     team_doc.draft_position = parseInt(team_doc.draft_position) + 1;
 
                     // make sure we have a valid percentage
-                    var percent = req.body.percent ? req.body.percent : 100;
+                    var percent = (req.body.hasOwnProperty(percent)) ? req.body.percent : 100;
 
                     // find the winning member
                     var winner_found = false;
