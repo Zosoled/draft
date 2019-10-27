@@ -114,7 +114,7 @@ router.post('/draft', function(req, res, next) {
                     team_doc.draft_position = parseInt(team_doc.draft_position) + 1;
 
                     // make sure we have a valid percentage
-                    var percent = (req.body.hasOwnProperty(percent)) ? req.body.percent : 100;
+                    var percent = req.body.percent ? req.body.percent : 100;
 
                     // find the winning member
                     var winner_found = false;
