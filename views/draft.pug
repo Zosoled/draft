@@ -40,10 +40,10 @@ block content
                             if c_date >= draft.draft_start && c_date <= draft.draft_end
                                 h3 Finalize Price
                                 form#set_price_form
-                                    input(type="hidden", name="movie_id", value="#{movie._id}")
-                                    input(type="hidden", name="team_id", value="#{team._id}")
-                                    input(type="hidden", name="movie_number", value="#{movie.order}")
-                                    input(type="hidden", name="final_movie", value="#{final_movie}")
+                                    input(type="hidden", name="movie_id", value=movie._id)
+                                    input(type="hidden", name="team_id", value=team._id)
+                                    input(type="hidden", name="movie_number", value=movie.order)
+                                    input(type="hidden", name="final_movie", value=final_movie)
                                     label(for="winner") Winner
                                     select(id="set_price_form_winner", name="winner")
                                         option(value="", disabled, selected)
