@@ -60,7 +60,7 @@ app.use(function(err, req, res, next) {
 // format a YYYYMMDD string to a human friendly date
 app.locals.prettyDate = function(d) {
     return d.substr(4,2)+"/"+d.substr(6,2)+"/"+d.substr(0,4);
-}
+};
 
 // function to total up movie spend for a member
 app.locals.totalMemberMovies = function(movies) {
@@ -70,21 +70,21 @@ app.locals.totalMemberMovies = function(movies) {
     }
 
     return total;
-}
+};
 
 // simple function to return current yyyymmdd date
 app.locals.ymd = function() {
-    var date = new Date;
+    var date = new Date();
     var y = date.getFullYear().toString();
     var mm = (date.getMonth()+1).toString();
     var dd = date.getDate().toString();
     return parseInt(y + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]));
-}
+};
 
 app.locals.h_num = function(number) {
     number = Math.round(Number(number));
     
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+};
 
 module.exports = app;

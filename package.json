@@ -1,14 +1,14 @@
 {
   "name": "movie-draft",
   "description": "Build a roster of upcoming films and compete for the highest gross earnings.",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
   },
   "dependencies": {
     "async": "^3.2.0",
-    "aws-sdk": "^2.641.0",
+    "aws-sdk": "^2.642.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "debug": "^4.1.1",
