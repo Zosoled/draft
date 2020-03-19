@@ -3,7 +3,7 @@ var express = require('express');
 var router = express.Router();
 var helpers = require(global.appRoot + '/modules/helpers.js');
 var Datastore = require('nedb');
-var db = new Object;
+var db = {};
 db.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true });
 db.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true });
 db.team = new Datastore({ filename: 'data/team.nedb', autoload: true });
@@ -13,12 +13,12 @@ db.value = new Datastore({ filename: 'data/value.nedb', autoload: true });
 router.get('/', function(req, res, next) {
     var selection_draft = helpers.currentDraft();
 
-    db['movie'].find( selection_draft ).sort({ release_date: 1 }).exec( function(err, movie_docs) {
+    db.movie.find( selection_draft ).sort({ release_date: 1 }).exec( function(err, movie_docs) {
         if (err) { console.log("Unable to get movie documents",err); process.exit(1); };
         console.log(movie_docs);
 
         // get the draft details as well
-        db['draft'].findOne( selection_draft ).exec(function(err, draft_doc) {
+        db.draft.findOne(selection_draft, function(err, draft_doc) {
             if (err) { console.log("Unable to get movie documents",err); process.exit(1); };
 
             var current_draft = {};
@@ -29,7 +29,7 @@ router.get('/', function(req, res, next) {
             current_draft.season_start = draft_doc.season_start;
             current_draft.season_end = draft_doc.season_end;
 
-            db['team'].find( selection_draft ).exec(function(err, team_docs) {
+            db.team.find( selection_draft ).exec(function(err, team_docs) {
                 res.render('index', { title: 'IDX Movie Draft', movies: movie_docs, current_draft: current_draft, teams: team_docs });
             });
         });
@@ -41,46 +41,46 @@ router.get('/team/' + ':id', function(req, res, next) {
     var selection_draft = helpers.currentDraft();
     var team_id = req.params.id;
 
-    db['draft'].findOne( selection_draft ).exec(function (err, draft_doc) {
+    db.draft.findOne(selection_draft, function (err, draft_doc) {
         if (draft_doc === null) {
             res.render('team', { title: 'Team not found', found: false });
         }
         else {
-            db['movie'].find( selection_draft ).sort({ release_date: 1 }).exec( function(err, movie_docs) {
-                db['team'].findOne({ _id: team_id }).sort({ release_date: 1 }).exec( function(err, team_doc) {
-                    if (team_doc === null) {
-                        var found = false;
-                        var title = "Team not found";
-                    }
-                    else {
-                        var found = true;
-                        var title = team_doc.team_name
+            db.movie.find( selection_draft ).sort({ release_date: 1 }).exec( function(err, movie_docs) {
+                db.team.findOne({ _id: team_id }, function(err, team_doc) {
+					var found = false;
+					var title = "Team not found";
+					var owner_list = {};
+					team_doc.sort({ release_date: 1 }).exec( function(err, team_doc) {
+                    	if (team_doc !== null) {
+                        	found = true;
+                        	title = team_doc.team_name;
 
-                        var owner_list = {};
-                        for (var i = 0; i < team_doc.member.length; i++) {
-                            // compute total gross for each person in the team
-                            team_doc.member[i].total_gross = 0;
+                        	for (var i = 0; i < team_doc.member.length; i++) {
+                            	// compute total gross for each person in the team
+                            	team_doc.member[i].total_gross = 0;
 
-                            if (team_doc.member[i].hasOwnProperty('movies')) {
-                                for (var j = 0; j < team_doc.member[i].movies.length; j++) {
-                                    console.log(team_doc.member[i].movies);
-                                    for (var k = 0; k < movie_docs.length; k++) {
-                                        if (movie_docs[k]._id == team_doc.member[i].movies[j].movie_id) {
-                                            if (movie_docs[k].hasOwnProperty('last_gross')) {
-                                                team_doc.member[i].total_gross += parseInt(movie_docs[k].last_gross * (team_doc.member[i].movies[j].percent / 100));
-                                            }
-                                        }
-                                    }
+                            	if (team_doc.member[i].hasOwnProperty('movies')) {
+                                	for (var j = 0; j < team_doc.member[i].movies.length; j++) {
+                                    	console.log(team_doc.member[i].movies);
+	                                    for (var k = 0; k < movie_docs.length; k++) {
+    	                                    if (movie_docs[k]._id == team_doc.member[i].movies[j].movie_id) {
+        	                                    if (movie_docs[k].hasOwnProperty('last_gross')) {
+            	                                    team_doc.member[i].total_gross += parseInt(movie_docs[k].last_gross * (team_doc.member[i].movies[j].percent / 100));
+                	                            }
+                    	                    }
+                        	            }
 
-                                    owner_list[team_doc.member[i].movies[j].movie_id] = { 
-                                        member_name: team_doc.member[i].name,
-                                        bid: team_doc.member[i].movies[j].bid,
-                                        percent: team_doc.member[i].movies[j].percent
-                                    }
-                                }
-                            }
+                            	        owner_list[team_doc.member[i].movies[j].movie_id] = { 
+                                	        member_name: team_doc.member[i].name,
+                                    	    bid: team_doc.member[i].movies[j].bid,
+                                        	percent: team_doc.member[i].movies[j].percent
+                                    	};
+	                                }
+								}
+							}
                         }
-                    }
+                    });
                     res.render('team', {title: title, found: found, draft: draft_doc, team: team_doc, movies: movie_docs, winner_info: owner_list, show_gross: true });
                 });
             });
@@ -96,7 +96,7 @@ router.post('/draft', function(req, res, next) {
     var draft_year = info[1];
     
     // lets double check that we're in a valid draft
-    db['draft'].findOne({ season: draft_season, year: draft_year }).exec(function(err, draft_doc) {
+    db.draft.findOne({ season: draft_season, year: draft_year }, function(err, draft_doc) {
         if (draft_doc == null) {
             res.statusCode = 400;
             res.send({});
@@ -107,7 +107,7 @@ router.post('/draft', function(req, res, next) {
         // draft valid
         else {
             // get team from the information
-            db['team'].findOne({ _id: team_id }).exec(function(err, team_doc) {
+            db.team.findOne({ _id: team_id }, function(err, team_doc) {
                 if (team_doc == null) {
                     res.statusCode = 400;
                     res.send({});
@@ -154,7 +154,7 @@ router.post('/draft', function(req, res, next) {
                     }
                     // winner found
                     else {
-                        db['team'].update({ _id: team_doc._id }, team_doc, function(err) {
+                        db.team.update({ _id: team_doc._id }, team_doc, null, function(err) {
                             if (err) {
                                 console.log(err);
                                 res.statusCode = 400;
@@ -182,33 +182,31 @@ router.get('/draft/' + ':team_id' + '/' + ':movie_number', function(req, res, ne
     var not_found = [];
 
     // get the draft doc and make sure it's drafting time
-    db['draft'].findOne({ season: draft_season, year: draft_year }).exec(function (err, draft_doc) {
+    db.draft.findOne({ season: draft_season, year: draft_year }, function (err, draft_doc) {
         if (draft_doc === null) {
             res.render('draft', { title: 'Drafting: Draft Not Found', not_found: 'draft' });
         } else {
             // if we have a valid draft
             // find the requested team
-            db['team'].findOne({ _id: team_id }).exec(function (err, team_doc) {
+            db.team.findOne({ _id: team_id }, function (err, team_doc) {
                 if (team_doc === null) {
                     res.render('draft', { title: 'Drafting: Team Not Found', not_found: 'team' });
                 } else {
                     // if we have a valid team
                     // count the total movies this draft
-                    db['movie'].count({ season: draft_season, year: draft_year }, function (err, count) {
+                    db.movie.count({ season: draft_season, year: draft_year }, function (err, count) {
                         if (err) {
                             res.render('draft', { title: 'Drafting: Movie Not Found', not_found: 'movie' });
                         }
 
-                        var last_movie = count - 1;
+						var last_movie = count - 1;
+						var final_movie = 1;
                         if (movie_number != last_movie) {
-                            var final_movie = 0;
-                        }
-                        else {
-                            var final_movie = 1;
+                            final_movie = 0;
                         }
 
                         // get the requested movie
-                        db['movie'].findOne({ season: draft_season, year: draft_year, order: movie_number }).exec(function (err, movie_doc) {
+                        db.movie.findOne({ season: draft_season, year: draft_year, order: movie_number }, function (err, movie_doc) {
                             if (movie_doc === null) {
                                 res.render('draft', { title: 'Drafting: Movie Not Found', not_found: 'movie' });
                             // if we have a valid movie
@@ -228,11 +226,10 @@ router.get('/draft/' + ':team_id' + '/' + ':movie_number', function(req, res, ne
 router.get('/add_team', function(req, res, next) {
     var selection_draft = helpers.currentDraft();
 
-    // create a bool to decide if required fields should be highlighted
+	// create a bool to decide if required fields should be highlighted
+	var highlight_required = false;
     if (req.query.hasOwnProperty("required")) {
-        var highlight_required = true;
-    } else {
-        var highlight_required = false;
+        highlight_required = true;
     }
 
     res.render('add_team', {title: 'Add a drafting team', current_draft: selection_draft, highlight_required: highlight_required});
@@ -282,7 +279,7 @@ router.post('/add_team', function(req, res, next) {
 
     // check to see if the name is taken
     function checkName (body, callback) {
-        db['team'].count({ _id: body._id }).exec(function(err, count) {
+        db.team.count({ _id: body._id }).exec(function(err, count) {
             if (err) {
                 callback(err,null);
             }
@@ -292,7 +289,7 @@ router.post('/add_team', function(req, res, next) {
             else {
                 callback(null,body);
             }
-        })
+        });
     }
 
     // turn the members array into an object
@@ -315,7 +312,7 @@ router.post('/add_team', function(req, res, next) {
         body.draft_position = 0;
         body.draft_complete = false;
 
-        db['team'].insert(body, function(err) {
+        db.team.insert(body, function(err) {
             if (err) { callback("Unable to insert team into database. " + err, null); process.exit(1); }
         });
 
