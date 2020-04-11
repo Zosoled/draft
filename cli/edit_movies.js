@@ -1,9 +1,11 @@
+const path = require("path");
+const cwd = path.win32.resolve(__dirname);
+const prompts = require("prompts");
+const async = require("async");
+var helpers = require(path.win32.normalize(cwd+"../modules/helpers.js"));
 var Datastore = require('nedb'),
     db = new Datastore({ filename: '../data/movie.nedb', autoload: true }),
     draftDb = new Datastore({ filename: '../data/draft.nedb', autoload: true});
-var prompt = require('prompt');
-var async = require("async");
-var helpers = require("../modules/helpers.js");
 
 // this governs the user prompts and valid responses
 var draft_schema = {
@@ -25,8 +27,6 @@ var draft_schema = {
         }
     }
 }
-
-prompt.start();
 
 // first we need to get an validate the draft selection
 prompt.get(draft_schema, function(err,draft) {

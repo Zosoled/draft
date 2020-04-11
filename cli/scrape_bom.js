@@ -1,9 +1,11 @@
-var https = require('https');
-var helpers = require('../modules/helpers.js');
-var async = require('async');
-var Datastore = require('nedb');
+const path = require("path");
+const cwd = path.win32.resolve(__dirname);
+const https = require('https');
+const async = require('async');
+const Datastore = require('nedb');
+const fs = require('fs');
+var helpers = require(path.win32.normalize(cwd+"../modules/helpers.js"));
 var db = new Object;
-var fs = require('fs');
 db.draft = new Datastore({ filename: '../data/draft.nedb', autoload: true })
 db.movie = new Datastore({ filename: '../data/movie.nedb', autoload: true });
 db.value = new Datastore({ filename: '../data/value.nedb', autoload: true });

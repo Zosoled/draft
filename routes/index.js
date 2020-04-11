@@ -1,8 +1,10 @@
-var async = require('async');
-var express = require('express');
-var router = express.Router();
-var helpers = require(global.appRoot + '/modules/helpers.js');
-var Datastore = require('nedb');
+const path = require("path");
+const cwd = path.win32.resolve(__dirname);
+const async = require('async');
+const express = require('express');
+const router = express.Router();
+const Datastore = require('nedb');
+var helpers = require(path.win32.normalize(cwd+"/../modules/helpers.js"));
 var db = {};
 db.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true });
 db.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true });
@@ -14,12 +16,14 @@ router.get('/', function(req, res, next) {
     var selection_draft = helpers.currentDraft();
 
     db.movie.find( selection_draft ).sort({ release_date: 1 }).exec( function(err, movie_docs) {
-        if (err) { console.log("Unable to get movie documents",err); process.exit(1); };
+        if (err) { console.error("Unable to get movie documents",err); process.exit(1); };
+        console.log(selection_draft);
         console.log(movie_docs);
 
         // get the draft details as well
         db.draft.findOne(selection_draft, function(err, draft_doc) {
-            if (err) { console.log("Unable to get movie documents",err); process.exit(1); };
+			if (err) { console.error("Unable to get movie documents",err); process.exit(1); }
+			if (!draft_doc) { console.error("No draft docs found"); process.exit(1); }
 
             var current_draft = {};
             current_draft.season= selection_draft.season;

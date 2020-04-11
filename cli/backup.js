@@ -1,7 +1,9 @@
+const path = require("path");
+const cwd = path.win32.resolve(__dirname);
 var zlib = require('zlib');
 var fs = require('fs');
 var AWS = require('aws-sdk');
-var config = require('../modules/backup_config');
+var config = require(path.win32.normalize(cwd+"../modules/backup_config"));
 
 // make sure there is a bucket
 if (config.aws.bucket == '') {
