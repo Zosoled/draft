@@ -1,17 +1,17 @@
-const path = require("path");
-const cwd = path.win32.resolve(__dirname);
+const Datastore = require("nedb");
 const prompts = require("prompts");
-const helpers = require(path.win32.normalize(cwd+"/../modules/helpers"));
 
-var Datastore = require("nedb"),
-	db = new Datastore({
-		filename: path.win32.normalize(cwd+"/../data/movie.nedb"),
-		autoload: true
-	}),
-	draftDb = new Datastore({
-		filename: path.win32.normalize(cwd+"/../data/draft.nedb"),
-		autoload: true
-	});
+const path = require("path");
+const helpers = require(path.win32.resolve(__dirname,"../modules/helpers.js"));
+
+var db = new Datastore({
+	filename: path.win32.resolve(__dirname,"../data/movie.nedb"),
+	autoload: true
+});
+var draftDb = new Datastore({
+	filename: path.win32.resolve(__dirname,"../data/draft.nedb"),
+	autoload: true
+});
 
 // this governs the user prompts and valid responses
 var draft_schema = [{

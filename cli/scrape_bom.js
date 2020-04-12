@@ -1,19 +1,30 @@
+const async = require("async");
+const Datastore = require("nedb");
+const fs = require("fs");
+const https = require("https");
+
 const path = require("path");
-const cwd = path.win32.resolve(__dirname);
-const https = require('https');
-const async = require('async');
-const Datastore = require('nedb');
-const fs = require('fs');
-var helpers = require(path.win32.normalize(cwd+"../modules/helpers.js"));
-var db = new Object;
-db.draft = new Datastore({ filename: '../data/draft.nedb', autoload: true })
-db.movie = new Datastore({ filename: '../data/movie.nedb', autoload: true });
-db.value = new Datastore({ filename: '../data/value.nedb', autoload: true });
+const helpers = require(path.win32.resolve(__dirname,"../modules/helpers.js"));
+
+var db = {
+	draft: new Datastore({
+		filename: path.win32.resolve(__dirname,"../data/draft.nedb"),
+		autoload: true
+	}),
+	movie: new Datastore({
+		filename: path.win32.resolve(__dirname,"../data/movie.nedb"),
+		autoload: true
+	}),
+	value: new Datastore({
+		filename: path.win32.resolve(__dirname,"../data/value.nedb"),
+		autoload: true
+	})
+};
 
 var current_draft = helpers.currentDraft();
 var current_date = helpers.currentDate();
 
-db['movie'].find(current_draft, function(err,movies) {
+db.movie.find(current_draft, function(err,movies) {
     // decide which movies to scrape then scrape in a waterfall
     async.waterfall([
         async.apply(determineOpenMovies, movies),
@@ -21,8 +32,8 @@ db['movie'].find(current_draft, function(err,movies) {
     ], function (err, result) {
         if (err) { console.log("waterfall error: ",err); }
         
-        db['draft'].update( current_draft, { $set: { last_scrape: current_date }}, {}, function(err, num_updated) {
-            if (err) { console.log('Unable to update the last scrape date',err), process.exit(1); }
+        db.draft.update( current_draft, { $set: { last_scrape: current_date }}, {}, function(err, num_updated) {
+            if (err) { console.log('Unable to update the last scrape date',err); process.exit(1); }
 
             console.log('Updated '+num_updated+' draft documents');
         });
@@ -30,7 +41,7 @@ db['movie'].find(current_draft, function(err,movies) {
 
     function determineOpenMovies(movies, callback) {
         // these are the movies that are open
-        var open_movies = new Array;
+        var open_movies = [];
 
         for (var i = 0; i < movies.length; i++) {
             if (current_date >= movies[i].release_date) {
@@ -58,9 +69,11 @@ db['movie'].find(current_draft, function(err,movies) {
                     // set the options for the get request
                     var options = {
                         host: 'www.imdb.com',
-                        headers: {'user-agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'},
+                        headers: {
+							'user-agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
+						},
                         path: movie_path
-                    }
+                    };
 
                     https.get(options, function(res) {
                         res.setEncoding('utf8');
@@ -74,32 +87,32 @@ db['movie'].find(current_draft, function(err,movies) {
                                         gross = gross.replace(/\D/g,'');
                                         console.log(movie.name+' gross: '+gross);
 
-                                        movie_doc = {
+                                        var movie_doc = {
                                             _id: current_date+'-'+movie._id,
                                             movie_id: movie._id,
                                             scrape_date: current_date,
                                             gross: gross
-                                        }
+                                        };
 
-                                        db['value'].count({ _id: movie_doc._id }, function (err, count) {
+                                        db.value.count({ _id: movie_doc._id }, function (err, count) {
                                             if (err) { console.log('Unable to insert value doc',err); process.exit(1); }
 
                                             if (count > 0) {
-                                                db['value'].update( { _id: movie_doc._id }, { $set: { gross: gross }}, {}, function(err, num_updated) {
-                                                    if (err) { console.log('Unable to update the last scrape date',err), process.exit(1); }
+                                                db.value.update( { _id: movie_doc._id }, { $set: { gross: gross }}, {}, function(err, num_updated) {
+                                                    if (err) { console.log('Unable to update the last scrape date',err); process.exit(1); }
                                                     console.log('Updated the gross for '+num_updated+' value documents');
-                                                })
+                                                });
                                             }
                                             else {
-                                                db['value'].insert(movie_doc, function(err,newDoc) {
+                                                db.value.insert(movie_doc, function(err,newDoc) {
                                                     if (err) { console.log('Unable to insert value doc',err); process.exit(1); }
                                                     console.log('Value document inserted');
                                                 });
                                             }
                                         });
 
-                                        db['movie'].update( { _id: movie._id }, { $set: { last_gross: gross }}, {}, function(err, num_updated) {
-                                            if (err) { console.log('Unable to update the last scrape date',err), process.exit(1); }
+                                        db.movie.update( { _id: movie._id }, { $set: { last_gross: gross }}, {}, function(err, num_updated) {
+                                            if (err) { console.log('Unable to update the last scrape date',err); process.exit(1); }
 
                                             console.log('Updated '+num_updated+' movie documents');
 
@@ -117,7 +130,7 @@ db['movie'].find(current_draft, function(err,movies) {
                         console.log('error: ',err);
                     });
                 },seconds);
-            }
+            };
             scrapeDelayer(open_movies[j]);
         }
 

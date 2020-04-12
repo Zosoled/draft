@@ -1,17 +1,19 @@
-const path = require("path");
-const cwd = path.win32.resolve(__dirname);
-const prompts = require("prompts");
-var Datastore = require("nedb"),
-	db = new Datastore({
-		filename: path.win32.normalize(cwd+"/../data/draft.nedb"),
-		autoload: true
-	});
+var Datastore = require("nedb");
+var prompts = require("prompts");
 
-var schema = [{
+var path = require("path");
+var db = new Datastore({
+	filename: path.win32.resolve(__dirname,"../data/draft.nedb"),
+	autoload: true
+});
+
+var schema = [
+	{
 		type: "select",
 		name: "season",
 		message: "Pick a season",
-		choices: [{
+		choices: [
+			{
 				title: "Summer",
 				value: "summer"
 			},
@@ -59,7 +61,7 @@ var schema = [{
 	}
 ];
 
-console.log("Hello and welcome to new draft setup. We'll just need to answer a few questions\n");
+console.log("Hello and welcome to new draft setup. We'll just need to answer a few questions.");
 
 (async () => {
 	const result = await prompts(schema);
@@ -73,10 +75,8 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
 		season: result.season,
 		year: result.year
 	}, function (err, docs) {
-		if (err) {
-			console.log("Unable to get search database", err);
-			process.exit(1);
-		}
+		if (err||!docs) { console.log("Unable to search database",err?err:""); process.exit(1); }
+
 		// check to see if there"s aleady a draft for this season and year
 		if (docs.length != 0) {
 			(async () => {
@@ -89,10 +89,7 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
 					inactive: "No"
 				});
 
-				if (!ynresp) {
-					console.error("Unable to get response");
-					process.exit(1);
-				}
+				if (!ynresp) { console.error("Unable to get response"); process.exit(1); }
 
 				// if we got a yes prompt then add the ID we found so the DB knows to replace instead of add new
 				if (ynresp.overwrite) {
@@ -102,8 +99,8 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
 					}, {
 						multi: true
 					}, function (err, numRemoved) {
-						if (err || !numRemoved) {
-							console.log("Unable to remove old draft", err ? err : "");
+						if (err||!numRemoved) {
+							console.log("Unable to remove old draft", err?err:"");
 							process.exit(1);
 						}
 						db.persistence.compactDatafile();
@@ -122,10 +119,7 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
 			})();
 		} else {
 			db.insert(result, function (err, resp) {
-				if (err) {
-					console.log("Unable to get insert new draft", err);
-					process.exit(1);
-				}
+				if (err) { console.log("Unable to get insert new draft",err); process.exit(1); }
 				console.log("Draft created. All hail George Lucas, king of the pizza buffet.");
 			});
 		}
