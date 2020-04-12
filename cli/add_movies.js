@@ -1,140 +1,175 @@
-var Datastore = require('nedb'),
-    db = new Datastore({ filename: '../data/movie.nedb', autoload: true }),
-    draftDb = new Datastore({ filename: '../data/draft.nedb', autoload: true});
-var prompt = require('prompt');
-var async = require("async");
-var helpers = require("../modules/helpers");
+const Datastore = require("nedb");
+const prompts = require("prompts");
+
+const path = require("path");
+const helpers = require(path.win32.resolve(__dirname,"../modules/helpers.js"));
+
+var db = new Datastore({
+	filename: path.win32.resolve(__dirname,"../data/movie.nedb"),
+	autoload: true
+});
+var draftDb = new Datastore({
+	filename: path.win32.resolve(__dirname,"../data/draft.nedb"),
+	autoload: true
+});
 
 // this governs the user prompts and valid responses
-var draft_schema = {
-    properties: {
-        season: {
-            description: "Season (summer/winter)",
-            pattern: /^(summer|winter)$/i,
-            message: '"summer" or "winter"',
-            required: true,
-            before: function (input) {
-                return input.toLowerCase();
-            }
-        },
-        year: {
-            description: "Year (YYYY)",
-            pattern: /^20\d{2}$/,
-            message: "Four digit year only",
-            required: true
-        }
-    }
-}
+var draft_schema = [{
+		type: "select",
+		name: "season",
+		message: "Pick a season",
+		choices: [{
+				title: "Summer",
+				value: "summer"
+			},
+			{
+				title: "Winter",
+				value: "winter"
+			}
+		]
+	},
+	{
+		type: "number",
+		name: "year",
+		message: "Enter a year (YYYY)",
+		initial: 2020,
+		min: 0,
+		max: 9999
+	}
+];
 
-var movie_schema = {
-    properties: {
-        name: {
-            description: "Movie Name",
-            required: true
-        },
-        release_date: {
-            description: "US Release Date",
-            pattern: /^20\d{6}$/,
-            message: "YYYYMMDD format",
-            required: true
-        },
-        bom_id: {
-            description: "Box Office Mojo ID",
-            pattern: /.+\.htm$/,
-            message: "BOM IDs end in .htm",
-            required: true
-        },
-        imdb_id: {
-            description: "IMDb ID",
-            pattern: /^tt/,
-            message: "IMDb IDs start with tt",
-            required: true
-        },
-        poster_url: {
-            description: "Poster URL",
-            required: true
-        },
-        yt_id: {
-            description: "YouTube trailer ID",
-            required: true
-        },
-        done: {
-            description: "Finished with draft? (Y/N)",
-        }
-    }
-}
-
-prompt.start();
+var movie_schema = [{
+		type: "text",
+		name: "name",
+		message: "Movie Name",
+		validate: name => name.length < 1 ? 'Please enter a name.' : true
+	},
+	{
+		type: "date",
+		name: "release_date",
+		message: "US Release Date",
+		initial: new Date(2020, 1, 1),
+		mask: "YYYY-MM-DD"
+	},
+	{
+		type: "text",
+		name: "bom_id",
+		message: "Box Office Mojo ID"
+	},
+	{
+		type: "text",
+		name: "imdb_id",
+		message: "IMDb ID"
+	},
+	{
+		type: "text",
+		name: "poster_url",
+		message: "Poster URL"
+	},
+	{
+		type: "text",
+		name: "yt_id",
+		message: "YouTube trailer ID"
+	},
+	{
+		type: "toggle",
+		name: "done",
+		message: "Finished with draft?",
+		active: "Yes",
+		inactive: "No"
+	}
+];
 
 console.log("This will add the movies to an existing draft.");
 console.log("This will overwrite any existing movie list on the draft.");
 
-// an array to hold all the movies as we loop though prompts
-var movies = [];
+// first we need to get and validate the draft selection
+(async () => {
+	var draft = await prompts(draft_schema);
+	if (!draft) {
+		console.error("Unable to get draft prompts");
+		process.exit(1);
+	}
 
-// this (when true) will end the movie addition loop
-var entry_done = false;
+	// look up and validate the draft document
+	draftDb.count(draft, function (err, count) {
+		if (err) {
+			console.error("Unable to search database", err);
+			process.exit(1);
+		} else if (count < 1) {
+			console.error("Unable to find matching draft. Please use the create_draft script first.");
+			process.exit(1);
+		} else if (count > 1) {
+			console.error("Found " + count + " matching drafts when only 1 should exist. Try using create_draft script to overwrite existing drafts.");
+			process.exit(1);
+		} else {
+			/*
+			 * If a draft exists, it may have a movie list. Although we're not
+			 * currently checking for existing movies, we may want to in the 
+			 * future. In either case, for a consistent experience, the user
+			 * should confirm that they want to overwrite any existing data.
+			 */
+			(async () => {
+				var overwrite = await prompts({
+					type: "confirm",
+					name: "confirmed",
+					message: "Movie list exists for this draft. Overwrite?"
+				});
+				if (!overwrite) {
+					console.error("Unable to get response");
+					process.exit(1);
+				}
+				if (overwrite.confirmed == false) {
+					console.log("Movie list creation halted.");
+					process.exit(1);
+				} else {
+					db.remove(draft, {
+						multi: true
+					}, function (err, count) {
+						if (err) {
+							console.error("Unable to remove old movies", err);
+							process.exit(1);
+						}
+					});
 
-// first we need to get an validate the draft selection
-prompt.get(draft_schema, function(err,draft) {
-    if (err) { console.log("Unable to get prompt response",err); process.exit(1); };
+					/*
+					 * Loop until user indicates movie entry is done, then write the info to the
+					 * movie doc.
+					 */
+					var movies = [];
 
-    // look up the draft document
-    draftDb.count( draft, function (err, count) {
-        if (err) { console.log("Unable to get search database",err); process.exit(1); };
-        
-        // if there are no docs the error out
-        if (count !== 1) {
-            console.log("Unable to find appropriate draft. Please use the create_draft script first. Docs found: "+count);
-            process.exit(1);
-        }
+					(async function getMovie() {
+						var movie = await prompts(movie_schema);
+						if (!movie) {
+							console.error("Unable to get movie prompts");
+							process.exit(1);
+						}
 
-        // because I don't have time to write a full management system ATM we just delete all existing movies in this draft
-        db.remove(draft, { multi: true }, function (err, count) {
-            if (err) { console.log("Unable to remove old movies",err); process.exit(1); };
-        });
-    });
+						var finished = movie.done;
+						delete movie.done;
+						movie.season = draft.season;
+						movie.year = draft.year;
+						movie._id = helpers.makeID([draft.season, draft.year, movie.name]);
+						movies.push(movie);
+						console.log("    Movies so far: " + movies.length + "\n");
 
-    // loop until we're have our done criteria
-    // then run the callback to write the info to the movie doc
-    async.until(
-        function() {
-            return entry_done;
-        }, function(callback) {
-            prompt.get(movie_schema, function (err,movie) {
-                if (err) { callback("Unable to get search database - "+err,null); };
-       
-                if (movie.done == 'y' || movie.done == 'Y')
-                    entry_done = true;
-
-                // remove the done mark
-                delete movie.done;
-
-                // add the season and year
-                movie.season = draft.season;
-                movie.year = draft.year;
-
-                // predicable id
-                movie._id = helpers.makeID([ draft.season, draft.year, movie.name ]);
-
-                // add the movie to the movies array
-                movies.push(movie);
-
-                // a little formatting and output
-                console.log("    -Movies so far: "+movies.length+"\n");
-
-                callback(null,movies);
-            });
-        }, function(err,movies) {
-            // add order to movies array
-            movies = helpers.addRandomOrderElement(movies);
-            console.log(movies);
-
-            db.insert(movies, function(err) {
-                if (err) { console.log("Unable to insert movies into draft database: ",err); process.exit(1); };
-
-                console.log("Movies added to draft.");
-            });
-        }
-    );
-});
+						if (finished) {
+							// add order to movies array
+							movies = helpers.addRandomOrderElement(movies);
+							console.log(movies);
+							db.insert(movies, function (err) {
+								if (err) {
+									console.log("Unable to insert movies into draft database: ", err);
+									process.exit(1);
+								}
+								console.log("Movies added to draft.");
+							});
+						} else {
+							getMovie();
+						}
+					})();
+				}
+			})();
+		}
+	});
+})();

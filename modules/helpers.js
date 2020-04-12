@@ -7,7 +7,7 @@ helpers.currentDate = function() {
 
 // get the current draft
 helpers.currentDraft = function() {
-    return { season: "winter", year: "2019" };
+    return { season: "summer", year: 2020 };
 }
 
 // take an array, make them id/url friendly, then concat with a hyphen
@@ -20,7 +20,9 @@ helpers.makeID = function(thing) {
     }
 
     for (var i = 0; i < thing.length; i++) {
-        thing[i] = thing[i].replace(/\s+/g,"_").replace(/[^a-zA-Z0-9_]/,"");
+		if (typeof thing[i] == "string") {
+			thing[i] = thing[i].replace(/\s+/g,"_").replace(/[^a-zA-Z0-9_]/,"");
+		}
     }
     return thing.join('-');
 }
@@ -50,6 +52,6 @@ helpers.addRandomOrderElement = function (movies) {
     }
 
     return movies;
-}
+};
 
 module.exports = helpers;
