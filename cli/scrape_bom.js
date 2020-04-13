@@ -4,19 +4,19 @@ const fs = require("fs");
 const https = require("https");
 
 const path = require("path");
-const helpers = require(path.win32.resolve(__dirname,"../modules/helpers.js"));
+const helpers = require(path.win32.resolve(__dirname, "../modules/helpers.js"));
 
 var db = {
 	draft: new Datastore({
-		filename: path.win32.resolve(__dirname,"../data/draft.nedb"),
+		filename: path.win32.resolve(__dirname, "../data/draft.nedb"),
 		autoload: true
 	}),
 	movie: new Datastore({
-		filename: path.win32.resolve(__dirname,"../data/movie.nedb"),
+		filename: path.win32.resolve(__dirname, "../data/movie.nedb"),
 		autoload: true
 	}),
 	value: new Datastore({
-		filename: path.win32.resolve(__dirname,"../data/value.nedb"),
+		filename: path.win32.resolve(__dirname, "../data/value.nedb"),
 		autoload: true
 	})
 };
@@ -117,7 +117,7 @@ db.movie.find(current_draft, function(err,movies) {
                                             console.log('Updated '+num_updated+' movie documents');
 
                                             // we write a tracking file. This will automatically cause the server to restart if using nodemon - this is desired behavior
-                                            fs.writeFile("../modules/scrape_track.js", "var scrape_track = {}; scrape_track.last_scrape = "+current_date+"; module.exports = scrape_track;", function(err) {
+                                            fs.writeFile(path.win32.resolve(__dirname, "../modules/scrape_track.js"), "var scrape_track = {}; scrape_track.last_scrape = "+current_date+"; module.exports = scrape_track;", function(err) {
                                                 if (err) { console.log(err); }
                                                 else { console.log("tracking file updated"); }
                                             });

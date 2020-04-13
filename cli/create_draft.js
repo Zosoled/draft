@@ -3,7 +3,7 @@ var prompts = require("prompts");
 
 var path = require("path");
 var db = new Datastore({
-	filename: path.win32.resolve(__dirname,"../data/draft.nedb"),
+	filename: path.win32.resolve(__dirname, "../data/draft.nedb"),
 	autoload: true
 });
 
@@ -26,7 +26,7 @@ var schema = [
 	{
 		type: "number",
 		name: "year",
-		message: "Enter a year (YYYY)",
+		message: "Enter a year",
 		initial: 2020,
 		min: 0,
 		max: 9999
@@ -35,28 +35,28 @@ var schema = [
 		type: "date",
 		name: "draft_start",
 		message: "Drafting Start Date",
-		initial: new Date(2020, 1, 1),
+		initial: new Date(),
 		mask: "YYYY-MM-DD"
 	},
 	{
 		type: "date",
 		name: "draft_end",
 		message: "Drafting End Date",
-		initial: new Date(2020, 1, 1),
+		initial: prev => prev,
 		mask: "YYYY-MM-DD"
 	},
 	{
 		type: "date",
 		name: "draft_end",
 		message: "Season Start Date",
-		initial: new Date(2020, 1, 1),
+		initial: prev => prev,
 		mask: "YYYY-MM-DD"
 	},
 	{
 		type: "date",
 		name: "draft_end",
 		message: "Season End Date",
-		initial: new Date(2020, 1, 1),
+		initial: prev => prev,
 		mask: "YYYY-MM-DD"
 	}
 ];
@@ -75,24 +75,27 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
 		season: result.season,
 		year: result.year
 	}, function (err, docs) {
-		if (err||!docs) { console.log("Unable to search database",err?err:""); process.exit(1); }
+		if (err || !docs) {
+			console.log("Unable to search database",err?err:"");
+			process.exit(1);
+		}
 
 		// check to see if there"s aleady a draft for this season and year
 		if (docs.length != 0) {
 			(async () => {
 				// prompt to see if we should overwrite the existing season information
-				var ynresp = await prompts({
+				var overwrite = await prompts({
 					type: "toggle",
-					name: "overwrite",
-					message: "There is already a draft for this season and year. Overwrite (and lose movie list)?",
+					name: "confirmed",
+					message: "There is already a draft for this season and year. Overwrite existing movie list?",
 					active: "Yes",
 					inactive: "No"
 				});
 
-				if (!ynresp) { console.error("Unable to get response"); process.exit(1); }
+				if (!overwrite) { console.error("Unable to get response"); process.exit(1); }
 
 				// if we got a yes prompt then add the ID we found so the DB knows to replace instead of add new
-				if (ynresp.overwrite) {
+				if (overwrite.confirmed) {
 					db.remove({
 						season: result.season,
 						year: result.year

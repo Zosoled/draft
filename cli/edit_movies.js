@@ -2,23 +2,25 @@ const Datastore = require("nedb");
 const prompts = require("prompts");
 
 const path = require("path");
-const helpers = require(path.win32.resolve(__dirname,"../modules/helpers.js"));
+const helpers = require(path.win32.resolve(__dirname, "../modules/helpers.js"));
 
 var db = new Datastore({
-	filename: path.win32.resolve(__dirname,"../data/movie.nedb"),
+	filename: path.win32.resolve(__dirname, "../data/movie.nedb"),
 	autoload: true
 });
 var draftDb = new Datastore({
-	filename: path.win32.resolve(__dirname,"../data/draft.nedb"),
+	filename: path.win32.resolve(__dirname, "../data/draft.nedb"),
 	autoload: true
 });
 
 // this governs the user prompts and valid responses
-var draft_schema = [{
+var draft_schema = [
+	{
 		type: "select",
 		name: "season",
 		message: "Pick a season",
-		choices: [{
+		choices: [
+			{
 				title: "Summer",
 				value: "summer"
 			},
@@ -31,7 +33,7 @@ var draft_schema = [{
 	{
 		type: "number",
 		name: "year",
-		message: "Enter a year (YYYY)",
+		message: "Enter a year",
 		initial: 2020,
 		min: 0,
 		max: 9999

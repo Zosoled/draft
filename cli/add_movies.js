@@ -2,23 +2,25 @@ const Datastore = require("nedb");
 const prompts = require("prompts");
 
 const path = require("path");
-const helpers = require(path.win32.resolve(__dirname,"../modules/helpers.js"));
+const helpers = require(path.win32.resolve(__dirname, "../modules/helpers.js"));
 
 var db = new Datastore({
-	filename: path.win32.resolve(__dirname,"../data/movie.nedb"),
+	filename: path.win32.resolve(__dirname, "../data/movie.nedb"),
 	autoload: true
 });
 var draftDb = new Datastore({
-	filename: path.win32.resolve(__dirname,"../data/draft.nedb"),
+	filename: path.win32.resolve(__dirname, "../data/draft.nedb"),
 	autoload: true
 });
 
 // this governs the user prompts and valid responses
-var draft_schema = [{
+var draft_schema = [
+	{
 		type: "select",
 		name: "season",
 		message: "Pick a season",
-		choices: [{
+		choices: [
+			{
 				title: "Summer",
 				value: "summer"
 			},
@@ -38,7 +40,8 @@ var draft_schema = [{
 	}
 ];
 
-var movie_schema = [{
+var movie_schema = [
+	{
 		type: "text",
 		name: "name",
 		message: "Movie Name",
@@ -48,7 +51,7 @@ var movie_schema = [{
 		type: "date",
 		name: "release_date",
 		message: "US Release Date",
-		initial: new Date(2020, 1, 1),
+		initial: new Date(),
 		mask: "YYYY-MM-DD"
 	},
 	{
@@ -75,13 +78,12 @@ var movie_schema = [{
 		type: "toggle",
 		name: "done",
 		message: "Finished with draft?",
-		active: "Yes",
-		inactive: "No"
+		active: "Yes, finished",
+		inactive: "No, add more"
 	}
 ];
 
-console.log("This will add the movies to an existing draft.");
-console.log("This will overwrite any existing movie list on the draft.");
+console.log("\tAdd movies to an existing draft and overwrite any existing movie list on the draft.");
 
 // first we need to get and validate the draft selection
 (async () => {
@@ -96,13 +98,16 @@ console.log("This will overwrite any existing movie list on the draft.");
 		if (err) {
 			console.error("Unable to search database", err);
 			process.exit(1);
-		} else if (count < 1) {
+		}
+		else if (count < 1) {
 			console.error("Unable to find matching draft. Please use the create_draft script first.");
 			process.exit(1);
-		} else if (count > 1) {
+		}
+		else if (count > 1) {
 			console.error("Found " + count + " matching drafts when only 1 should exist. Try using create_draft script to overwrite existing drafts.");
 			process.exit(1);
-		} else {
+		}
+		else {
 			/*
 			 * If a draft exists, it may have a movie list. Although we're not
 			 * currently checking for existing movies, we may want to in the 
@@ -111,18 +116,20 @@ console.log("This will overwrite any existing movie list on the draft.");
 			 */
 			(async () => {
 				var overwrite = await prompts({
-					type: "confirm",
+					type: "toggle",
 					name: "confirmed",
-					message: "Movie list exists for this draft. Overwrite?"
+					message: () => {
+						console.log("Draft found. It may already have an existing movie list. You can edit the list using the edit_movies script.\nIf you continue, you will overwrite the existing list.");
+						return "Stop now, or continue with overwrite?";
+					},
+					active: "Continue (Overwrite)",
+					inactive: "Stop"
 				});
 				if (!overwrite) {
 					console.error("Unable to get response");
 					process.exit(1);
 				}
-				if (overwrite.confirmed == false) {
-					console.log("Movie list creation halted.");
-					process.exit(1);
-				} else {
+				if (overwrite.confirmed) {
 					db.remove(draft, {
 						multi: true
 					}, function (err, count) {
@@ -133,8 +140,8 @@ console.log("This will overwrite any existing movie list on the draft.");
 					});
 
 					/*
-					 * Loop until user indicates movie entry is done, then write the info to the
-					 * movie doc.
+					 * Loop until user indicates movie entry is done, then write
+					 * the info to the movie doc.
 					 */
 					var movies = [];
 
@@ -151,7 +158,7 @@ console.log("This will overwrite any existing movie list on the draft.");
 						movie.year = draft.year;
 						movie._id = helpers.makeID([draft.season, draft.year, movie.name]);
 						movies.push(movie);
-						console.log("    Movies so far: " + movies.length + "\n");
+						console.log("\tMovies so far: " + movies.length);
 
 						if (finished) {
 							// add order to movies array
@@ -159,7 +166,7 @@ console.log("This will overwrite any existing movie list on the draft.");
 							console.log(movies);
 							db.insert(movies, function (err) {
 								if (err) {
-									console.log("Unable to insert movies into draft database: ", err);
+									console.log("Unable to insert movies into draft database: "+err);
 									process.exit(1);
 								}
 								console.log("Movies added to draft.");
@@ -168,6 +175,11 @@ console.log("This will overwrite any existing movie list on the draft.");
 							getMovie();
 						}
 					})();
+				}
+				/* User opted not to overwrite movie list */
+				else {
+					console.log("Movie list creation halted.");
+					process.exit(1);
 				}
 			})();
 		}
