@@ -44,13 +44,13 @@ Insert draft and movie information into the database with CLI scripts prior to r
 Example:
 ```
 cd draft/cli
-node create_draft.js
+node createDraft.js
 ```
 
-## create_draft.js
+## createDraft.js
 Inserts a movie draft game in the database. You'll need to enter the season (`summer` or `winter`), the year, and the dates that the different phases start and stop.
 
-## add_movies.js
+## addMovies.js
 Adds movies to an existing draft. This is the most time-consuming part. You'll need to have the following for each film:
 * Title
 * Release date
@@ -58,7 +58,7 @@ Adds movies to an existing draft. This is the most time-consuming part. You'll n
 * YouTube ID for the film’s trailer
 * Poster image URL
 
-## edit_movies.js
+## editMovies.js
 Prompts for an existing draft, then cycles through the draft's movies one field at a time to make changes as desired.
 
 #### Special Note

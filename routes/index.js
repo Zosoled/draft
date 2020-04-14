@@ -14,7 +14,7 @@ db.value = new Datastore({ filename: 'data/value.nedb', autoload: true })
 router.get('/', function (req, res, next) {
   var selectionDraft = helpers.currentDraft()
 
-  db.movie.find(selectionDraft).sort({ release_date: 1 }).exec(function (err, movieDocs) {
+  db.movie.find(selectionDraft).sort({ releaseDate: 1 }).exec(function (err, movieDocs) {
     if (err) { console.error('Unable to get movie documents', err); process.exit(1) };
     console.log(selectionDraft)
     console.log(movieDocs)
@@ -27,14 +27,14 @@ router.get('/', function (req, res, next) {
       var currentDraft = {}
       currentDraft.season = selectionDraft.season
       currentDraft.year = selectionDraft.year
-      currentDraft.draft_start = draftDoc.draft_start
-      currentDraft.draft_end = draftDoc.draft_end
-      currentDraft.season_start = draftDoc.season_start
-      currentDraft.season_end = draftDoc.season_end
+      currentDraft.draftStart = draftDoc.draftStart
+      currentDraft.draftEnd = draftDoc.draftEnd
+      currentDraft.seasonStart = draftDoc.seasonStart
+      currentDraft.seasonEnd = draftDoc.seasonEnd
 
       db.team.find(selectionDraft).exec(function (err, teamDocs) {
         if (err) { console.error('Unable to get team documents', err); process.exit(1) }
-        res.render('index', { title: 'IDX Movie Draft', movies: movieDocs, current_draft: currentDraft, teams: teamDocs })
+        res.render('index', { title: 'IDX Movie Draft', movies: movieDocs, currentDraft: currentDraft, teams: teamDocs })
       })
     })
   })
@@ -50,36 +50,36 @@ router.get('/team/' + ':id', function (req, res, next) {
     if (draftDoc === null) {
       res.render('team', { title: 'Team not found', found: false })
     } else {
-      db.movie.find(selectionDraft).sort({ release_date: 1 }).exec(function (err, movieDocs) {
+      db.movie.find(selectionDraft).sort({ releaseDate: 1 }).exec(function (err, movieDocs) {
         if (err) { console.error('Unable to get movie documents', err); process.exit(1) }
         db.team.findOne({ _id: teamId }, function (err, teamDoc) {
           if (err) { console.error('Unable to get team', err); process.exit(1) }
           var found = false
           var title = 'Team not found'
           var ownerList = {}
-          teamDoc.sort({ release_date: 1 }).exec(function (err, teamDoc) {
+          teamDoc.sort({ releaseDate: 1 }).exec(function (err, teamDoc) {
             if (err) { console.error('Unable to sort teams', err); process.exit(1) }
             if (teamDoc !== null) {
               found = true
-              title = teamDoc.team_name
+              title = teamDoc.teamName
 
               for (var i = 0; i < teamDoc.member.length; i++) {
                 // compute total gross for each person in the team
-                teamDoc.member[i].total_gross = 0
+                teamDoc.member[i].totalGross = 0
 
                 if (teamDoc.member[i].movies) {
                   for (var j = 0; j < teamDoc.member[i].movies.length; j++) {
                     console.log(teamDoc.member[i].movies)
                     for (var k = 0; k < movieDocs.length; k++) {
-                      if (movieDocs[k]._id === teamDoc.member[i].movies[j].movie_id) {
-                        if (movieDocs[k].last_gross) {
-                          teamDoc.member[i].total_gross += (movieDocs[k].last_gross * (teamDoc.member[i].movies[j].percent / 100))
+                      if (movieDocs[k]._id === teamDoc.member[i].movies[j].movieId) {
+                        if (movieDocs[k].lastGross) {
+                          teamDoc.member[i].totalGross += (movieDocs[k].lastGross * (teamDoc.member[i].movies[j].percent / 100))
                         }
                       }
                     }
 
-                    ownerList[teamDoc.member[i].movies[j].movie_id] = {
-                      member_name: teamDoc.member[i].name,
+                    ownerList[teamDoc.member[i].movies[j].movieId] = {
+                      memberName: teamDoc.member[i].name,
                       bid: teamDoc.member[i].movies[j].bid,
                       percent: teamDoc.member[i].movies[j].percent
                     }
@@ -88,7 +88,7 @@ router.get('/team/' + ':id', function (req, res, next) {
               }
             }
           })
-          res.render('team', { title: title, found: found, draft: draftDoc, team: teamDoc, movies: movieDocs, winner_info: ownerList, show_gross: true })
+          res.render('team', { title: title, found: found, draft: draftDoc, team: teamDoc, movies: movieDocs, winnerInfo: ownerList, showGross: true })
         })
       })
     }
@@ -97,7 +97,7 @@ router.get('/team/' + ':id', function (req, res, next) {
 
 // process form submit from the draft page
 router.post('/draft', function (req, res, next) {
-  var teamId = req.body.team_id
+  var teamId = req.body.teamId
   var info = teamId.split('-')
   var draftSeason = info[0]
   var draftYear = info[1]
@@ -116,7 +116,7 @@ router.post('/draft', function (req, res, next) {
           res.statusCode = 400
           res.send({})
         } else {
-          teamDoc.draft_position = parseInt(teamDoc.draft_position) + 1
+          teamDoc.draftPosition = parseInt(teamDoc.draftPosition) + 1
 
           // make sure we have a valid percentage
           var percent = (req.body.percent) ? req.body.percent : 100
@@ -135,15 +135,15 @@ router.post('/draft', function (req, res, next) {
               }
 
               if (totalBux >= parseInt(req.body.bid)) {
-                teamDoc.member[i].movies.push({ movie_id: req.body.movie_id, bid: req.body.bid, percent: percent })
+                teamDoc.member[i].movies.push({ movieId: req.body.movieId, bid: req.body.bid, percent: percent })
                 hasBux = true
               }
             }
           }
 
           // if final movie then set the team doc value
-          if (parseInt(req.body.final_movie) === 1) {
-            teamDoc.draft_complete = true
+          if (parseInt(req.body.finalMovie) === 1) {
+            teamDoc.draftComplete = true
           }
 
           // no winner found or winner doesn't have enough money
@@ -173,30 +173,30 @@ router.post('/draft', function (req, res, next) {
 })
 
 // this is a sequential route used for drafting
-router.get('/draft/' + ':team_id' + '/' + ':movie_number', function (req, res, next) {
-  var info = req.params.team_id.split('-')
+router.get('/draft/' + ':teamId' + '/' + ':movieNumber', function (req, res, next) {
+  var info = req.params.teamId.split('-')
   var draftSeason = info[0]
   var draftYear = info[1]
-  var teamId = req.params.team_id
-  var movieNumber = parseInt(req.params.movie_number)
+  var teamId = req.params.teamId
+  var movieNumber = parseInt(req.params.movieNumber)
 
   // get the draft doc and make sure it's drafting time
   db.draft.findOne({ season: draftSeason, year: draftYear }, function (err, draftDoc) {
     if (err) { console.log('Unable to get draft', err) }
     if (draftDoc === null) {
-      res.render('draft', { title: 'Drafting: Draft Not Found', not_found: 'draft' })
+      res.render('draft', { title: 'Drafting: Draft Not Found', notFound: 'draft' })
     } else {
       // if we have a valid draft
       // find the requested team
       db.team.findOne({ _id: teamId }, function (err, teamDoc) {
         if (err) { console.log('Unable to get team', err) }
         if (teamDoc === null) {
-          res.render('draft', { title: 'Drafting: Team Not Found', not_found: 'team' })
+          res.render('draft', { title: 'Drafting: Team Not Found', notFound: 'team' })
         } else {
           // if we have a valid team
           // count the total movies this draft
           db.movie.count({ season: draftSeason, year: draftYear }, function (err, count) {
-            if (err) { res.render('draft', { title: 'Drafting: Movie Not Found', not_found: 'movie' }) }
+            if (err) { res.render('draft', { title: 'Drafting: Movie Not Found', notFound: 'movie' }) }
 
             var lastMovie = count - 1
             var finalMovie = 1
@@ -208,11 +208,11 @@ router.get('/draft/' + ':team_id' + '/' + ':movie_number', function (req, res, n
             db.movie.findOne({ season: draftSeason, year: draftYear, order: movieNumber }, function (err, movieDoc) {
               if (err) { console.log('Unable to get movie', err) }
               if (movieDoc === null) {
-                res.render('draft', { title: 'Drafting: Movie Not Found', not_found: 'movie' })
+                res.render('draft', { title: 'Drafting: Movie Not Found', notFound: 'movie' })
                 // if we have a valid movie
                 // render the full page content
               } else {
-                res.render('draft', { title: 'Drafting: ' + movieDoc.name, draft: draftDoc, movie: movieDoc, team: teamDoc, not_found: null, movie_number: movieNumber, final_movie: finalMovie, show_gross: false })
+                res.render('draft', { title: 'Drafting: ' + movieDoc.name, draft: draftDoc, movie: movieDoc, team: teamDoc, notFound: null, movieNumber: movieNumber, finalMovie: finalMovie, showGross: false })
               }
             })
           })
@@ -232,13 +232,13 @@ router.get('/add_team', function (req, res, next) {
     highlightRequired = true
   }
 
-  res.render('add_team', { title: 'Add a drafting team', current_draft: selectionDraft, highlight_required: highlightRequired })
+  res.render('add_team', { title: 'Add a drafting team', currentDraft: selectionDraft, highlightRequired: highlightRequired })
 })
 
 // add_team processor
 router.post('/add_team', function (req, res, next) {
   var required = [
-    req.body.team_name,
+    req.body.teamName,
     req.body.member[0],
     req.body.member[1],
     req.body.member[2]
@@ -268,7 +268,7 @@ router.post('/add_team', function (req, res, next) {
 
   // make the teams ID and add it to the body
   function makeID (body, callback) {
-    body._id = helpers.makeID([body.season, body.year, body.team_name])
+    body._id = helpers.makeID([body.season, body.year, body.teamName])
 
     if (typeof body._id !== 'string') {
       callback(new Error('Did not get string from makeID'), null)
@@ -307,8 +307,8 @@ router.post('/add_team', function (req, res, next) {
   // insert into the database
   function insertTeam (body, callback) {
     // one last set, adding draft tracking
-    body.draft_position = 0
-    body.draft_complete = false
+    body.draftPosition = 0
+    body.draftComplete = false
 
     db.team.insert(body, function (err) {
       if (err) { callback(new Error('Unable to insert team into database.' + err), null); process.exit(1) }

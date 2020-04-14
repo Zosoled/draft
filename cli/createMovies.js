@@ -44,29 +44,24 @@ const movieSchema = [{
 },
 {
   type: 'date',
-  name: 'release_date',
+  name: 'releaseDate',
   message: 'US Release Date',
   initial: new Date(),
   mask: 'YYYY-MM-DD'
 },
 {
   type: 'text',
-  name: 'bom_id',
-  message: 'Box Office Mojo ID'
-},
-{
-  type: 'text',
-  name: 'imdb_id',
+  name: 'imdbId',
   message: 'IMDb ID'
 },
 {
   type: 'text',
-  name: 'poster_url',
+  name: 'posterUrl',
   message: 'Poster URL'
 },
 {
   type: 'text',
-  name: 'yt_id',
+  name: 'ytId',
   message: 'YouTube trailer ID'
 },
 {
@@ -94,10 +89,10 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
       console.error('Unable to search database', err)
       process.exit(1)
     } else if (count < 1) {
-      console.error('Unable to find matching draft. Please use the create_draft script first.')
+      console.error('Unable to find matching draft. Please use the createDraft script first.')
       process.exit(1)
     } else if (count > 1) {
-      console.error('Found ' + count + ' matching drafts when only 1 should exist. Try using create_draft script to overwrite existing drafts.')
+      console.error('Found ' + count + ' matching drafts when only 1 should exist. Try using createDraft script to overwrite existing drafts.')
       process.exit(1)
     } else {
       /*
@@ -111,7 +106,7 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
           type: 'toggle',
           name: 'confirmed',
           message: () => {
-            console.log('Draft found. It may already have an existing movie list. You can edit the list using the edit_movies script.\nIf you continue, you will overwrite the existing list.')
+            console.log('Draft found. It may already have an existing movie list. You can edit the list using the editMovies script.\nIf you continue, you will overwrite the existing list.')
             return 'Stop now, or continue with overwrite?'
           },
           active: 'Continue (Overwrite)',

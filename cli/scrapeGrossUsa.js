@@ -37,7 +37,7 @@ db.movie.find(currentDraft, function (err, movies) {
 
     db.draft.update(currentDraft, {
       $set: {
-        last_scrape: now
+        lastScrape: now
       }
     }, {}, function (err, numUpdated) {
       if (err) {
@@ -54,7 +54,7 @@ db.movie.find(currentDraft, function (err, movies) {
     var openMovies = []
 
     for (var i = 0; i < movies.length; i++) {
-      if (now >= movies[i].release_date) {
+      if (now >= movies[i].releaseDate) {
         openMovies.push(movies[i])
       }
     }
@@ -74,7 +74,7 @@ db.movie.find(currentDraft, function (err, movies) {
 
         setTimeout(function () {
           // set the unique path for this movie
-          var moviePath = '/title/' + movie.imdb_id + '/'
+          var moviePath = '/title/' + movie.imdbId + '/'
 
           // set the options for the get request
           var options = {
@@ -99,8 +99,8 @@ db.movie.find(currentDraft, function (err, movies) {
 
                     var movieDoc = {
                       _id: now + '-' + movie._id,
-                      movie_id: movie._id,
-                      scrape_date: now,
+                      movieId: movie._id,
+                      scrapeDate: now,
                       gross: gross
                     }
 
@@ -141,7 +141,7 @@ db.movie.find(currentDraft, function (err, movies) {
                       _id: movie._id
                     }, {
                       $set: {
-                        last_gross: gross
+                        lastGross: gross
                       }
                     }, {}, function (err, numUpdated) {
                       if (err) {
@@ -152,7 +152,7 @@ db.movie.find(currentDraft, function (err, movies) {
                       console.log('Updated ' + numUpdated + ' movie documents')
 
                       // we write a tracking file. This will automatically cause the server to restart if using nodemon - this is desired behavior
-                      fs.writeFile(path.win32.resolve(__dirname, '../modules/scrape_track.js'), 'var scrape_track = {}; scrape_track.last_scrape = ' + now + '; module.exports = scrape_track;', function (err) {
+                      fs.writeFile(path.win32.resolve(__dirname, '../modules/scrapeTrack.js'), 'var scrapeTrack = {}; scrapeTrack.lastScrape = ' + now + '; module.exports = scrapeTrack;', function (err) {
                         if (err) {
                           console.log(err)
                         } else {

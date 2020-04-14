@@ -30,28 +30,28 @@ const schema = [{
 },
 {
   type: 'date',
-  name: 'draft_start',
+  name: 'draftStart',
   message: 'Drafting Start Date',
   initial: new Date(),
   mask: 'YYYY-MM-DD'
 },
 {
   type: 'date',
-  name: 'draft_end',
+  name: 'draftEnd',
   message: 'Drafting End Date',
   initial: prev => prev,
   mask: 'YYYY-MM-DD'
 },
 {
   type: 'date',
-  name: 'draft_end',
+  name: 'seasonStart',
   message: 'Season Start Date',
   initial: prev => prev,
   mask: 'YYYY-MM-DD'
 },
 {
   type: 'date',
-  name: 'draft_end',
+  name: 'seasonEnd',
   message: 'Season End Date',
   initial: prev => prev,
   mask: 'YYYY-MM-DD'

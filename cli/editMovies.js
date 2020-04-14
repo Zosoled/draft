@@ -53,12 +53,12 @@ const draftSchema = [{
 
     // if there are no docs the error out
     if (count !== 1) {
-      console.log('Unable to find appropriate draft. Please use the create_draft script first. Docs found: ' + count)
+      console.log('Unable to find appropriate draft. Please use the createDraft script first. Docs found: ' + count)
       process.exit(1)
     }
 
     db.find(draft).sort({
-      release_date: 1
+      releaseDate: 1
     }).exec((err, movieDocs) => {
       if (movieDocs.length === 0) {
         console.log('Did not find any movie documents. ', err)
@@ -76,34 +76,34 @@ const draftSchema = [{
         },
         {
           type: 'date',
-          name: 'release_date',
+          name: 'releaseDate',
           message: 'US Release Date',
-          initial: movie.release_date,
+          initial: movie.releaseDate,
           mask: 'YYYY-MM-DD'
         },
         {
           type: 'text',
-          name: 'bom_id',
+          name: 'bomId',
           message: 'Box Office Mojo ID',
-          initial: movie.bom_id
+          initial: movie.bomId
         },
         {
           type: 'text',
-          name: 'imdb_id',
+          name: 'imdbId',
           message: 'IMDb ID',
-          initial: movie.imdb_id
+          initial: movie.imdbId
         },
         {
           type: 'text',
-          name: 'poster_url',
+          name: 'posterUrl',
           message: 'Poster URL',
-          initial: movie.poster_url
+          initial: movie.posterUrl
         },
         {
           type: 'text',
-          name: 'yt_id',
+          name: 'ytId',
           message: 'YouTube trailer ID',
-          initial: movie.yt_id
+          initial: movie.ytId
         }
         ];
 
