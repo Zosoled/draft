@@ -85,7 +85,7 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
           type: 'toggle',
           name: 'confirmed',
           message: () => {
-            console.log('A draft exists for this season and year.\nIf you continue, you will overwrite the existing movie list.');
+            console.log('A draft exists for this season and year.\nIf you continue, you will overwrite the existing movie list.')
             return 'Stop now, or continue with overwrite?'
           },
           active: 'Continue (Overwrite)',
