@@ -45,3 +45,4 @@ jspm_packages
 
 # IDE
 .vscode/
+.code-workspace
