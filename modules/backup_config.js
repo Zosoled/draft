@@ -1,11 +1,11 @@
-var config = {};
-
-config.fs = {};
-config.fs.data_path = __dirname + '/../data';
+const path = require('path')
+var config = {}
+config.fs = {}
+config.fs.data_path = path.win32.resolve(__dirname, '../data')
 config.fs.tmp_dest = '/tmp'
 
-config.aws = {};
-config.aws.bucket = '';
-config.aws.folder = 'movie_draft';
+config.aws = {}
+config.aws.bucket = 'a'
+config.aws.folder = 'movie_draft'
 
-module.exports = config;
+module.exports = config
