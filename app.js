@@ -51,18 +51,20 @@ app.use(function (err, req, res, next) {
   })
 })
 
-// format a YYYYMMDD string to a human friendly date
-app.locals.prettyDate = function (d) {
-  return d instanceof Date
-    ? d.toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    })
-    : d
+/**
+ * Converts a date to a human-friendly version.
+ * @param {date}
+*/
+app.locals.prettyDate = function (dateToConvert) {
+  if (!(dateToConvert instanceof Date)) throw new TypeError('Argument is not a Date')
+  return dateToConvert.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  })
 }
 
-// function to total up movie spend for a member
+/** Returns sum of bid amounts by a member. */
 app.locals.totalMemberMovies = function (movies) {
   var total = 0
   for (var i = 0; i < movies.length; i++) {
