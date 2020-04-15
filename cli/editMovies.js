@@ -116,7 +116,7 @@ const draftSchema = [{
           }
           movie.season = draft.season
           movie.year = draft.year
-          movie._id = helpers.makeID([draft.season, draft.year, movie.name])
+          movie._id = helpers.makeId([draft.season, draft.year, movie.name])
           editedMovies.push(movie)
 
           if (movieDocs.length > 0) {

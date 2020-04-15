@@ -143,7 +143,7 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
             delete movie.done
             movie.season = draft.season
             movie.year = draft.year
-            movie._id = helpers.makeID([draft.season, draft.year, movie.name])
+            movie._id = helpers.makeId([draft.season, draft.year, movie.name])
             movies.push(movie)
             console.log('\tMovies so far: ' + movies.length)
 

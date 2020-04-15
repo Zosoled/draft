@@ -252,7 +252,7 @@ router.post('/add_team', function (req, res, next) {
 
   // there's a number of steps we want to do in series
   async.waterfall([
-    async.apply(makeID, req.body),
+    async.apply(makeId, req.body),
     checkName,
     translateMembers,
     insertTeam
@@ -267,11 +267,11 @@ router.post('/add_team', function (req, res, next) {
   })
 
   // make the teams ID and add it to the body
-  function makeID (body, callback) {
-    body._id = helpers.makeID([body.season, body.year, body.teamName])
+  function makeId (body, callback) {
+    body._id = helpers.makeId([body.season, body.year, body.teamName])
 
     if (typeof body._id !== 'string') {
-      callback(new Error('Did not get string from makeID'), null)
+      callback(new Error('Did not get string from makeId'), null)
     } else {
       callback(null, body)
     }
@@ -297,7 +297,7 @@ router.post('/add_team', function (req, res, next) {
     for (var i = 0; i < 8; i++) {
       // remove empty elements
       if (typeof body.member[i] === 'string' && body.member[i].length !== 0) {
-        members.push({ _id: helpers.makeID(body.member[i]), name: body.member[i], movies: [] })
+        members.push({ _id: helpers.makeId(body.member[i]), name: body.member[i], movies: [] })
       }
     }
     body.member = members

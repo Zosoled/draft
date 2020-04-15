@@ -11,7 +11,7 @@ if (config.aws.bucket === '') {
 }
 
 // gzip all nedb files in the data directory to temp
-fs.readdir(config.fs.data_path, function (err, files) {
+fs.readdir(config.fs.dataPath, function (err, files) {
   if (err) {
     console.log('An error has occured reading the data directory', err)
     process.exit(1)
@@ -19,7 +19,7 @@ fs.readdir(config.fs.data_path, function (err, files) {
 
   for (var i = 0; i < files.length; i++) {
     if (files[i].match(/nedb$/)) {
-      var ipFile = config.fs.data_path + '/' + files[i]
+      var ipFile = config.fs.dataPath + '/' + files[i]
       var opFile = config.aws.folder + '/' + files[i] + '.gz'
       console.log('zipping and uploading ' + files[i])
 
