@@ -2,11 +2,11 @@ const AWS = require('aws-sdk')
 const fs = require('fs')
 const zlib = require('zlib')
 const path = require('path')
-const config = require(path.win32.resolve(__dirname, '../modules/backup_config.js'))
+const config = require(path.win32.resolve(__dirname, '../modules/backupConfig.js')
 
 // make sure there is a bucket
 if (config.aws.bucket === '') {
-  console.log('No S3 bucket name set in modules/backup_config.js')
+  console.log('No S3 bucket name set in modules/backupConfig.js')
   process.exit(1)
 }
 

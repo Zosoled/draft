@@ -53,8 +53,8 @@ app.use(function (err, req, res, next) {
 
 /**
  * Converts a date to a human-friendly version.
- * @param {date}
-*/
+ * @param {Date} dateToConvert
+ */
 app.locals.prettyDate = function (dateToConvert) {
   if (!(dateToConvert instanceof Date)) throw new TypeError('Argument is not a Date')
   return dateToConvert.toLocaleDateString(undefined, {
