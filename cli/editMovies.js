@@ -101,9 +101,9 @@ const draftSchema = [{
         },
         {
           type: 'text',
-          name: 'ytId',
+          name: 'youtubeId',
           message: 'YouTube trailer ID',
-          initial: movie.ytId
+          initial: movie.youtubeId
         }
         ];
 

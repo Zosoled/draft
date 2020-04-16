@@ -61,7 +61,7 @@ const movieSchema = [{
 },
 {
   type: 'text',
-  name: 'ytId',
+  name: 'youtubeId',
   message: 'YouTube trailer ID'
 },
 {
