@@ -1,7 +1,7 @@
 extends layout
 
 block content
-    - var c_date = today();
+    - var today = new Date()
     div#body_container
         div#body_left
             h2 Movies
@@ -22,9 +22,9 @@ block content
                                 td
                                     a(href="/team/" + team._id) #{team.team_name}
                                 td #{team.member.length}
-                                if team.draft_complete === false
-                                    if c_date >= current_draft.draft_start && c_date <= current_draft.draft_end 
-                                        if team.draft_position == 0
+                                if team.draftComplete === false
+                                    if today >= currentDraft.draftStart && today <= currentDraft.draftEnd 
+                                        if team.draftPosition == 0
                                             td
                                                 a(href="/draft/" + team._id + "/0/") Not Started
                                         else
@@ -33,14 +33,14 @@ block content
                                     else
                                         td Incomplete
                                 else
-                                        if c_date > current_draft.draft_end 
+                                        if today > currentDraft.draftEnd 
                                             td
                                                 a(href="/draft/" + team._id + "/0/") Draft Complete
                                         else
                                             td Draft Complete
                                 td None
 
-            if c_date >= current_draft.draft_start && c_date <= current_draft.draft_end 
+            if today >= currentDraft.draftStart && today <= currentDraft.draftEnd 
                 div#team_action
                     br
                     a#add_team_button(href='/add_team') Add Team

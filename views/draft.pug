@@ -7,7 +7,7 @@ block content
             h2 Not Found
             p We were unable to find this #{not_found}
         else
-            - var c_date = today();
+            - var today = new Date()
             div#movie_display
                 div#movie_title
                 div#movie_poster
@@ -18,8 +18,8 @@ block content
                 div#movie_info
 
                     div#set_price
-                        if team.draft_position > movie_number
-                            if c_date >= draft.draft_start && c_date <= draft.draft_end
+                        if team.draftPosition > movieNumber
+                            if today >= draft.draftStart && today <= draft.draftEnd
                                 h3 Sale information redacted until the draft period ends
                             else
                                 h3 Movie Stats
@@ -37,7 +37,7 @@ block content
                                                     td #{this_movie.percent}
                                 br
                         else
-                            if c_date >= draft.draft_start && c_date <= draft.draft_end
+                            if today >= draft.draftStart && today <= draft.draftEnd
                                 h3 Finalize Price
                                 form#set_price_form
                                     input(type="hidden", name="movie_id", value=movie._id)

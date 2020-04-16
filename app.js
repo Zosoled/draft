@@ -73,12 +73,6 @@ app.locals.totalMemberMovies = function (movies) {
   return total
 }
 
-/** Returns today's date as a string value in ISO format. Excludes time. */
-app.locals.today = function () {
-  var d = new Date()
-  return d.toISOString().slice(0, 10)
-}
-
 app.locals.h_num = function (number) {
   number = Math.round(Number(number))
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
