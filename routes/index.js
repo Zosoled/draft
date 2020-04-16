@@ -16,8 +16,6 @@ router.get('/', function (req, res, next) {
 
   db.movie.find(selectionDraft).sort({ releaseDate: 1 }).exec(function (err, movieDocs) {
     if (err) { console.error('Unable to get movie documents', err); process.exit(1) };
-    console.log(selectionDraft)
-    console.log(movieDocs)
 
     // get the draft details as well
     db.draft.findOne(selectionDraft, function (err, draftDoc) {
@@ -69,7 +67,6 @@ router.get('/team/' + ':id', function (req, res, next) {
 
                 if (teamDoc.member[i].movies) {
                   for (var j = 0; j < teamDoc.member[i].movies.length; j++) {
-                    console.log(teamDoc.member[i].movies)
                     for (var k = 0; k < movieDocs.length; k++) {
                       if (movieDocs[k]._id === teamDoc.member[i].movies[j].movieId) {
                         if (movieDocs[k].lastGross) {
@@ -225,12 +222,7 @@ router.get('/draft/' + ':teamId' + '/' + ':movieNumber', function (req, res, nex
 // team addtions page
 router.get('/add_team', function (req, res, next) {
   var selectionDraft = helpers.currentDraft()
-
-  // create a bool to decide if required fields should be highlighted
-  var highlightRequired = false
-  if (req.query.required) {
-    highlightRequired = true
-  }
+  var highlightRequired = req.query.required
 
   res.render('add_team', { title: 'Add a drafting team', currentDraft: selectionDraft, highlightRequired: highlightRequired })
 })
@@ -257,8 +249,8 @@ router.post('/add_team', function (req, res, next) {
     translateMembers,
     insertTeam
   ],
-  function (errs, finalRes) {
-    if (errs) { console.log('An error has occured ', errs); process.exit(1) }
+  function (err, finalRes) {
+    if (err) { console.log('An error has occured ', err); process.exit(1) }
 
     if (typeof finalRes === 'object') {
       res.statusCode = 200

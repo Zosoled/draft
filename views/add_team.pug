@@ -4,22 +4,22 @@ block content
     div#body_container
         div#add_team_section
             h2 Add Drafting Team
-            h3 #{current_draft.season.charAt(0).toUpperCase()+current_draft.season.slice(1)} #{current_draft.year}
+            h3 #{currentDraft.season.charAt(0).toUpperCase()+currentDraft.season.slice(1)} #{currentDraft.year}
             p At least three (3) members are required.
         
             form(method='post', id='add_team_form')
-                input(type='hidden', name='season', value= current_draft.season)
-                input(type='hidden', name='year', value= current_draft.year)
+                input(type='hidden', name='season', value=currentDraft.season)
+                input(type='hidden', name='year', value=currentDraft.year)
                 div#team_name_input
                     label(for="team_name") Team Name: &nbsp;
-                    input(id='team_name', name='team_name', class= highlight_required == true ? "required" : "")
+                    input(id='team_name', name='team_name', class=(highlightRequired ? "required" : ""))
                     - var i = 0
                     while i < 3
                         - j = i
                         - i++
                             div(id= 'member_' + i)
                                 label Member #{i}: &nbsp;
-                                input(id= 'member_input_' + i, name='member', class= highlight_required == true ? "required" : "") 
+                                input(id= 'member_input_' + i, name='member', class=(highlightRequired ? "required" : ""))
                     while i < 8
                         - j = i
                         - i++
@@ -45,36 +45,36 @@ block script
             $("#add_team_form").submit(function(e){
                 e.preventDefault();
 
-                var min_members = 3;
-                var required_ids = [{ _id: 'team_name', type: 'string' }];
-                for (var i = 1; i <= min_members; i++) {
-                    required_ids.push({ _id: 'member_input_'+i, type: 'string' });
+                var minMembers = 3;
+                var requiredIds = [{ _id: 'team_name', type: 'string' }];
+                for (var i = 1; i <= minMembers; i++) {
+                    requiredIds.push({ _id: 'member_input_'+i, type: 'string' });
                 }
 
-                required = required_fields(required_ids);
+                required = requiredFields(requiredIds);
                 if (typeof required == 'string') {
                     $('#'+required).addClass('required');
                 }
                 else {
-                    var json_data = $("#add_team_form").serializeArray();
+                    var jsonData = $("#add_team_form").serializeArray();
                     $.ajax({
                         type: "POST",
                         url: '/add_team',
-                        data: json_data,
+                        data: jsonData,
                         success: function() {
                             var elms = new Array;
                             for (var i = 0; i <= 2; i++) {
-                                elms.push(json_data[i].value.replace(/\s+/g,"_").replace(/[^a-zA-Z0-9_]/,""));
+                                elms.push(jsonData[i].value.replace(/\s+/g,"_").replace(/[^a-zA-Z0-9_]/,""));
                             }
-                            var draft_url = "/draft/"+elms.join('-')+"/0/";
-                            $('#draft_url').prop('href',draft_url);
+                            var draftUrl = "/draft/"+elms.join('-')+"/0/";
+                            $('#draft_url').prop('href',draftUrl);
                             $('#add_team_section').css('display','none');
                             $('#success_section').css('display','block');
                         },
                         error: function() {
                             alert('An error occured processing this request.');
-                            for (var i; i <= required_ids.length; i++) {
-                                $('#'+required_id[i]).addClass('required');
+                            for (var i; i <= requiredIds.length; i++) {
+                                $('#'+requiredIds[i]).addClass('required');
                             }
                         },
                         dataType: 'json'

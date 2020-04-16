@@ -22,24 +22,24 @@ html
             $(document).ready(function() {
                 // this block is a simple handler for iframe display
                 // to be used for youtube links
-                $('.yt_link').click(function() {
-                    var yt_url = 'https://www.youtube.com/embed/' + $(this).attr('yt_id');
-                    open_info(yt_url);
+                $('.video_link').click(function() {
+                    var videoUrl = 'https://www.youtube.com/embed/' + $(this).attr('youtubeId');
+                    openInfo(videoUrl);
                 });
                 $('#full_screen_close').click(function() {
-                    close_yt();
+                    closeVideo();
                 });
                 $(window, $('iframe#full_screen_window')).keyup(function(e) {
                     if (e.keyCode == 27) { // Esc
-                        close_yt();
+                        closeVideo();
                     }
                 });
-                function open_info(url) {
+                function openInfo(url) {
                     $('#full_screen_window').attr('src', url);
                     $('#full_screen_window').css('display','block');
                     $('#full_screen_close').css('display','block');
                 }
-                function close_yt() {
+                function closeVideo() {
                     $('#full_screen_window').attr('src', "");
                     $('#full_screen_window').css('display','none');
                     $('#full_screen_close').css('display','none');
@@ -48,16 +48,16 @@ html
             });
 
             // simple function for checking required fields
-            function required_fields(f_array) {
-                for (var i = 0; i < f_array.length; i++) {
-                    if (f_array[i].type == 'number') {
-                        if (isNaN($('#'+f_array[i]._id).val())) {
-                            return f_array[i]._id;
+            function requiredFields(fieldArray) {
+                for (var i = 0; i < fieldArray.length; i++) {
+                    if (fieldArray[i].type == 'number') {
+                        if (isNaN($('#'+fieldArray[i]._id).val())) {
+                            return fieldArray[i]._id;
                         }    
                     }
-                    else if (f_array[i].type == 'string') {
-                        if ($('#'+f_array[i]._id).val() == '') {
-                            return f_array[i]._id;
+                    else if (fieldArray[i].type == 'string') {
+                        if ($('#'+fieldArray[i]._id).val() == '') {
+                            return fieldArray[i]._id;
                         }
                     }
                 } 
