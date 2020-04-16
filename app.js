@@ -65,7 +65,7 @@ app.locals.prettyDate = function (dateToConvert) {
 }
 
 /** Returns sum of bid amounts by a member. */
-app.locals.totalMemberMovies = function (movies) {
+app.locals.totalMemberMovies = movies => {
   var total = 0
   for (var i = 0; i < movies.length; i++) {
     total += parseInt(movies[i].bid)
@@ -73,7 +73,7 @@ app.locals.totalMemberMovies = function (movies) {
   return total
 }
 
-app.locals.h_num = function (number) {
+app.locals.addCommasToNumber = number => {
   number = Math.round(Number(number))
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
