@@ -20,8 +20,8 @@ helpers.makeId = function (itemsToConcatenate) {
 helpers.shuffle = function (arrayToShuffle) {
   if (!arrayToShuffle || !arrayToShuffle.length) throw new TypeError('Invalid argument')
   for (let i = arrayToShuffle.length; i > 0; i--) {
-    let j = Math.floor(Math.random() * i)
-    let x = arrayToShuffle[i - 1]
+    const j = Math.floor(Math.random() * i)
+    const x = arrayToShuffle[i - 1]
     arrayToShuffle[i - 1] = arrayToShuffle[j]
     arrayToShuffle[j] = x
   }
