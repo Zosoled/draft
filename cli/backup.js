@@ -2,7 +2,7 @@ const AWS = require('aws-sdk')
 const fs = require('fs')
 const zlib = require('zlib')
 const path = require('path')
-const config = require(path.win32.resolve(__dirname, '../modules/backupConfig.js')
+const config = require(path.win32.resolve(__dirname, '../modules/backupConfig.js'))
 
 // make sure there is a bucket
 if (config.aws.bucket === '') {
