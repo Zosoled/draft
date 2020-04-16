@@ -21,31 +21,15 @@ helpers.makeID = function (thing) {
   return thing.join('-')
 }
 
-helpers.addRandomOrderElement = function (movies) {
-  function shuffle (a) {
-    var j, x, i
-    for (i = a.length; i; i -= 1) {
-      j = Math.floor(Math.random() * i)
-      x = a[i - 1]
-      a[i - 1] = a[j]
-      a[j] = x
-    }
-
-    return a
+/** Shuffles the order of items in an array. */
+helpers.shuffle = function (arrayToShuffle) {
+  if (!arrayToShuffle || !arrayToShuffle.length) throw new TypeError('Invalid argument')
+  for (let i = arrayToShuffle.length; i > 0; i--) {
+    let j = Math.floor(Math.random() * i)
+    let x = arrayToShuffle[i - 1]
+    arrayToShuffle[i - 1] = arrayToShuffle[j]
+    arrayToShuffle[j] = x
   }
-
-  // first make an array of orders the same size
-  var movieOrder = []
-  for (let i = 0; i < movies.length; i++) {
-    movieOrder.push(i)
-  }
-  movieOrder = shuffle(movieOrder)
-
-  for (let i = 0; i < movies.length; i++) {
-    movies[i].order = movieOrder[i]
-  }
-
-  return movies
 }
 
 module.exports = helpers

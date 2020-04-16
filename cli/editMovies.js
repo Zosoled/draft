@@ -130,7 +130,7 @@ const draftSchema = [{
                 console.log('Unable to remove old movies', err)
                 process.exit(1)
               }
-              editedMovies = helpers.addRandomOrderElement(editedMovies)
+              helpers.shuffle(editedMovies)
               db.insert(editedMovies, function (err) {
                 if (err) {
                   console.log('Unable to insert edited movies into draft database. ', err)

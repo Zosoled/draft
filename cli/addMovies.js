@@ -149,7 +149,7 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
 
             if (finished) {
               // add order to movies array
-              movies = helpers.addRandomOrderElement(movies)
+              helpers.shuffle(movies)
               console.log(movies)
               db.insert(movies, function (err) {
                 if (err) {
