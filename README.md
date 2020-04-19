@@ -48,7 +48,7 @@ node createDraft.js
 ```
 
 ## createDraft.js
-Inserts a movie draft game in the database. You'll need to enter the season (`summer` or `winter`), the year, and the dates that the different phases start and stop.
+Inserts a movie draft game in the database. You'll need to enter the season (`Summer` or `Winter`), the year, and the dates that the different phases start and stop.
 
 ## addMovies.js
 Adds movies to an existing draft. This is the most time-consuming part. You'll need to have the following for each film:

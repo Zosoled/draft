@@ -12,11 +12,11 @@ const schema = [{
   message: 'Pick a season',
   choices: [{
     title: 'Summer',
-    value: 'summer'
+    value: 'Summer'
   },
   {
     title: 'Winter',
-    value: 'winter'
+    value: 'Winter'
   }
   ]
 },

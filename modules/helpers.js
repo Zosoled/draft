@@ -2,7 +2,7 @@ var helpers = {}
 
 /** Get the current draft */
 helpers.currentDraft = function () {
-  return { season: 'summer', year: 2020 }
+  return { season: 'Summer', year: 2020 }
 }
 
 /** Concatenates an array of items into a URL-friendly pseudo-ID string */

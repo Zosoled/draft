@@ -50,7 +50,7 @@ router.get('/team/' + ':id', function (req, res, next) {
     } else {
       db.movie.find(selectionDraft).sort({ releaseDate: 1 }).exec(function (err, movieDocs) {
         if (err) { console.error('Unable to get movie documents', err); process.exit(1) }
-        db.team.findOne({ _id: teamId }, function (err, teamDoc) {
+        db.team.findOne({ id: teamId }, function (err, teamDoc) {
           if (err) { console.error('Unable to get team', err); process.exit(1) }
           var found = false
           var title = 'Team not found'
@@ -68,7 +68,7 @@ router.get('/team/' + ':id', function (req, res, next) {
                 if (teamDoc.member[i].movies) {
                   for (var j = 0; j < teamDoc.member[i].movies.length; j++) {
                     for (var k = 0; k < movieDocs.length; k++) {
-                      if (movieDocs[k]._id === teamDoc.member[i].movies[j].movieId) {
+                      if (movieDocs[k].id === teamDoc.member[i].movies[j].movieId) {
                         if (movieDocs[k].lastGross) {
                           teamDoc.member[i].totalGross += (movieDocs[k].lastGross * (teamDoc.member[i].movies[j].percent / 100))
                         }
@@ -107,7 +107,7 @@ router.post('/draft', function (req, res, next) {
       res.send({})
     } else {
       // draft valid, get team from the information
-      db.team.findOne({ _id: teamId }, function (err, teamDoc) {
+      db.team.findOne({ id: teamId }, function (err, teamDoc) {
         if (err) { console.error('Unable to get team', err); process.exit(1) }
         if (teamDoc == null) {
           res.statusCode = 400
@@ -122,7 +122,7 @@ router.post('/draft', function (req, res, next) {
           var winnerFound = false
           var hasBux = false
           for (var i = 0; i < teamDoc.member.length; i++) {
-            if (teamDoc.member[i]._id === req.body.winner) {
+            if (teamDoc.member[i].id === req.body.winner) {
               winnerFound = true
 
               // total the existing bids for this member make sure it's greater than or equal to the bid
@@ -152,7 +152,7 @@ router.post('/draft', function (req, res, next) {
             res.send({})
           } else {
             // winner found
-            db.team.update({ _id: teamDoc._id }, teamDoc, null, function (err) {
+            db.team.update({ id: teamDoc.id }, teamDoc, null, function (err) {
               if (err) {
                 console.log(err)
                 res.statusCode = 400
@@ -185,7 +185,7 @@ router.get('/draft/' + ':teamId' + '/' + ':movieNumber', function (req, res, nex
     } else {
       // if we have a valid draft
       // find the requested team
-      db.team.findOne({ _id: teamId }, function (err, teamDoc) {
+      db.team.findOne({ id: teamId }, function (err, teamDoc) {
         if (err) { console.log('Unable to get team', err) }
         if (teamDoc === null) {
           res.render('draft', { title: 'Drafting: Team Not Found', notFound: 'team' })
@@ -260,9 +260,9 @@ router.post('/add_team', function (req, res, next) {
 
   // make the teams ID and add it to the body
   function makeId (body, callback) {
-    body._id = helpers.makeId([body.season, body.year, body.teamName])
+    body.id = helpers.makeId([body.season, body.year, body.teamName])
 
-    if (typeof body._id !== 'string') {
+    if (typeof body.id !== 'string') {
       callback(new Error('Did not get string from makeId'), null)
     } else {
       callback(null, body)
@@ -271,7 +271,7 @@ router.post('/add_team', function (req, res, next) {
 
   // check to see if the name is taken
   function checkName (body, callback) {
-    db.team.count({ _id: body._id }).exec(function (err, count) {
+    db.team.count({ id: body.id }).exec(function (err, count) {
       if (err) {
         callback(err, null)
       } else if (count !== 0) {
@@ -289,7 +289,7 @@ router.post('/add_team', function (req, res, next) {
     for (var i = 0; i < 8; i++) {
       // remove empty elements
       if (typeof body.member[i] === 'string' && body.member[i].length !== 0) {
-        members.push({ _id: helpers.makeId(body.member[i]), name: body.member[i], movies: [] })
+        members.push({ id: helpers.makeId(body.member[i]), name: body.member[i], movies: [] })
       }
     }
     body.member = members

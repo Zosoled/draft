@@ -20,27 +20,27 @@ block content
                         each team in teams
                             tr
                                 td
-                                    a(href="/team/" + team._id) #{team.teamName}
+                                    a(href="/team/" + team.id) #{team.teamName}
                                 td #{team.member.length}
                                 if team.draftComplete === false
-                                    if today >= currentDraft.draftStart && today <= currentDraft.draftEnd 
+                                    if currentDraft.draftStart <= today && today <= currentDraft.draftEnd 
                                         if team.draftPosition == 0
                                             td
-                                                a(href="/draft/" + team._id + "/0/") Not Started
+                                                a(href="/draft/" + team.id + "/0/") Not Started
                                         else
                                             td
-                                                a(href="/draft/" + team._id + "/" + team.draftPosition + "/") Incomplete
+                                                a(href="/draft/" + team.id + "/" + team.draftPosition + "/") Incomplete
                                     else
                                         td Incomplete
                                 else
-                                        if today > currentDraft.draftEnd 
+                                        if currentDraft.draftEnd < today
                                             td
-                                                a(href="/draft/" + team._id + "/0/") Draft Complete
+                                                a(href="/draft/" + team.id + "/0/") Draft Complete
                                         else
                                             td Draft Complete
                                 td None
 
-            if today >= currentDraft.draftStart && today <= currentDraft.draftEnd 
+            if currentDraft.draftStart <= today && today <= currentDraft.draftEnd 
                 div#team_action
                     br
                     a#add_team_button(href='/add_team') Add Team

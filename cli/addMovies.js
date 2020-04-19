@@ -18,11 +18,11 @@ const draftSchema = [{
   message: 'Pick a season',
   choices: [{
     title: 'Summer',
-    value: 'summer'
+    value: 'Summer'
   },
   {
     title: 'Winter',
-    value: 'winter'
+    value: 'Winter'
   }
   ]
 },
@@ -154,7 +154,7 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
             delete movie.done
             movie.season = draft.season
             movie.year = draft.year
-            movie._id = helpers.makeId([draft.season, draft.year, movie.name])
+            movie.id = helpers.makeId([draft.season, draft.year, movie.name])
             movies.push(movie)
             console.log('\tMovies so far: ' + movies.length)
 

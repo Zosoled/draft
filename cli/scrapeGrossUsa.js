@@ -98,14 +98,14 @@ db.movie.find(currentDraft, function (err, movies) {
                     console.log(movie.name + ' gross: ' + gross)
 
                     var movieDoc = {
-                      _id: now + '-' + movie._id,
-                      movieId: movie._id,
+                      id: now + '-' + movie.id,
+                      movieId: movie.id,
                       scrapeDate: now,
                       gross: gross
                     }
 
                     db.value.count({
-                      _id: movieDoc._id
+                      id: movieDoc.id
                     }, function (err, count) {
                       if (err) {
                         console.log('Unable to insert value doc', err)
@@ -114,7 +114,7 @@ db.movie.find(currentDraft, function (err, movies) {
 
                       if (count > 0) {
                         db.value.update({
-                          _id: movieDoc._id
+                          id: movieDoc.id
                         }, {
                           $set: {
                             gross: gross
@@ -138,7 +138,7 @@ db.movie.find(currentDraft, function (err, movies) {
                     })
 
                     db.movie.update({
-                      _id: movie._id
+                      id: movie.id
                     }, {
                       $set: {
                         lastGross: gross

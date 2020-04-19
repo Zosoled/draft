@@ -51,13 +51,13 @@ html
             function requiredFields(fieldArray) {
                 for (var i = 0; i < fieldArray.length; i++) {
                     if (fieldArray[i].type == 'number') {
-                        if (isNaN($('#'+fieldArray[i]._id).val())) {
-                            return fieldArray[i]._id;
+                        if (isNaN($('#'+fieldArray[i].id).val())) {
+                            return fieldArray[i].id;
                         }    
                     }
                     else if (fieldArray[i].type == 'string') {
-                        if ($('#'+fieldArray[i]._id).val() == '') {
-                            return fieldArray[i]._id;
+                        if ($('#'+fieldArray[i].id).val() == '') {
+                            return fieldArray[i].id;
                         }
                     }
                 } 
