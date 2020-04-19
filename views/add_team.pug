@@ -11,8 +11,8 @@ block content
                 input(type='hidden', name='season', value=currentDraft.season)
                 input(type='hidden', name='year', value=currentDraft.year)
                 div#team_name_input
-                    label(for="team_name") Team Name: &nbsp;
-                    input(id='team_name', name='team_name', class=(highlightRequired ? "required" : ""))
+                    label(for="teamName") Team Name: &nbsp;
+                    input(id='teamName', name='teamName', class=(highlightRequired ? "required" : ""))
                     - var i = 0
                     while i < 3
                         - j = i
@@ -46,7 +46,7 @@ block script
                 e.preventDefault();
 
                 var minMembers = 3;
-                var requiredIds = [{ _id: 'team_name', type: 'string' }];
+                var requiredIds = [{ _id: 'teamName', type: 'string' }];
                 for (var i = 1; i <= minMembers; i++) {
                     requiredIds.push({ _id: 'member_input_'+i, type: 'string' });
                 }

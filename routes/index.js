@@ -303,7 +303,7 @@ router.post('/add_team', function (req, res, next) {
     body.draftComplete = false
 
     db.team.insert(body, function (err) {
-      if (err) { callback(new Error('Unable to insert team into database.' + err), null); process.exit(1) }
+      if (err) { callback(new Error('Unable to insert team into database.' + err), null) }
     })
 
     callback(null, body)
