@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const favicon = require('serve-favicon')
