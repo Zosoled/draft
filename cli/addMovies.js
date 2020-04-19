@@ -39,30 +39,41 @@ const draftSchema = [{
 const movieSchema = [{
   type: 'text',
   name: 'name',
-  message: 'Movie Name',
-  validate: name => name.length < 1 ? 'Please enter a name.' : true
+  message: 'Movie Title',
+  validate: value => value.length < 1 ? 'Please enter a name.' : true
 },
 {
   type: 'date',
   name: 'releaseDate',
   message: 'US Release Date',
   initial: new Date(),
-  mask: 'YYYY-MM-DD'
+  mask: 'YYYY-MM-DD',
+  validate: value => value instanceof Date ? true : 'Please enter a date.'
 },
 {
   type: 'text',
   name: 'imdbId',
-  message: 'IMDb ID'
+  message: 'IMDb ID',
+  initial: 'tt0000001',
+  validate: value => {
+    if (value.length < 1) return 'Please enter a value.'
+    else if (RegExp(/^tt\d{7}$/).test(value) === false) return 'Please enter a valid IMDb ID.'
+    else return true
+  }
 },
 {
   type: 'text',
   name: 'posterUrl',
-  message: 'Poster URL'
+  message: 'Poster URL',
+  initial: 'https://www.imdb.com/title/tt0000001/mediaviewer/rm2384026624',
+  validate: value => value.length < 1 ? 'Please enter a URL.' : true
 },
 {
   type: 'text',
   name: 'youtubeId',
-  message: 'YouTube trailer ID'
+  message: 'YouTube trailer ID',
+  initial: 'dQw4w9WgXcQ',
+  validate: value => value.length < 1 ? 'Please enter a value.' : true
 },
 {
   type: 'toggle',
