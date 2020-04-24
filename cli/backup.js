@@ -2,16 +2,16 @@ const AWS = require('aws-sdk')
 const fs = require('fs')
 const zlib = require('zlib')
 const path = require('path')
-const config = require(path.win32.resolve(__dirname, '../modules/backup_config.js'))
+const config = require(path.win32.resolve(__dirname, '../modules/backupConfig.js'))
 
 // make sure there is a bucket
 if (config.aws.bucket === '') {
-  console.log('No S3 bucket name set in modules/backup_config.js')
+  console.log('No S3 bucket name set in modules/backupConfig.js')
   process.exit(1)
 }
 
 // gzip all nedb files in the data directory to temp
-fs.readdir(config.fs.data_path, function (err, files) {
+fs.readdir(config.fs.dataPath, function (err, files) {
   if (err) {
     console.log('An error has occured reading the data directory', err)
     process.exit(1)
@@ -19,7 +19,7 @@ fs.readdir(config.fs.data_path, function (err, files) {
 
   for (var i = 0; i < files.length; i++) {
     if (files[i].match(/nedb$/)) {
-      var ipFile = config.fs.data_path + '/' + files[i]
+      var ipFile = config.fs.dataPath + '/' + files[i]
       var opFile = config.aws.folder + '/' + files[i] + '.gz'
       console.log('zipping and uploading ' + files[i])
 

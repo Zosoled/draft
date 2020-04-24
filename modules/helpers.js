@@ -1,51 +1,30 @@
 var helpers = {}
 
-// get the current draft
+/** Get the current draft */
 helpers.currentDraft = function () {
-  return { season: 'summer', year: 2020 }
+  return { season: 'Summer', year: 2020 }
 }
 
-// take an array, make them id/url friendly, then concat with a hyphen
-helpers.makeID = function (thing) {
-  if (typeof thing === 'string') {
-    thing = [thing]
-  } else if (!Array.isArray(thing)) {
-    return false
+/** Concatenates an array of items into a URL-friendly pseudo-ID string */
+helpers.makeId = function (itemsToConcatenate) {
+  const a = []
+  for (let i = 0; i < itemsToConcatenate.length; i++) {
+    a[i] = String(itemsToConcatenate[i])
+      .replace(/\s/g, '_')
+      .replace(/[^a-zA-Z0-9_]/, '')
   }
-
-  for (var i = 0; i < thing.length; i++) {
-    if (typeof thing[i] === 'string') {
-      thing[i] = thing[i].replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/, '')
-    }
-  }
-  return thing.join('-')
+  return a.join('-')
 }
 
-helpers.addRandomOrderElement = function (movies) {
-  function shuffle (a) {
-    var j, x, i
-    for (i = a.length; i; i -= 1) {
-      j = Math.floor(Math.random() * i)
-      x = a[i - 1]
-      a[i - 1] = a[j]
-      a[j] = x
-    }
-
-    return a
+/** Shuffles the order of items in an array. */
+helpers.shuffle = function (arrayToShuffle) {
+  if (!arrayToShuffle || !arrayToShuffle.length) throw new TypeError('Invalid argument')
+  for (let i = arrayToShuffle.length; i > 0; i--) {
+    const j = Math.floor(Math.random() * i)
+    const x = arrayToShuffle[i - 1]
+    arrayToShuffle[i - 1] = arrayToShuffle[j]
+    arrayToShuffle[j] = x
   }
-
-  // first make an array of orders the same size
-  var movieOrder = []
-  for (let i = 0; i < movies.length; i++) {
-    movieOrder.push(i)
-  }
-  movieOrder = shuffle(movieOrder)
-
-  for (let i = 0; i < movies.length; i++) {
-    movies[i].order = movieOrder[i]
-  }
-
-  return movies
 }
 
 module.exports = helpers

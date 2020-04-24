@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const favicon = require('serve-favicon')
@@ -52,19 +52,21 @@ app.use(function (err, req, res, next) {
   })
 })
 
-// format a YYYYMMDD string to a human friendly date
-app.locals.prettyDate = function (d) {
-  return d instanceof Date
-    ? d.toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    })
-    : d
+/**
+ * Converts a date to a human-friendly version.
+ * @param {Date} dateToConvert
+ */
+app.locals.prettyDate = function (dateToConvert) {
+  if (!(dateToConvert instanceof Date)) throw new TypeError('Argument is not a Date')
+  return dateToConvert.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  })
 }
 
-// function to total up movie spend for a member
-app.locals.totalMemberMovies = function (movies) {
+/** Returns sum of bid amounts by a member. */
+app.locals.totalMemberMovies = movies => {
   var total = 0
   for (var i = 0; i < movies.length; i++) {
     total += parseInt(movies[i].bid)
@@ -72,16 +74,7 @@ app.locals.totalMemberMovies = function (movies) {
   return total
 }
 
-// simple function to return current yyyymmdd date
-app.locals.ymd = function () {
-  var date = new Date()
-  var y = date.getFullYear().toString()
-  var mm = (date.getMonth() + 1).toString()
-  var dd = date.getDate().toString()
-  return parseInt(y + (mm[1] ? mm : '0' + mm[0]) + (dd[1] ? dd : '0' + dd[0]))
-}
-
-app.locals.h_num = function (number) {
+app.locals.addCommasToNumber = number => {
   number = Math.round(Number(number))
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }

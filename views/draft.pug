@@ -1,25 +1,25 @@
 extends layout
 
 block content
-    - var next_movie = movie_number + 1
+    - var nextMovie = movieNumber + 1
     div#body_container
-        if not_found !== null
+        if notFound !== null
             h2 Not Found
-            p We were unable to find this #{not_found}
+            p We were unable to find this #{notFound}
         else
-            - var c_date = ymd();
+            - var today = new Date()
             div#movie_display
                 div#movie_title
                 div#movie_poster
-                    a.yt_link(yt_id= movie.yt_id, href='#')
-                        img(src= movie.poster_url, border=0)
+                    a.video_link(youtubeId= movie.youtubeId, href='#')
+                        img(src= movie.posterUrl, border=0)
                         div.play_circle
                             div.play_circle_inner
                 div#movie_info
 
                     div#set_price
-                        if team.draft_position > movie_number
-                            if c_date >= draft.draft_start && c_date <= draft.draft_end
+                        if team.draftPosition > movieNumber
+                            if draft.draftStart <= today && today <= draft.draftEnd
                                 h3 Sale information redacted until the draft period ends
                             else
                                 h3 Movie Stats
@@ -30,25 +30,25 @@ block content
                                         th Percentage
                                     tbody
                                         each member in team.member
-                                            each this_movie in member.movies
-                                                if this_movie.movie_id == movie._id
+                                            each thisMovie in member.movies
+                                                if thisMovie.movieId == movie.id
                                                     td #{member.name}
-                                                    td #{this_movie.bid}
-                                                    td #{this_movie.percent}
+                                                    td #{thisMovie.bid}
+                                                    td #{thisMovie.percent}
                                 br
                         else
-                            if c_date >= draft.draft_start && c_date <= draft.draft_end
+                            if draft.draftStart <= today && today <= draft.draftEnd
                                 h3 Finalize Price
                                 form#set_price_form
-                                    input(type="hidden", name="movie_id", value=movie._id)
-                                    input(type="hidden", name="team_id", value=team._id)
-                                    input(type="hidden", name="movie_number", value=movie.order)
-                                    input(type="hidden", name="final_movie", value=final_movie)
+                                    input(type="hidden", name="movieId", value=movie.id)
+                                    input(type="hidden", name="teamId", value=team.id)
+                                    input(type="hidden", name="movieIndex", value=movie.order)
+                                    input(type="hidden", name="finalMovie", value=finalMovie)
                                     label(for="winner") Winner
                                     select(id="set_price_form_winner", name="winner")
                                         option(value="", disabled, selected)
                                         each member in team.member
-                                            option(value= member._id) #{member.name}
+                                            option(value= member.id) #{member.name}
                                     br
                                     label(for="bid") Bid
                                     input(name="bid", id="set_price_form_bid" size="3", class="numbers_only")
@@ -64,18 +64,16 @@ block content
                     div#more_info
                         h3 More Info
                         ul
-                            li Release Date: #{prettyDate(movie.release_date)}
+                            li Release Date: #{prettyDate(movie.releaseDate)}
                             li
-                                a(href="http://www.boxofficemojo.com/title/" + movie.imdb_id + "/" target='_blank') Box Office Mojo
-                            li
-                                a(href="http://www.imdb.com/title/" + movie.imdb_id + "/" target='_blank') IMDB
+                                a(href="http://www.imdb.com/title/" + movie.imdbId + "/" target='_blank') IMDB
                     div#members
                         h3 Overall Stats
                         include member_movie_stats.pug
 
-                        if team.draft_position > movie_number
+                        if team.draftPosition > movieNumber
                             p
-                                a(href="/draft/" + team._id + "/" + next_movie + "/") Next Movie
+                                a(href="/draft/" + team.id + "/" + nextMovie + "/") Next Movie
 
 
 
@@ -131,22 +129,21 @@ block script
             }
             // if everything checks out then proceed
             else {
-                var json_data = $("#set_price_form").serializeArray();
+                var jsonData = $("#set_price_form").serializeArray();
                 $.ajax({
                     type: "POST",
                     url: '/draft',
-                    data: json_data,
+                    data: jsonData,
                     success: function() {
-                        var team_id = json_data[1].value;
-                        var next_movie = parseInt(json_data[2].value) + 1;
-                        console.log(json_data);
-                        if (json_data[3].value != 1) {
-                            var new_url = '/draft/'+team_id+'/'+next_movie+'/';
+                        var teamId = jsonData[1].value;
+                        var nextMovie = parseInt(jsonData[2].value) + 1;
+                        if (jsonData[3].value != 1) {
+                            var newUrl = '/draft/'+teamId+'/'+nextMovie+'/';
                         }
                         else {
-                            var new_url = '/';
+                            var newUrl = '/';
                         }
-                        window.location.replace(new_url);
+                        window.location.replace(newUrl);
                     },
                     error: function() {
                         alert('An error occured processing this request.');

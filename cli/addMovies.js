@@ -18,11 +18,11 @@ const draftSchema = [{
   message: 'Pick a season',
   choices: [{
     title: 'Summer',
-    value: 'summer'
+    value: 'Summer'
   },
   {
     title: 'Winter',
-    value: 'winter'
+    value: 'Winter'
   }
   ]
 },
@@ -39,35 +39,41 @@ const draftSchema = [{
 const movieSchema = [{
   type: 'text',
   name: 'name',
-  message: 'Movie Name',
-  validate: name => name.length < 1 ? 'Please enter a name.' : true
+  message: 'Movie Title',
+  validate: value => value.length < 1 ? 'Please enter a name.' : true
 },
 {
   type: 'date',
-  name: 'release_date',
+  name: 'releaseDate',
   message: 'US Release Date',
   initial: new Date(),
-  mask: 'YYYY-MM-DD'
+  mask: 'YYYY-MM-DD',
+  validate: value => value instanceof Date ? true : 'Please enter a date.'
 },
 {
   type: 'text',
-  name: 'bom_id',
-  message: 'Box Office Mojo ID'
+  name: 'imdbId',
+  message: 'IMDb ID',
+  initial: 'tt0000001',
+  validate: value => {
+    if (value.length < 1) return 'Please enter a value.'
+    else if (RegExp(/^tt\d{7}$/).test(value) === false) return 'Please enter a valid IMDb ID.'
+    else return true
+  }
 },
 {
   type: 'text',
-  name: 'imdb_id',
-  message: 'IMDb ID'
+  name: 'posterUrl',
+  message: 'Poster URL',
+  initial: 'https://www.imdb.com/title/tt0000001/mediaviewer/rm2384026624',
+  validate: value => value.length < 1 ? 'Please enter a URL.' : true
 },
 {
   type: 'text',
-  name: 'poster_url',
-  message: 'Poster URL'
-},
-{
-  type: 'text',
-  name: 'yt_id',
-  message: 'YouTube trailer ID'
+  name: 'youtubeId',
+  message: 'YouTube trailer ID',
+  initial: 'dQw4w9WgXcQ',
+  validate: value => value.length < 1 ? 'Please enter a value.' : true
 },
 {
   type: 'toggle',
@@ -94,10 +100,10 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
       console.error('Unable to search database', err)
       process.exit(1)
     } else if (count < 1) {
-      console.error('Unable to find matching draft. Please use the create_draft script first.')
+      console.error('Unable to find matching draft. Please use the createDraft script first.')
       process.exit(1)
     } else if (count > 1) {
-      console.error('Found ' + count + ' matching drafts when only 1 should exist. Try using create_draft script to overwrite existing drafts.')
+      console.error('Found ' + count + ' matching drafts when only 1 should exist. Try using createDraft script to overwrite existing drafts.')
       process.exit(1)
     } else {
       /*
@@ -111,7 +117,7 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
           type: 'toggle',
           name: 'confirmed',
           message: () => {
-            console.log('Draft found. It may already have an existing movie list. You can edit the list using the edit_movies script.\nIf you continue, you will overwrite the existing list.')
+            console.log('Draft found. It may already have an existing movie list. You can edit the list using the editMovies script.\nIf you continue, you will overwrite the existing list.')
             return 'Stop now, or continue with overwrite?'
           },
           active: 'Continue (Overwrite)',
@@ -148,13 +154,13 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
             delete movie.done
             movie.season = draft.season
             movie.year = draft.year
-            movie._id = helpers.makeID([draft.season, draft.year, movie.name])
+            movie.id = helpers.makeId([draft.season, draft.year, movie.name])
             movies.push(movie)
             console.log('\tMovies so far: ' + movies.length)
 
             if (finished) {
               // add order to movies array
-              movies = helpers.addRandomOrderElement(movies)
+              helpers.shuffle(movies)
               console.log(movies)
               db.insert(movies, function (err) {
                 if (err) {
