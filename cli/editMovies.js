@@ -83,12 +83,6 @@ const draftSchema = [{
         },
         {
           type: 'text',
-          name: 'bomId',
-          message: 'Box Office Mojo ID',
-          initial: movie.bomId
-        },
-        {
-          type: 'text',
           name: 'imdbId',
           message: 'IMDb ID',
           initial: movie.imdbId
