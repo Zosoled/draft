@@ -49,7 +49,7 @@ block content
                 div#previous_draft
                     h3 Previous Draft
                     if (typeof previousDraft == "object")
-                        p #{previousDraft.season.charAt(0).toUpperCase()+previousDraft.season.slice(1)} #{previousDraft.year}
+                        p #{previousDraft.season} #{previousDraft.year}
                         ul
                             li Drafting Started: #{prettyDate(previousDraft.draftStart)}
                             li Drafting Ended: #{prettyDate(previousDraft.draftEnd)}
@@ -60,7 +60,7 @@ block content
                             i Not Found
                 div#current_draft
                     h3 Current Draft
-                    p #{currentDraft.season.charAt(0).toUpperCase()+currentDraft.season.slice(1)} #{currentDraft.year}
+                    p #{currentDraft.season} #{currentDraft.year}
                     ul
                         li Drafting Starts: #{prettyDate(currentDraft.draftStart)}
                         li Drafting Ends: #{prettyDate(currentDraft.draftEnd)}
@@ -69,7 +69,7 @@ block content
                 div#next_draft
                     h3 Next Draft
                     if (typeof nextDraft == "object")
-                        p #{nextDraft.season.charAt(0).toUpperCase()+nextDraft.season.slice(1)} #{nextDraft.year}
+                        p #{nextDraft.season} #{nextDraft.year}
                         ul
                             li Drafting Starts: #{prettyDate(nextDraft.draftStart)}
                             li Drafting Ends: #{prettyDate(nextDraft.draftEnd)}
