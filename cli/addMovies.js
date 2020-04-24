@@ -57,7 +57,7 @@ const movieSchema = [{
   initial: 'tt0000001',
   validate: value => {
     if (value.length < 1) return 'Please enter a value.'
-    else if (RegExp(/^tt\d{8}$/).test(value) === false) return 'Please enter a valid IMDb ID.'
+    else if (RegExp(/^tt\d{7,8}$/).test(value) === false) return 'Please enter a valid IMDb ID.'
     else return true
   }
 },
@@ -84,7 +84,7 @@ const movieSchema = [{
 }
 ]
 
-const cancel = (prompt, answers) => {
+const onCancel = (prompt, answers) => {
   console.log('Cancelled movie entry.')
   process.exit(1)
 }
@@ -149,7 +149,7 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
           var movies = [];
 
           (async function getMovie () {
-            var movie = await prompts(movieSchema, cancel)
+            var movie = await prompts(movieSchema, { onCancel })
             if (!movie) {
               console.error('Unable to get movie prompts')
               process.exit(1)
