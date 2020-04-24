@@ -57,7 +57,7 @@ const movieSchema = [{
   initial: 'tt0000001',
   validate: value => {
     if (value.length < 1) return 'Please enter a value.'
-    else if (RegExp(/^tt\d{7}$/).test(value) === false) return 'Please enter a valid IMDb ID.'
+    else if (RegExp(/^tt\d{8}$/).test(value) === false) return 'Please enter a valid IMDb ID.'
     else return true
   }
 },
