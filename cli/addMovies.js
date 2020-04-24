@@ -84,6 +84,11 @@ const movieSchema = [{
 }
 ]
 
+const cancel = (prompt, answers) => {
+  console.log('Cancelled movie entry.')
+  process.exit(1)
+}
+
 console.log('\tAdd movies to an existing draft and overwrite any existing movie list on the draft.');
 
 // first we need to get and validate the draft selection
@@ -144,7 +149,7 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
           var movies = [];
 
           (async function getMovie () {
-            var movie = await prompts(movieSchema)
+            var movie = await prompts(movieSchema, cancel)
             if (!movie) {
               console.error('Unable to get movie prompts')
               process.exit(1)
