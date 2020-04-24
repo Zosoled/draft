@@ -235,10 +235,9 @@ router.post('/add_team', function (req, res, next) {
     req.body.member[1],
     req.body.member[2]
   ]
-  required.forEach(function (elm) {
-    if (typeof elm !== 'string' || elm.length === 0) {
-      res.statusCode = 400
-      res.send({})
+  required.forEach(element => {
+    if (typeof element !== 'string' || element.length === 0) {
+      res.status(400).send('Minimum team size is 3 players.')
     }
   })
 
