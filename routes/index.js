@@ -274,7 +274,7 @@ router.post('/add_team', function (req, res, next) {
       if (err) {
         callback(err, null)
       } else if (count !== 0) {
-        callback(new Error('Team name already exists'), null)
+        callback(new Error('Team name already exists.'), null)
       } else {
         callback(null, body)
       }
@@ -302,10 +302,11 @@ router.post('/add_team', function (req, res, next) {
     body.draftComplete = false
     body.year = parseInt(body.year, 10)
 
-    db.team.insert(body, function (err) {
-      if (err) { callback(new Error('Unable to insert team into database.' + err), null) }
+    db.team.insert(body, err => {
+      if (err) {
+        callback(new Error('Unable to insert team into database. ' + err), null)
+      }
     })
-
     callback(null, body)
   }
 })
