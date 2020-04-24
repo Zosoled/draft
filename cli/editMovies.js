@@ -60,8 +60,12 @@ const draftSchema = [{
     db.find(draft).sort({
       releaseDate: 1
     }).exec((err, movieDocs) => {
+      if (err) {
+        console.log('Error getting movies. ', err)
+        process.exit(1)
+      }
       if (movieDocs.length === 0) {
-        console.log('Did not find any movie documents. ', err)
+        console.log('Draft has no movies yet.')
         process.exit(1)
       }
       var editedMovies = [];
