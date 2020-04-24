@@ -9,7 +9,7 @@ block content
         
             form(method='post', id='add_team_form')
                 input(type='hidden', name='season', value=currentDraft.season)
-                input(type='hidden', name='year', value=parseInt(currentDraft.year,10))
+                input(type='hidden', name='year', value=currentDraft.year)
                 div#team_name_input
                     label(for='teamName') Team Name: &nbsp;
                     input(id='teamName', name='teamName', class=(highlightRequired ? 'required' : ''))

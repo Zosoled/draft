@@ -301,6 +301,7 @@ router.post('/add_team', function (req, res, next) {
     // one last set, adding draft tracking
     body.draftPosition = 0
     body.draftComplete = false
+    body.year = parseInt(body.year, 10)
 
     db.team.insert(body, function (err) {
       if (err) { callback(new Error('Unable to insert team into database.' + err), null) }
