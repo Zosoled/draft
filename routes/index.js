@@ -98,7 +98,7 @@ router.post('/draft', function (req, res, next) {
   var teamId = req.body.teamId
   var info = teamId.split('-')
   var draftSeason = info[0]
-  var draftYear = info[1]
+  var draftYear = parseInt(info[1], 10)
 
   // lets double check that we're in a valid draft
   db.draft.findOne({ season: draftSeason, year: draftYear }, function (err, draftDoc) {
@@ -174,9 +174,9 @@ router.post('/draft', function (req, res, next) {
 router.get('/draft/' + ':teamId' + '/' + ':movieNumber', function (req, res, next) {
   var info = req.params.teamId.split('-')
   var draftSeason = info[0]
-  var draftYear = info[1]
+  var draftYear = parseInt(info[1], 10)
   var teamId = req.params.teamId
-  var movieNumber = parseInt(req.params.movieNumber)
+  var movieNumber = parseInt(req.params.movieNumber, 10)
 
   // get the draft doc and make sure it's drafting time
   db.draft.findOne({ season: draftSeason, year: draftYear }, function (err, draftDoc) {
