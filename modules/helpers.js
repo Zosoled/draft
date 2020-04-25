@@ -1,55 +1,30 @@
-var helpers = {};
+var helpers = {}
 
-// get the current date in YYYYMMDD format
-helpers.currentDate = function() {
-    return (new Date()).toISOString().slice(0,10).replace(/-/g,"");
+/** Get the current draft */
+helpers.currentDraft = function () {
+  return { season: 'Summer', year: 2020 }
 }
 
-// get the current draft
-helpers.currentDraft = function() {
-    return { season: "winter", year: "2019" };
+/** Concatenates an array of items into a URL-friendly pseudo-ID string */
+helpers.makeId = function (itemsToConcatenate) {
+  const a = []
+  for (let i = 0; i < itemsToConcatenate.length; i++) {
+    a[i] = String(itemsToConcatenate[i])
+      .replace(/\s/g, '_')
+      .replace(/[^a-zA-Z0-9_]/, '')
+  }
+  return a.join('-')
 }
 
-// take an array, make them id/url friendly, then concat with a hyphen
-helpers.makeID = function(thing) {
-    if (typeof thing == "string") {
-        thing = [ thing ];
-    }
-    else if (!Array.isArray(thing)) {
-        return false;
-    }
-
-    for (var i = 0; i < thing.length; i++) {
-        thing[i] = thing[i].replace(/\s+/g,"_").replace(/[^a-zA-Z0-9_]/,"");
-    }
-    return thing.join('-');
+/** Shuffles the order of items in an array. */
+helpers.shuffle = function (arrayToShuffle) {
+  if (!arrayToShuffle || !arrayToShuffle.length) throw new TypeError('Invalid argument')
+  for (let i = arrayToShuffle.length; i > 0; i--) {
+    const j = Math.floor(Math.random() * i)
+    const x = arrayToShuffle[i - 1]
+    arrayToShuffle[i - 1] = arrayToShuffle[j]
+    arrayToShuffle[j] = x
+  }
 }
 
-helpers.addRandomOrderElement = function (movies) {
-    function shuffle (a) {
-        var j, x, i;
-        for (i = a.length; i; i -= 1) {
-            j = Math.floor(Math.random() * i);
-            x = a[i - 1];
-            a[i - 1] = a[j];
-            a[j] = x;
-        }
-
-        return a;
-    }
-    
-    // first make an array of orders the same size
-    var movie_order = new Array;
-    for (var i = 0; i < movies.length; i++) {
-        movie_order.push(i);
-    }
-    movie_order = shuffle(movie_order);
-    
-    for (var i = 0; i < movies.length; i++) {
-        movies[i].order = movie_order[i];
-    }
-
-    return movies;
-}
-
-module.exports = helpers;
+module.exports = helpers

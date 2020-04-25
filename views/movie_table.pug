@@ -1,60 +1,55 @@
 block movie_table
-    - var c_date = ymd();
-    table#movie_table
-        thead
-            tr
-                th Title
-                th &nbsp;
-                th &nbsp;
-                if found === true
-                    th Owner
-                    th Cost
-                    th Percentage
-                th Release Date
-                if found === true
-                    th Adjusted Gross
-                    th Efficency
-                else
-                    th Gross
-        tbody
-            each movie in movies
-                if found == true && winner_info[movie._id]
-                    - var adj_gross = movie.last_gross * (winner_info[movie._id].percent / 100)
-                else
-                    - var adj_gross = movie.last_gross
-                tr
-                    td
-                        a.yt_link(yt_id= movie.yt_id, href='#') #{movie.name}
-                    td
-                        a(href="http://www.imdb.com/title/" + movie.imdb_id + "/" target='_blank')
-                            img(src='/public/images/imdb_sm.png' width=30 height=14 border=0)
-                    td
-                        a(href="http://www.boxofficemojo.com/title/" + movie.imdb_id + "/" target='_blank')
-                            img(src='/public/images/bom_sm.png' width=30 height=14 border=0)
-                    if found == true
-                        if winner_info.hasOwnProperty(movie._id)
-                            td #{winner_info[movie._id].member_name}
-                            if c_date < draft.draft_start || c_date > draft.draft_end
-                                td #{winner_info[movie._id].bid}
-                                td #{winner_info[movie._id].percent}
-                            else
-                                td redacted
-                                td redacted
-                                td redacted
-                        else
-                            td
-                                i None
-                            td
-                                i N/A
-                            td
-                                i N/A
-                    td #{prettyDate(movie.release_date)}
-                    if movie.last_gross
-                        td $#{h_num(adj_gross)}
-                    else
-                        td $0
-                    if found == true && movie.last_gross
-                        - var eff = adj_gross / winner_info[movie._id].bid
-                        td #{h_num(eff)}
-                    else if found == true
-                        td TBD
+	- var today = new Date()
+	table#movie_table
+		thead
+			tr
+				th Title
+				th &nbsp;
+				if found === true
+					th Owner
+					th Cost
+					th Percentage
+				th Release Date
+				if found === true
+					th Adjusted Gross
+					th Efficency
+				else
+					th Gross
+		tbody
+			each movie in movies
+				if found == true && winnerInfo[movie.id]
+					- var adjGross = movie.lastGross * (winnerInfo[movie.id].percent / 100)
+				else
+					- var adjGross = movie.lastGross
+				tr
+					td
+						a.video_link(youtubeId=movie.youtubeId, href='#') #{movie.name}
+					td
+						a(href="http://www.imdb.com/title/" + movie.imdbId + "/" target='_blank')
+							img(src='/public/images/imdb_sm.png' width=30 height=14 border=0)
+					if found == true
+						if winnerInfo.hasOwnProperty(movie.id)
+							td #{winnerInfo[movie.id].memberName}
+							if today < draft.draftStart || draft.draftEnd < today
+								td #{winnerInfo[movie.id].bid}
+								td #{winnerInfo[movie.id].percent}
+							else
+								td redacted
+								td redacted
+						else
+							td
+								i None
+							td
+								i N/A
+							td
+								i N/A
+					td #{prettyDate(movie.releaseDate)}
+					if movie.lastGross
+						td $#{addCommasToNumber(adjGross)}
+					else
+						td $0
+					if found == true && movie.lastGross
+						- var eff = adjGross / winnerInfo[movie.id].bid
+						td #{addCommasToNumber(eff)}
+					else if found == true
+						td TBD
