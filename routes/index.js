@@ -157,7 +157,7 @@ router.post('/draft', function (req, res, next) {
             res.send({})
           } else {
             // winner found
-            db.team.update({ id: teamDoc.id }, teamDoc, null, function (err) {
+            db.team.update({ id: teamDoc.id }, teamDoc, {}, function (err) {
               if (err) {
                 console.log(err)
                 res.statusCode = 400
