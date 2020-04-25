@@ -164,7 +164,6 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
             console.log('\tMovies so far: ' + movies.length)
 
             if (finished) {
-              // add order to movies array
               helpers.shuffle(movies)
               console.log(movies)
               db.insert(movies, function (err) {
