@@ -206,24 +206,26 @@ router.get('/draft/:teamId/:movieNumber', function (req, res, next) {
             }
 
             // get the requested movie
-            db.movie.findOne({ season: draftSeason, year: draftYear, order: movieNumber }, function (err, movieDoc) {
-              if (err) { console.log('Unable to get movie', err) }
-              if (movieDoc === null) {
-                res.render('draft', { title: 'Drafting: Movie Not Found', notFound: 'movie' })
-              } else {
-                // if we have a valid movie render the full page content
-                res.render('draft', {
-                  title: 'Drafting: ' + movieDoc.name,
-                  draft: draftDoc,
-                  movie: movieDoc,
-                  team: teamDoc,
-                  notFound: null,
-                  movieNumber: movieNumber,
-                  finalMovie: finalMovie,
-                  showGross: false
-                })
-              }
-            })
+            db.movie.findOne({ season: draftSeason, year: draftYear })
+              .skip(movieNumber)
+              .exec(function (err, movieDoc) {
+                if (err) { console.log('Unable to get movie', err) }
+                if (movieDoc === null) {
+                  res.render('draft', { title: 'Drafting: Movie Not Found', notFound: 'movie' })
+                } else {
+                  // if we have a valid movie render the full page content
+                  res.render('draft', {
+                    title: 'Drafting: ' + movieDoc.name,
+                    draft: draftDoc,
+                    movie: movieDoc,
+                    team: teamDoc,
+                    notFound: null,
+                    movieNumber: movieNumber,
+                    finalMovie: finalMovie,
+                    showGross: false
+                  })
+                }
+              })
           })
         }
       })
