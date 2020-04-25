@@ -114,7 +114,7 @@ router.post('/draft', function (req, res, next) {
       // draft valid, get team from the information
       db.team.findOne({ id: teamId }, function (err, teamDoc) {
         if (err) { console.error('Unable to get team', err); process.exit(1) }
-        if (teamDoc == null) {
+        if (!teamDoc) {
           res.statusCode = 400
           res.send({})
         } else {
@@ -174,12 +174,12 @@ router.post('/draft', function (req, res, next) {
   })
 })
 
-router.get('/draft/:teamId/:movieNumber', function (req, res, next) {
+router.get('/draft/:teamId/:movieIndex', function (req, res, next) {
   var info = req.params.teamId.split('-')
   var draftSeason = info[0]
   var draftYear = parseInt(info[1], 10)
   var teamId = req.params.teamId
-  var movieNumber = parseInt(req.params.movieNumber, 10)
+  var movieIndex = parseInt(req.params.movieIndex, 10)
 
   // get the draft doc and make sure it's drafting time
   db.draft.findOne({ season: draftSeason, year: draftYear }, function (err, draftDoc) {
@@ -201,13 +201,13 @@ router.get('/draft/:teamId/:movieNumber', function (req, res, next) {
 
             var lastMovie = count - 1
             var finalMovie = 1
-            if (movieNumber !== lastMovie) {
+            if (movieIndex !== lastMovie) {
               finalMovie = 0
             }
 
             // get the requested movie
             db.movie.findOne({ season: draftSeason, year: draftYear })
-              .skip(movieNumber)
+              .skip(movieIndex)
               .exec(function (err, movieDoc) {
                 if (err) { console.log('Unable to get movie', err) }
                 if (movieDoc === null) {
@@ -220,7 +220,7 @@ router.get('/draft/:teamId/:movieNumber', function (req, res, next) {
                     movie: movieDoc,
                     team: teamDoc,
                     notFound: null,
-                    movieNumber: movieNumber,
+                    movieIndex: movieIndex,
                     finalMovie: finalMovie,
                     showGross: false
                   })
