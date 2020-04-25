@@ -1,3 +1,7 @@
+/**
+ * Route parameters are named URL segments indicated by colon prefixes.
+ * https://expressjs.com/en/guide/routing.html#route-parameters
+ */
 const async = require('async')
 const Datastore = require('nedb')
 const express = require('express')
@@ -38,8 +42,8 @@ router.get('/', function (req, res, next) {
   })
 })
 
-// team addtions page
-router.get('/team/' + ':id', function (req, res, next) {
+// team additions page
+router.get('/team/:id', function (req, res, next) {
   var selectionDraft = helpers.currentDraft()
   var teamId = req.params.id
 
@@ -170,8 +174,7 @@ router.post('/draft', function (req, res, next) {
   })
 })
 
-// this is a sequential route used for drafting
-router.get('/draft/' + ':teamId' + '/' + ':movieNumber', function (req, res, next) {
+router.get('/draft/:teamId/:movieNumber', function (req, res, next) {
   var info = req.params.teamId.split('-')
   var draftSeason = info[0]
   var draftYear = parseInt(info[1], 10)
@@ -207,10 +210,18 @@ router.get('/draft/' + ':teamId' + '/' + ':movieNumber', function (req, res, nex
               if (err) { console.log('Unable to get movie', err) }
               if (movieDoc === null) {
                 res.render('draft', { title: 'Drafting: Movie Not Found', notFound: 'movie' })
-                // if we have a valid movie
-                // render the full page content
               } else {
-                res.render('draft', { title: 'Drafting: ' + movieDoc.name, draft: draftDoc, movie: movieDoc, team: teamDoc, notFound: null, movieNumber: movieNumber, finalMovie: finalMovie, showGross: false })
+                // if we have a valid movie render the full page content
+                res.render('draft', {
+                  title: 'Drafting: ' + movieDoc.name,
+                  draft: draftDoc,
+                  movie: movieDoc,
+                  team: teamDoc,
+                  notFound: null,
+                  movieNumber: movieNumber,
+                  finalMovie: finalMovie,
+                  showGross: false
+                })
               }
             })
           })
