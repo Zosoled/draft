@@ -57,7 +57,9 @@ app.use(function (err, req, res, next) {
  * @param {Date} dateToConvert
  */
 app.locals.prettyDate = function (dateToConvert) {
-  if (!(dateToConvert instanceof Date)) throw new TypeError('Argument is not a Date')
+  if (!dateToConvert || !(dateToConvert instanceof Date)) {
+    throw new TypeError('Expected Date, received ' + typeof dateToConvert)
+  }
   return dateToConvert.toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
