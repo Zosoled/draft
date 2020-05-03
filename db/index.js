@@ -78,21 +78,3 @@ async function insertTable (table) {
     client.release()
   }
 }
-
-async function getTables () {
-  const client = await pool.connect()
-  let results = []
-  try {
-    const query = {
-      text: 'SELECT * FROM information_schema.tables WHERE table_schema = $1',
-      values: ['public']
-    }
-    const reply = await client.query(query)
-    results = (reply) ? reply.rows : results
-  } catch (e) {
-    console.error(e)
-  } finally {
-    client.release()
-  }
-  return results
-}
