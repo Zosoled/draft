@@ -1,3 +1,10 @@
+/* First version of movie-draft app used NeDB for data storage */
+const Datastore = require('nedb')
+exports.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true })
+exports.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true })
+exports.team = new Datastore({ filename: 'data/team.nedb', autoload: true })
+exports.value = new Datastore({ filename: 'data/value.nedb', autoload: true })
+
 /* Initialize Postgres database */
 const { Pool } = require('pg')
 const pool = new Pool({
@@ -97,8 +104,5 @@ async function getTables () {
   } finally {
     client.release()
   }
-  console.log(results)
   return results
 }
-
-module.exports = {}

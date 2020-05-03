@@ -3,17 +3,10 @@
  * https://expressjs.com/en/guide/routing.html#route-parameters
  */
 const async = require('async')
-const Datastore = require('nedb')
 const express = require('express')
-const path = require('path')
 const router = express.Router()
-const pg = require('../db')
-const helpers = require(path.win32.resolve(__dirname, '../modules/helpers.js'))
-var db = {}
-db.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true })
-db.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true })
-db.team = new Datastore({ filename: 'data/team.nedb', autoload: true })
-db.value = new Datastore({ filename: 'data/value.nedb', autoload: true })
+const db = require('../db')
+const helpers = require('../modules/helpers.js')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
