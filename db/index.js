@@ -1,14 +1,8 @@
 /* Initialize Postgres database */
-const pgUser = 'jcfdytkfjfekdz'
-const pgPassword = 'dd9e14615e59b7153495f9d4aee8e1e512d0855d15610f5e67c7d003c2d6c41d'
-const pgHost = 'ec2-54-225-242-183.compute-1.amazonaws.com'
-const pgPort = '5432'
-const pgDatabase = 'dftp19h0fcneq7'
-const pgUri = 'postgres://' + pgUser + ':' + pgPassword + '@' + pgHost + ':' + pgPort + '/' + pgDatabase
 const { Pool } = require('pg')
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || pgUri,
-  ssl: true
+  connectionString: process.env.PGURI,
+  ssl: { rejectUnauthorized: false }
 })
 
 /* Build table creation query strings */
@@ -57,14 +51,14 @@ const pgSchema = [{
   ');'
 }
 ]
-insertTables(pgSchema)
+construct(pgSchema)
 
-async function insertTables (pgSchema) {
-  const currentTables = await getCurrentTables()
+async function construct (pgSchema) {
+  const tables = await getTables()
   for (let i = 0; i < pgSchema.length; i++) {
     let found = false
-    for (let i = 0; i < currentTables.length && !found; i++) {
-      if (currentTables[i].tablename === pgSchema[i].name) {
+    for (let i = 0; i < tables.length && !found; i++) {
+      if (tables[i].tablename === pgSchema[i].name) {
         found = true
       }
     }
@@ -74,37 +68,37 @@ async function insertTables (pgSchema) {
   }
 }
 
-async function insertTable (tableSchema) {
+async function insertTable (table) {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
-    await client.query(tableSchema)
+    await client.query(table)
     await client.query('COMMIT')
   } catch (e) {
     await client.query('ROLLBACK')
-    console.log(e)
-    throw e
+    console.error(e)
   } finally {
     client.release()
   }
 }
 
-async function getCurrentTables () {
+async function getTables () {
   const client = await pool.connect()
   let results = []
   try {
     const query = {
-      text: 'SELECT * FROM pg_catalog.pg_tables WHERE tableowner != $1',
-      values: ['postgres']
+      text: 'SELECT * FROM information_schema.tables WHERE table_schema == $1',
+      values: ['public']
     }
     const reply = await client.query(query)
     results = (reply) ? reply.rows : results
   } catch (e) {
-    console.log(e)
-    throw e
+    console.error(e)
   } finally {
     client.release()
   }
   console.log(results)
   return results
 }
+
+module.exports = {}
