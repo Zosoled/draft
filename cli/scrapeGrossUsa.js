@@ -1,23 +1,9 @@
 const async = require('async')
-const Datastore = require('nedb')
+const db = require('../db')
 const fs = require('fs')
 const https = require('https')
 const path = require('path')
-const helpers = require(path.win32.resolve(__dirname, '../modules/helpers.js'))
-var db = {
-  draft: new Datastore({
-    filename: path.win32.resolve(__dirname, '../data/draft.nedb'),
-    autoload: true
-  }),
-  movie: new Datastore({
-    filename: path.win32.resolve(__dirname, '../data/movie.nedb'),
-    autoload: true
-  }),
-  value: new Datastore({
-    filename: path.win32.resolve(__dirname, '../data/value.nedb'),
-    autoload: true
-  })
-}
+const helpers = require('../modules/helpers.js')
 
 var currentDraft = helpers.currentDraft()
 var now = new Date()

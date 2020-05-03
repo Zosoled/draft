@@ -1,10 +1,5 @@
-const Datastore = require('nedb')
+const db = require('../db')
 const prompts = require('prompts')
-const path = require('path')
-var db = new Datastore({
-  filename: path.win32.resolve(__dirname, '../data/draft.nedb'),
-  autoload: true
-})
 
 const schema = [{
   type: 'select',
@@ -68,7 +63,7 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
   }
 
   // lets see if the specified draft exists
-  db.find({
+  db.draft.find({
     season: result.season,
     year: result.year
   }, function (err, docs) {
@@ -99,7 +94,7 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
 
         // if we got a yes prompt then add the ID we found so the DB knows to replace instead of add new
         if (overwrite.confirmed) {
-          db.remove({
+          db.draft.remove({
             season: result.season,
             year: result.year
           }, {
@@ -109,8 +104,8 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
               console.log('Unable to remove old draft', err || '')
               process.exit(1)
             }
-            db.persistence.compactDatafile()
-            db.insert(result, function (err, resp) {
+            db.draft.persistence.compactDatafile()
+            db.draft.insert(result, function (err, resp) {
               if (err) {
                 console.log('Unable to get insert new draft', err)
                 process.exit(1)
@@ -124,7 +119,7 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
         }
       })()
     } else {
-      db.insert(result, function (err, resp) {
+      db.draft.insert(result, function (err, resp) {
         if (err) {
           console.log('Unable to get insert new draft', err)
           process.exit(1)

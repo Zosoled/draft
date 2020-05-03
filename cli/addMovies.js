@@ -1,15 +1,7 @@
-const Datastore = require('nedb')
+const db = require('../db')
 const prompts = require('prompts')
 const path = require('path')
 const helpers = require(path.win32.resolve(__dirname, '../modules/helpers.js'))
-var db = new Datastore({
-  filename: path.win32.resolve(__dirname, '../data/movie.nedb'),
-  autoload: true
-})
-var draftDb = new Datastore({
-  filename: path.win32.resolve(__dirname, '../data/draft.nedb'),
-  autoload: true
-})
 
 // this governs the user prompts and valid responses
 const draftSchema = [{
@@ -100,7 +92,7 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
   }
 
   // look up and validate the draft document
-  draftDb.count(draft, function (err, count) {
+  db.draft.count(draft, function (err, count) {
     if (err) {
       console.error('Unable to search database', err)
       process.exit(1)
@@ -133,7 +125,7 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
           process.exit(1)
         }
         if (overwrite.confirmed) {
-          db.remove(draft, {
+          db.movie.remove(draft, {
             multi: true
           }, function (err, count) {
             if (err) {
@@ -166,7 +158,7 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
             if (finished) {
               helpers.shuffle(movies)
               console.log(movies)
-              db.insert(movies, function (err) {
+              db.movie.insert(movies, function (err) {
                 if (err) {
                   console.log('Unable to insert movies into draft database: ' + err)
                   process.exit(1)

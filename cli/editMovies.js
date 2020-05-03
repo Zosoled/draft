@@ -1,15 +1,6 @@
-const Datastore = require('nedb')
+const db = require('../db')
+const helpers = require('../modules/helpers.js')
 const prompts = require('prompts')
-const path = require('path')
-const helpers = require(path.win32.resolve(__dirname, '../modules/helpers.js'))
-var db = new Datastore({
-  filename: path.win32.resolve(__dirname, '../data/movie.nedb'),
-  autoload: true
-})
-var draftDb = new Datastore({
-  filename: path.win32.resolve(__dirname, '../data/draft.nedb'),
-  autoload: true
-})
 
 // this governs the user prompts and valid responses
 const draftSchema = [{
@@ -45,7 +36,7 @@ const draftSchema = [{
   }
 
   // look up the draft document
-  draftDb.count(draft).exec(function (err, count) {
+  db.draft.count(draft).exec(function (err, count) {
     if (err) {
       console.log('Unable to get search database', err)
       process.exit(1)
@@ -57,7 +48,7 @@ const draftSchema = [{
       process.exit(1)
     }
 
-    db.find(draft).sort({
+    db.movie.find(draft).sort({
       releaseDate: 1
     }).exec((err, movieDocs) => {
       if (err) {
@@ -121,7 +112,7 @@ const draftSchema = [{
             editMovies(movieDocs)
           } else {
             // delete the old records in case IDs have changed
-            db.remove(draft, {
+            db.movie.remove(draft, {
               multi: true
             }, function (err, count) {
               if (err) {
@@ -129,7 +120,7 @@ const draftSchema = [{
                 process.exit(1)
               }
               helpers.shuffle(editedMovies)
-              db.insert(editedMovies, function (err) {
+              db.movie.insert(editedMovies, function (err) {
                 if (err) {
                   console.log('Unable to insert edited movies into draft database. ', err)
                   process.exit(1)
