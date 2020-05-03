@@ -15,7 +15,7 @@ const pool = new Pool({
 /* Build table creation query strings */
 const pgSchema = [{
   name: 'Draft',
-  create: 'CREATE TABLE Draft(' +
+  create: 'CREATE TABLE IF NOT EXISTS Draft(' +
     'Id char(16) primary key,' +
     'Season text,' +
     'Year int,' +
@@ -27,7 +27,7 @@ const pgSchema = [{
 },
 {
   name: 'Movie',
-  create: 'CREATE TABLE Movie(' +
+  create: 'CREATE TABLE IF NOT EXISTS Movie(' +
     'Id char(16) primary key,' +
     'DraftId char(16) references Draft(Id),' +
     'Name text,' +
@@ -39,7 +39,7 @@ const pgSchema = [{
 },
 {
   name: 'Player',
-  create: 'CREATE TABLE Player(' +
+  create: 'CREATE TABLE IF NOT EXISTS Player(' +
     'Id char(16) primary key,' +
     'Name text,' +
     'Movies Movie[]' +
@@ -47,7 +47,7 @@ const pgSchema = [{
 },
 {
   name: 'Team',
-  create: 'CREATE TABLE Team(' +
+  create: 'CREATE TABLE IF NOT EXISTS Team(' +
     'Id char(16) primary key,' +
     'DraftId char(16) references Draft(Id),' +
     'Name text,' +
@@ -60,17 +60,8 @@ const pgSchema = [{
 construct(pgSchema)
 
 async function construct (pgSchema) {
-  const tables = await getTables()
   for (let i = 0; i < pgSchema.length; i++) {
-    let found = false
-    for (let i = 0; i < tables.length && !found; i++) {
-      if (tables[i].table_name === pgSchema[i].name) {
-        found = true
-      }
-    }
-    if (!found) {
-      insertTable(pgSchema[i].create)
-    }
+    insertTable(pgSchema[i].create)
   }
 }
 
