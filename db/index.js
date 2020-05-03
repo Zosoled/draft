@@ -58,7 +58,7 @@ async function construct (pgSchema) {
   for (let i = 0; i < pgSchema.length; i++) {
     let found = false
     for (let i = 0; i < tables.length && !found; i++) {
-      if (tables[i].tablename === pgSchema[i].name) {
+      if (tables[i].table_name === pgSchema[i].name) {
         found = true
       }
     }
@@ -87,7 +87,7 @@ async function getTables () {
   let results = []
   try {
     const query = {
-      text: 'SELECT * FROM information_schema.tables WHERE table_schema == $1',
+      text: 'SELECT * FROM information_schema.tables WHERE table_schema = $1',
       values: ['public']
     }
     const reply = await client.query(query)
