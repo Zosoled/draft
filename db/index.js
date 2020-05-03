@@ -61,7 +61,7 @@ construct(pgSchema)
 
 async function construct (pgSchema) {
   for (let i = 0; i < pgSchema.length; i++) {
-    insertTable(pgSchema[i].create)
+    await insertTable(pgSchema[i].create)
   }
 }
 
