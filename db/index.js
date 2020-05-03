@@ -14,47 +14,46 @@ const pool = new Pool({
 
 /* Build table creation query strings */
 const pgSchema = [{
-  name: 'draft',
-  create: 'CREATE TABLE draft(' +
-    'id char(16) primary key,' +
-    'season text,' +
-    'year int,' +
-    'draftStart date,' +
-    'draftEnd date,' +
-    'seasonStart date,' +
-    'seasonEnd date' +
+  name: 'Draft',
+  create: 'CREATE TABLE Draft(' +
+    'Id char(16) primary key,' +
+    'Season text,' +
+    'Year int,' +
+    'DraftStart date,' +
+    'DraftEnd date,' +
+    'SeasonStart date,' +
+    'SeasonEnd date' +
   ');'
 },
 {
-  name: 'movie',
-  create: 'CREATE TABLE movie(' +
-    'id char(16) primary key,' +
-    'draftId char(16) references Draft(id),' +
-    'name text,' +
-    'releaseDate date,' +
-    'imdbId text,' +
-    'posterUrl text,' +
-    'youtubeId text,' +
-    'done bool' +
+  name: 'Movie',
+  create: 'CREATE TABLE Movie(' +
+    'Id char(16) primary key,' +
+    'DraftId char(16) references Draft(Id),' +
+    'Name text,' +
+    'ReleaseDate date,' +
+    'ImdbId text,' +
+    'PosterUrl text,' +
+    'YoutubeId text' +
   ');'
 },
 {
-  name: 'player',
-  create: 'CREATE TABLE player(' +
-    'id char(16) primary key,' +
-    'movies movie[],' +
-    'name text' +
+  name: 'Player',
+  create: 'CREATE TABLE Player(' +
+    'Id char(16) primary key,' +
+    'Name text,' +
+    'Movies Movie[]' +
   ');'
 },
 {
-  name: 'team',
-  create: 'CREATE TABLE team(' +
-    'id char(16) primary key,' +
-    'draftId char(16) references Draft(id),' +
-    'players player[],' +
-    'name text,' +
-    'draftPosition int,' +
-    'draftComplete bool' +
+  name: 'Team',
+  create: 'CREATE TABLE Team(' +
+    'Id char(16) primary key,' +
+    'DraftId char(16) references Draft(Id),' +
+    'Name text,' +
+    'Players Player[],' +
+    'DraftPosition int,' +
+    'DraftComplete bool' +
   ');'
 }
 ]
