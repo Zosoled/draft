@@ -15,10 +15,12 @@
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "nedb": "^1.8.0",
-    "pg": "^8.0.2",
+    "pg": "^8.0.3",
     "prompts": "^2.3.2",
     "pug": "^2.0.4",
-    "serve-favicon": "^2.5.0",
+    "serve-favicon": "^2.5.0"
+  },
+  "devDependencies": {
     "standard": "^14.3.3"
   }
 }
