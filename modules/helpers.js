@@ -2,7 +2,13 @@ var helpers = {}
 
 /** Get the current draft */
 helpers.currentDraft = function () {
-  return { season: 'Summer', year: 2020 }
+  const today = new Date()
+  return {
+    season: today.getMonth() > 2 && today.getMonth() < 9
+      ? 'Summer'
+      : 'Winter',
+    year: today.getFullYear()
+  }
 }
 
 /** Concatenates an array of items into a URL-friendly pseudo-ID string */

@@ -8,16 +8,17 @@ A movie draft is something like a fantasy sports draft… or so I’m told. Gene
 
 ## General Info
 * There are 2 drafts per year:
-  * Summer Blockbuster: Usually kicking off in May
-  * Winter Oscar Bait: Usually kicking off in October
+  * Summer Blockbuster: Drafting begins in March for movies showing through the end of August.
+  * Winter Oscar Bait: Drafting begins in September for movies showing through the end of February.
 * Approximately 30 movies should be chosen per draft.
 * Groups of 4–6 players are best, given the number of movies.
 * The order of movies is randomized prior to drafting.
-* Each week the (domestic) film grosses are updated using IMDb.
+* Each week the US domestic film grosses are updated using IMDb.
 * The game ends 14 days after the final movie is released.
 
 ## Rules Per Team
-* Drafting takes 1–2 hours and should occur sometime during the 2 weeks prior to the first film’s release.
+* Drafting takes 1–2 hours. Plan accordingly!
+* The draft period opens in the first two weeks of each drafting season. You should coordinate teams 
 * Each player gets 100 “Draft Bucks” used to bid on a major film studio release from the current season.
   * Each player has at most $100 to spend on all their combined purchases; they may not exceed $100.
 * Films are put up for auction one at a time in random order to all players.
