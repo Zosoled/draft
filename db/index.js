@@ -1,9 +1,5 @@
 /* First version of movie-draft app used NeDB for data storage */
 const Datastore = require('nedb')
-exports.draft = new Datastore({ filename: 'data/draft.nedb', autoload: true })
-exports.movie = new Datastore({ filename: 'data/movie.nedb', autoload: true })
-exports.team = new Datastore({ filename: 'data/team.nedb', autoload: true })
-exports.value = new Datastore({ filename: 'data/value.nedb', autoload: true })
 
 /* Initialize Postgres database */
 const { Pool } = require('pg')
@@ -57,24 +53,27 @@ const pgSchema = [{
   ');'
 }
 ]
-construct(pgSchema)
 
-async function construct (pgSchema) {
-  for (let i = 0; i < pgSchema.length; i++) {
-    await insertTable(pgSchema[i].create)
-  }
+/* Construct the PostgreSQL schema */
+let transaction = 'BEGIN;'
+for (let i = 0; i < pgSchema.length; i++) {
+  transaction += pgSchema[i].create
 }
+transaction += 'COMMIT;'
+console.log(transaction)
+pool.query(transaction)
+  .catch(e => {
+    console.error('PostgreSQL schema initialization failed.' + e)
+    pool.query('ROLLBACK;')
+  })
 
-async function insertTable (table) {
-  const client = await pool.connect()
-  try {
-    await client.query('BEGIN')
-    await client.query(table)
-    await client.query('COMMIT')
-  } catch (e) {
-    await client.query('ROLLBACK')
-    console.error(e)
-  } finally {
-    client.release()
-  }
+/* Wrap db statements */
+module.exports = {
+  pg: {
+    query: (q, p) => { return pool.query(q, p) }
+  },
+  draft: new Datastore({ filename: 'data/draft.nedb', autoload: true }),
+  movie: new Datastore({ filename: 'data/movie.nedb', autoload: true }),
+  team: new Datastore({ filename: 'data/team.nedb', autoload: true }),
+  value: new Datastore({ filename: 'data/value.nedb', autoload: true })
 }
