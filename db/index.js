@@ -23,7 +23,7 @@ const pgSchema = [
     name: 'movie',
     create: 'CREATE TABLE IF NOT EXISTS movie(' +
       'id serial primary key,' +
-      'draft_id int references Draft(Id),' +
+      'draft_id int references draft(id),' +
       'name text,' +
       'release_date date,' +
       'imdb_id text,' +
@@ -36,16 +36,16 @@ const pgSchema = [
     create: 'CREATE TABLE IF NOT EXISTS player(' +
       'id serial primary key,' +
       'name text,' +
-      'movies Movie[]' +
+      'movies movie[]' +
     ');'
   },
   {
     name: 'team',
     create: 'CREATE TABLE IF NOT EXISTS team(' +
       'id serial primary key,' +
-      'draft_id int references Draft(Id),' +
+      'draft_id int references draft(id),' +
       'name text,' +
-      'players Player[],' +
+      'players player[],' +
       'draft_position int,' +
       'draft_complete bool' +
     ');'
