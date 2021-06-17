@@ -58,19 +58,15 @@ const schema = [
 console.log("Hello and welcome to new draft setup. We'll just need to answer a few questions.");
 
 (async () => {
-  const result = await prompts(schema)
-  if (!result) {
+  const draft = await prompts(schema)
+  if (!draft) {
     console.error('Unable to get prompt response')
     process.exit(1)
   }
 
   // lets see if the specified draft exists
-  const draftInsert = {
-    text: 'INSERT INTO draft(season, year, draft_start, draft_end, season_start, season_end) VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
-    values: [result.season, result.year, result.draft_start, result.draft_end, result.season_start, result.season_end]
-  }
   db.pg
-    .query('SELECT id FROM draft WHERE season = $1 AND year = $2', [result.season, result.year])
+    .query('SELECT id FROM draft WHERE season = $1 AND year = $2', [draft.season, draft.year])
     .then(res => {
       console.log('draftQuery results')
       console.log(res)
@@ -102,7 +98,7 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
               .then(res => {
                 console.log(res)
                 db.pg
-                  .query(draftInsert)
+                  .insertJson('draft', { season: 'text', year: 'int', draft_start: 'date', draft_end: 'date', season_start: 'date', season_end: 'date' }, draft)
                   .then(res => {
                     console.log("Draft replaced. God speed. You'll need it.")
                   })
@@ -123,7 +119,7 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
       } else {
         // draft does not already exist, so insert it
         db.pg
-          .query(draftInsert)
+          .insertJson('draft', { season: 'text', year: 'int', draft_start: 'date', draft_end: 'date', season_start: 'date', season_end: 'date' }, draft)
           .then(res => {
             console.log('Draft created!')
           })
