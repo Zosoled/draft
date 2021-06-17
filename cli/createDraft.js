@@ -65,69 +65,76 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
   }
 
   // lets see if the specified draft exists
-  db.draft.find({
-    season: result.season,
-    year: result.year
-  }, function (err, docs) {
-    if (err || !docs) {
+  const draftInsert = {
+    text: 'INSERT INTO Draft(Season, Year, DraftStart, DraftEnd, SeasonStart, SeasonEnd) VALUES($1, $2, $3, $4, $5, $6) RETURNING Id',
+    values: [result.Season, result.Year, result.DraftStart, result.DraftEnd, result.SeasonStart, result.SeasonEnd]
+  }
+  db.pg
+    .query('SELECT Id FROM Draft WHERE Season = $1 AND Year = $2', [result.Season, result.Year])
+    .then(res => {
+      console.log('draftQuery results')
+      console.log(res)
+      console.log(res.rows)
+      // if there's aleady a draft for this season and year
+      if (res.rows.length !== 0) {
+        (async () => {
+          // prompt to see if we should overwrite the existing season information
+          var overwrite = await prompts({
+            type: 'toggle',
+            name: 'confirmed',
+            message: () => {
+              console.log('A draft exists for this season and year.\nIf you continue, you will overwrite the existing movie list.')
+              return 'Stop now, or continue with overwrite?'
+            },
+            active: 'Continue (Overwrite)',
+            inactive: 'Stop'
+          })
+
+          if (!overwrite) {
+            console.error('Unable to get response')
+            process.exit(1)
+          }
+
+          // if overwrite draft accepted, then add the ID found so the DB knows to replace instead of add new
+          if (overwrite.confirmed) {
+            db.pg
+              .query('DELETE FROM Draft WHERE Id = $1', [res.rows[0].id])
+              .then(res => {
+                console.log(res)
+                db.pg
+                  .query(draftInsert)
+                  .then(res => {
+                    console.log("Draft replaced. God speed. You'll need it.")
+                  })
+                  .catch(err => {
+                    console.log('Unable to get insert new draft', err)
+                    process.exit(1)
+                  })
+              })
+              .catch(err => {
+                console.log('Unable to remove old draft', err || '')
+                process.exit(1)
+              })
+          } else {
+            // if overwrite rejected, then stop insertion
+            console.log('Draft creation halted.')
+          }
+        })()
+      } else {
+        // draft does not already exist, so insert it
+        db.pg
+          .query(draftInsert)
+          .then(res => {
+            console.log('Draft created. All hail George Lucas, king of the pizza buffet.')
+          })
+          .catch(err => {
+            console.log('Unable to get insert new draft', err)
+            process.exit(1)
+          })
+      }
+    })
+    .catch(err => {
       console.log('Unable to search database', err || '')
       process.exit(1)
-    }
-
-    // check to see if there's aleady a draft for this season and year
-    if (docs.length !== 0) {
-      (async () => {
-        // prompt to see if we should overwrite the existing season information
-        var overwrite = await prompts({
-          type: 'toggle',
-          name: 'confirmed',
-          message: () => {
-            console.log('A draft exists for this season and year.\nIf you continue, you will overwrite the existing movie list.')
-            return 'Stop now, or continue with overwrite?'
-          },
-          active: 'Continue (Overwrite)',
-          inactive: 'Stop'
-        })
-
-        if (!overwrite) {
-          console.error('Unable to get response')
-          process.exit(1)
-        }
-
-        // if we got a yes prompt then add the ID we found so the DB knows to replace instead of add new
-        if (overwrite.confirmed) {
-          db.draft.remove({
-            season: result.season,
-            year: result.year
-          }, {
-            multi: true
-          }, function (err, numRemoved) {
-            if (err || !numRemoved) {
-              console.log('Unable to remove old draft', err || '')
-              process.exit(1)
-            }
-            db.draft.persistence.compactDatafile()
-            db.draft.insert(result, function (err, resp) {
-              if (err) {
-                console.log('Unable to get insert new draft', err)
-                process.exit(1)
-              }
-            })
-          })
-          console.log("Draft replaced. God speed. You'll need it.")
-        } else {
-          // if we got something other than a yes response then we stop insertion
-          console.log('Draft creation halted.')
-        }
-      })()
-    } else {
-      db.draft.insert(result, function (err, resp) {
-        if (err) {
-          console.log('Unable to get insert new draft', err)
-          process.exit(1)
-        }
-        console.log('Draft created. All hail George Lucas, king of the pizza buffet.')
-      })
-    }
-  })
+    })
 })()
