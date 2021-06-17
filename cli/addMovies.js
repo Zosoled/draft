@@ -99,7 +99,7 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
     .query('SELECT id FROM draft WHERE season = $1 AND year = $2', [draft.season, draft.year])
     .then(res => {
       if (res.rows.length < 1) {
-        console.error('Unable to find matching draft. Please use the createDraft script first.')
+        console.error('Unable to find matching draft. Use the createDraft script first.')
         process.exit(1)
       } else if (res.rows.length > 1) {
         console.error('Found ' + res.rows.length + ' matching drafts when only 1 should exist. Try using createDraft script to overwrite existing drafts.')
