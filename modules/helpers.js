@@ -4,10 +4,10 @@ var helpers = {}
 helpers.currentDraft = function () {
   const today = new Date()
   return {
-    season: today.getMonth() > 2 && today.getMonth() < 9
+    season: today.getUTCMonth() > 2 && today.getUTCMonth() < 9
       ? 'Summer'
       : 'Winter',
-    year: today.getFullYear()
+    year: today.getUTCFullYear()
   }
 }
 
