@@ -9,45 +9,45 @@ const pool = new Pool({
 const pgSchema = [
   {
     name: 'Draft',
-    create: 'CREATE TABLE IF NOT EXISTS Draft(' +
-      'Id serial primary key,' +
-      'Season text,' +
-      'Year int,' +
-      'DraftStart date,' +
-      'DraftEnd date,' +
-      'SeasonStart date,' +
-      'SeasonEnd date' +
+    create: 'CREATE TABLE IF NOT EXISTS draft(' +
+      'id serial primary key,' +
+      'season text,' +
+      'year int,' +
+      'draft_start date,' +
+      'draft_end date,' +
+      'season_start date,' +
+      'season_end date' +
     ');'
   },
   {
     name: 'Movie',
-    create: 'CREATE TABLE IF NOT EXISTS Movie(' +
-      'Id serial primary key,' +
-      'DraftId int references Draft(Id),' +
-      'Name text,' +
-      'ReleaseDate date,' +
-      'ImdbId text,' +
-      'PosterUrl text,' +
-      'YoutubeId text' +
+    create: 'CREATE TABLE IF NOT EXISTS movie(' +
+      'id serial primary key,' +
+      'draft_id int references Draft(Id),' +
+      'name text,' +
+      'release_date date,' +
+      'imdb_id text,' +
+      'poster_url text,' +
+      'youtube_id text' +
     ');'
   },
   {
     name: 'Player',
-    create: 'CREATE TABLE IF NOT EXISTS Player(' +
-      'Id serial primary key,' +
-      'Name text,' +
-      'Movies Movie[]' +
+    create: 'CREATE TABLE IF NOT EXISTS player(' +
+      'id serial primary key,' +
+      'name text,' +
+      'movies Movie[]' +
     ');'
   },
   {
     name: 'Team',
-    create: 'CREATE TABLE IF NOT EXISTS Team(' +
-      'Id serial primary key,' +
-      'DraftId int references Draft(Id),' +
-      'Name text,' +
-      'Players Player[],' +
-      'DraftPosition int,' +
-      'DraftComplete bool' +
+    create: 'CREATE TABLE IF NOT EXISTS team(' +
+      'id serial primary key,' +
+      'draft_id int references Draft(Id),' +
+      'name text,' +
+      'players Player[],' +
+      'draft_position int,' +
+      'draft_complete bool' +
     ');'
   }
 ]

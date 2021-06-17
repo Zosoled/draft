@@ -4,7 +4,7 @@ const prompts = require('prompts')
 const schema = [
   {
     type: 'select',
-    name: 'Season',
+    name: 'season',
     message: 'Pick a season',
     choices: [
       {
@@ -19,7 +19,7 @@ const schema = [
   },
   {
     type: 'number',
-    name: 'Year',
+    name: 'year',
     message: 'Enter a year',
     initial: new Date().getUTCFullYear(),
     min: 0,
@@ -27,28 +27,28 @@ const schema = [
   },
   {
     type: 'date',
-    name: 'DraftStart',
+    name: 'draft_start',
     message: 'Drafting Start Date',
     initial: new Date(),
     mask: 'YYYY-MM-DD'
   },
   {
     type: 'date',
-    name: 'DraftEnd',
+    name: 'draft_end',
     message: 'Drafting End Date',
     initial: prev => new Date(prev),
     mask: 'YYYY-MM-DD'
   },
   {
     type: 'date',
-    name: 'SeasonStart',
+    name: 'season_start',
     message: 'Season Start Date',
     initial: prev => new Date(prev),
     mask: 'YYYY-MM-DD'
   },
   {
     type: 'date',
-    name: 'SeasonEnd',
+    name: 'season_end',
     message: 'Season End Date',
     initial: prev => new Date(prev),
     mask: 'YYYY-MM-DD'
@@ -66,11 +66,11 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
 
   // lets see if the specified draft exists
   const draftInsert = {
-    text: 'INSERT INTO Draft(Season, Year, DraftStart, DraftEnd, SeasonStart, SeasonEnd) VALUES($1, $2, $3, $4, $5, $6) RETURNING Id',
-    values: [result.Season, result.Year, result.DraftStart, result.DraftEnd, result.SeasonStart, result.SeasonEnd]
+    text: 'INSERT INTO draft(season, year, draft_start, draft_end, season_start, season_end) VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
+    values: [result.season, result.year, result.draft_start, result.draft_end, result.season_start, result.season_end]
   }
   db.pg
-    .query('SELECT Id FROM Draft WHERE Season = $1 AND Year = $2', [result.Season, result.Year])
+    .query('SELECT id FROM draft WHERE season = $1 AND year = $2', [result.season, result.year])
     .then(res => {
       console.log('draftQuery results')
       console.log(res)
@@ -98,7 +98,7 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
           // if overwrite draft accepted, then add the ID found so the DB knows to replace instead of add new
           if (overwrite.confirmed) {
             db.pg
-              .query('DELETE FROM Draft WHERE Id = $1', [res.rows[0].id])
+              .query('DELETE FROM draft WHERE id = $1', [res.rows[0].id])
               .then(res => {
                 console.log(res)
                 db.pg
@@ -107,12 +107,12 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
                     console.log("Draft replaced. God speed. You'll need it.")
                   })
                   .catch(err => {
-                    console.log('Unable to get insert new draft', err)
+                    console.log('Unable to get insert new draft.', err)
                     process.exit(1)
                   })
               })
               .catch(err => {
-                console.log('Unable to remove old draft', err || '')
+                console.log('Unable to remove old draft.', err || '')
                 process.exit(1)
               })
           } else {
@@ -125,16 +125,16 @@ console.log("Hello and welcome to new draft setup. We'll just need to answer a f
         db.pg
           .query(draftInsert)
           .then(res => {
-            console.log('Draft created. All hail George Lucas, king of the pizza buffet.')
+            console.log('Draft created!')
           })
           .catch(err => {
-            console.log('Unable to get insert new draft', err)
+            console.log('Unable to get insert new draft.', err)
             process.exit(1)
           })
       }
     })
     .catch(err => {
-      console.log('Unable to search database', err || '')
+      console.log('Unable to search database.', err || '')
       process.exit(1)
     })
 })()
