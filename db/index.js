@@ -1,6 +1,5 @@
 /* Initialize Postgres database */
 const { Pool } = require('pg')
-console.log(`PGURI: ${process.env.PGURI}`)
 const pool = new Pool({
   connectionString: process.env.PGURI,
   ssl: { rejectUnauthorized: false }
@@ -59,7 +58,7 @@ for (let i = 0; i < pgSchema.length; i++) {
   transaction += pgSchema[i].create
 }
 transaction += 'COMMIT;'
-console.log(transaction)
+
 pool.query(transaction)
   .catch(e => {
     console.error('PostgreSQL schema initialization failed.' + e)
