@@ -24,7 +24,7 @@ const draftSchema = [
     type: 'number',
     name: 'year',
     message: 'Enter a year (YYYY)',
-    initial: 2020,
+    initial: new Date().getUTCFullYear(),
     min: 0,
     max: 9999
   }
