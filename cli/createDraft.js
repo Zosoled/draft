@@ -1,56 +1,58 @@
 const db = require('../db')
 const prompts = require('prompts')
 
-const schema = [{
-  type: 'select',
-  name: 'season',
-  message: 'Pick a season',
-  choices: [{
-    title: 'Summer',
-    value: 'Summer'
+const schema = [
+  {
+    type: 'select',
+    name: 'Season',
+    message: 'Pick a season',
+    choices: [
+      {
+        title: 'Summer',
+        value: 'Summer'
+      },
+      {
+        title: 'Winter',
+        value: 'Winter'
+      }
+    ]
   },
   {
-    title: 'Winter',
-    value: 'Winter'
+    type: 'number',
+    name: 'Year',
+    message: 'Enter a year',
+    initial: new Date().getUTCFullYear(),
+    min: 0,
+    max: 9999
+  },
+  {
+    type: 'date',
+    name: 'DraftStart',
+    message: 'Drafting Start Date',
+    initial: new Date(),
+    mask: 'YYYY-MM-DD'
+  },
+  {
+    type: 'date',
+    name: 'DraftEnd',
+    message: 'Drafting End Date',
+    initial: prev => new Date(prev),
+    mask: 'YYYY-MM-DD'
+  },
+  {
+    type: 'date',
+    name: 'SeasonStart',
+    message: 'Season Start Date',
+    initial: prev => new Date(prev),
+    mask: 'YYYY-MM-DD'
+  },
+  {
+    type: 'date',
+    name: 'SeasonEnd',
+    message: 'Season End Date',
+    initial: prev => new Date(prev),
+    mask: 'YYYY-MM-DD'
   }
-  ]
-},
-{
-  type: 'number',
-  name: 'year',
-  message: 'Enter a year',
-  initial: 2020,
-  min: 0,
-  max: 9999
-},
-{
-  type: 'date',
-  name: 'draftStart',
-  message: 'Drafting Start Date',
-  initial: new Date(),
-  mask: 'YYYY-MM-DD'
-},
-{
-  type: 'date',
-  name: 'draftEnd',
-  message: 'Drafting End Date',
-  initial: prev => new Date(prev),
-  mask: 'YYYY-MM-DD'
-},
-{
-  type: 'date',
-  name: 'seasonStart',
-  message: 'Season Start Date',
-  initial: prev => new Date(prev),
-  mask: 'YYYY-MM-DD'
-},
-{
-  type: 'date',
-  name: 'seasonEnd',
-  message: 'Season End Date',
-  initial: prev => new Date(prev),
-  mask: 'YYYY-MM-DD'
-}
 ]
 
 console.log("Hello and welcome to new draft setup. We'll just need to answer a few questions.");
