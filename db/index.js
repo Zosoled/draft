@@ -8,7 +8,7 @@ const pool = new Pool({
 /* Build table creation query strings */
 const pgSchema = [
   {
-    name: 'Draft',
+    name: 'draft',
     create: 'CREATE TABLE IF NOT EXISTS draft(' +
       'id serial primary key,' +
       'season text,' +
@@ -20,7 +20,7 @@ const pgSchema = [
     ');'
   },
   {
-    name: 'Movie',
+    name: 'movie',
     create: 'CREATE TABLE IF NOT EXISTS movie(' +
       'id serial primary key,' +
       'draft_id int references Draft(Id),' +
@@ -32,7 +32,7 @@ const pgSchema = [
     ');'
   },
   {
-    name: 'Player',
+    name: 'player',
     create: 'CREATE TABLE IF NOT EXISTS player(' +
       'id serial primary key,' +
       'name text,' +
@@ -40,7 +40,7 @@ const pgSchema = [
     ');'
   },
   {
-    name: 'Team',
+    name: 'team',
     create: 'CREATE TABLE IF NOT EXISTS team(' +
       'id serial primary key,' +
       'draft_id int references Draft(Id),' +
