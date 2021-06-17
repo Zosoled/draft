@@ -158,12 +158,13 @@ console.log('\tAdd movies to an existing draft and overwrite any existing movie 
                 helpers.shuffle(movies)
                 console.log(movies)
                 db.pg
-                  .query('INSERT INTO movie() VALUES($1)', [movies])
+                  .insertJson('movie', { name: 'text', release_date: 'date', imdb_id: 'text', poster_url: 'text', youtube_id: 'text', draft_id: 'int' }, movies)
                   .then(res => {
+                    console.log(res.rows)
                     console.log('Movies added to draft.')
                   })
                   .catch(err => {
-                    console.log('Unable to insert movies into draft database.' + err)
+                    console.log('Unable to insert movies into draft database.', err)
                     process.exit(1)
                   })
               } else {
