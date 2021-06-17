@@ -3,28 +3,30 @@ const helpers = require('../modules/helpers.js')
 const prompts = require('prompts')
 
 // this governs the user prompts and valid responses
-const draftSchema = [{
-  type: 'select',
-  name: 'season',
-  message: 'Pick a season',
-  choices: [{
-    title: 'Summer',
-    value: 'Summer'
+const draftSchema = [
+  {
+    type: 'select',
+    name: 'season',
+    message: 'Pick a season',
+    choices: [
+      {
+        title: 'Summer',
+        value: 'Summer'
+      },
+      {
+        title: 'Winter',
+        value: 'Winter'
+      }
+    ]
   },
   {
-    title: 'Winter',
-    value: 'Winter'
+    type: 'number',
+    name: 'year',
+    message: 'Enter a year',
+    initial: 2020,
+    min: 0,
+    max: 9999
   }
-  ]
-},
-{
-  type: 'number',
-  name: 'year',
-  message: 'Enter a year',
-  initial: 2020,
-  min: 0,
-  max: 9999
-}
 ];
 
 // first we need to get an validate the draft selection
@@ -62,38 +64,39 @@ const draftSchema = [{
       var editedMovies = [];
       (async function editMovies (movieDocs) {
         var movie = movieDocs.shift()
-        var movieSchema = [{
-          type: 'text',
-          name: 'name',
-          message: 'Movie Name',
-          initial: movie.name,
-          validate: name => name.length < 1 ? 'Please enter a name.' : true
-        },
-        {
-          type: 'date',
-          name: 'releaseDate',
-          message: 'US Release Date',
-          initial: movie.releaseDate,
-          mask: 'YYYY-MM-DD'
-        },
-        {
-          type: 'text',
-          name: 'imdbId',
-          message: 'IMDb ID',
-          initial: movie.imdbId
-        },
-        {
-          type: 'text',
-          name: 'posterUrl',
-          message: 'Poster URL',
-          initial: movie.posterUrl
-        },
-        {
-          type: 'text',
-          name: 'youtubeId',
-          message: 'YouTube trailer ID',
-          initial: movie.youtubeId
-        }
+        var movieSchema = [
+          {
+            type: 'text',
+            name: 'name',
+            message: 'Movie Name',
+            initial: movie.name,
+            validate: name => name.length < 1 ? 'Please enter a name.' : true
+          },
+          {
+            type: 'date',
+            name: 'releaseDate',
+            message: 'US Release Date',
+            initial: movie.releaseDate,
+            mask: 'YYYY-MM-DD'
+          },
+          {
+            type: 'text',
+            name: 'imdbId',
+            message: 'IMDb ID',
+            initial: movie.imdbId
+          },
+          {
+            type: 'text',
+            name: 'posterUrl',
+            message: 'Poster URL',
+            initial: movie.posterUrl
+          },
+          {
+            type: 'text',
+            name: 'youtubeId',
+            message: 'YouTube trailer ID',
+            initial: movie.youtubeId
+          }
         ];
 
         // first we need to get and validate the draft selection
