@@ -23,7 +23,7 @@ const draftSchema = [
     type: 'number',
     name: 'year',
     message: 'Enter a year',
-    initial: 2020,
+    initial: new Date().getUTCFullYear(),
     min: 0,
     max: 9999
   }
@@ -31,109 +31,110 @@ const draftSchema = [
 
 // first we need to get an validate the draft selection
 (async () => {
-  var draft = await prompts(draftSchema)
+  const draft = await prompts(draftSchema)
   if (!draft) {
     console.log('Unable to get responses')
     process.exit(1)
   }
 
   // look up the draft document
-  db.draft.count(draft).exec(function (err, count) {
-    if (err) {
-      console.log('Unable to get search database', err)
-      process.exit(1)
-    }
-
-    // if there are no docs the error out
-    if (count !== 1) {
-      console.log('Unable to find appropriate draft. Please use the createDraft script first. Docs found: ' + count)
-      process.exit(1)
-    }
-
-    db.movie.find(draft).sort({
-      releaseDate: 1
-    }).exec((err, movieDocs) => {
-      if (err) {
-        console.log('Error getting movies. ', err)
+  db.pg
+    .query('SELECT id FROM draft WHERE season = $1 AND year = $2', [draft.season, draft.year])
+    .then(res => {
+      // if there are no docs, log and exit
+      if (res.rows.length < 1) {
+        console.error('Unable to find matching draft. Use the createDraft script first.')
+        process.exit(1)
+      } else if (res.rows.length > 1) {
+        console.error(`Found ${res.rows.length} matching drafts when only 1 should exist. Try using createDraft script to overwrite existing drafts.`)
         process.exit(1)
       }
-      if (movieDocs.length === 0) {
-        console.log('Draft has no movies yet.')
-        process.exit(1)
-      }
-      var editedMovies = [];
-      (async function editMovies (movieDocs) {
-        var movie = movieDocs.shift()
-        var movieSchema = [
-          {
-            type: 'text',
-            name: 'name',
-            message: 'Movie Name',
-            initial: movie.name,
-            validate: name => name.length < 1 ? 'Please enter a name.' : true
-          },
-          {
-            type: 'date',
-            name: 'releaseDate',
-            message: 'US Release Date',
-            initial: movie.releaseDate,
-            mask: 'YYYY-MM-DD'
-          },
-          {
-            type: 'text',
-            name: 'imdbId',
-            message: 'IMDb ID',
-            initial: movie.imdbId
-          },
-          {
-            type: 'text',
-            name: 'posterUrl',
-            message: 'Poster URL',
-            initial: movie.posterUrl
-          },
-          {
-            type: 'text',
-            name: 'youtubeId',
-            message: 'YouTube trailer ID',
-            initial: movie.youtubeId
-          }
-        ];
 
-        // first we need to get and validate the draft selection
-        (async () => {
-          var movie = await prompts(movieSchema)
-          if (!movie) {
-            console.log('Unable to get responses')
+      const draft = res.rows[0]
+      db.pg
+        .query('SELECT * FROM movie WHERE draft_id = $1 ORDER BY release_date ASC', [draft.id])
+        .then(res => {
+          if (res.rows.length === 0) {
+            console.log('Draft has no movies yet.')
             process.exit(1)
           }
-          movie.season = draft.season
-          movie.year = draft.year
-          movie.id = helpers.makeId([draft.season, draft.year, movie.name])
-          editedMovies.push(movie)
-
-          if (movieDocs.length > 0) {
-            editMovies(movieDocs)
-          } else {
-            // delete the old records in case IDs have changed
-            db.movie.remove(draft, {
-              multi: true
-            }, function (err, count) {
-              if (err) {
-                console.log('Unable to remove old movies', err)
+          (async () => {
+            // prompt for movie edits
+            const editedMovies = []
+            for (let i = 0; i < res.rows.length; i++) {
+              const movie = res.rows[i]
+              const movieSchema = [
+                {
+                  type: 'text',
+                  name: 'name',
+                  message: 'Movie Name',
+                  initial: movie.name,
+                  validate: name => name.length < 1 ? 'Please enter a name.' : true
+                },
+                {
+                  type: 'date',
+                  name: 'release_date',
+                  message: 'US Release Date',
+                  initial: movie.release_date,
+                  mask: 'YYYY-MM-DD'
+                },
+                {
+                  type: 'text',
+                  name: 'imdb_id',
+                  message: 'IMDb ID',
+                  initial: movie.imdb_id
+                },
+                {
+                  type: 'text',
+                  name: 'poster_url',
+                  message: 'Poster URL',
+                  initial: movie.poster_url
+                },
+                {
+                  type: 'text',
+                  name: 'youtube_id',
+                  message: 'YouTube trailer ID',
+                  initial: movie.youtube_id
+                }
+              ]
+              const newMovie = await prompts(movieSchema)
+              if (!newMovie) {
+                console.log('Unable to get responses.')
                 process.exit(1)
               }
-              helpers.shuffle(editedMovies)
-              db.movie.insert(editedMovies, function (err) {
-                if (err) {
-                  console.log('Unable to insert edited movies into draft database. ', err)
-                  process.exit(1)
-                }
-                console.log('Movies successfully edited.')
+              newMovie.draft_id = movie.draft_id
+              editedMovies.push(newMovie)
+            }
+
+            // delete the old movie records, then insert the new ones
+            db.pg
+              .query('DELETE FROM movie WHERE draft_id = $1', [draft.id])
+              .then(res => {
+                helpers.shuffle(editedMovies)
+                db.pg
+                  .insertJson('movie', { name: 'text', release_date: 'date', imdb_id: 'text', poster_url: 'text', youtube_id: 'text', draft_id: 'int' }, editedMovies)
+                  .then(res => {
+                    console.log(res.rows)
+                    console.log('Movies successfully edited.')
+                  })
+                  .catch(err => {
+                    console.log('Error inserting edited movies into draft database.\n', err)
+                    process.exit(1)
+                  })
               })
-            })
-          }
-        })()
-      })(movieDocs)
+              .catch(err => {
+                console.log('Unable to remove old movies.\n', err)
+                process.exit(1)
+              })
+          })()
+        })
+        .catch(err => {
+          console.log('Error getting movies.\n', err)
+          process.exit(1)
+        })
     })
-  })
+    .catch(err => {
+      console.log('Error getting draft.\n', err)
+      process.exit(1)
+    })
 })()
