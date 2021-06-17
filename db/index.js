@@ -68,6 +68,21 @@ pool.query(transaction)
 /* Wrap db statements */
 module.exports = {
   pg: {
-    query: (text, values) => { return pool.query(text, values) }
+    query: (text, values) => {
+      return pool.query(text, values)
+    },
+    insertJson: (table, fieldmap, values) => {
+      const fields = Object.keys(fieldmap).join(',')
+      let fieldtypes = []
+      Object.keys(fieldmap).forEach(k => {
+        fieldtypes.push(`${k} ${fieldmap[k]}`)
+      })
+      fieldtypes = fieldtypes.join(',')
+      const text = `INSERT INTO ${table} (${fields}) \
+          SELECT * FROM json_to_recordset($1) \
+          AS x(${fieldtypes}) \
+          RETURNING id`
+      return pool.query(text, [JSON.stringify(values)])
+    }
   }
 }
