@@ -68,6 +68,6 @@ pool.query(transaction)
 /* Wrap db statements */
 module.exports = {
   pg: {
-    query: (q, p) => { return pool.query(q, p) }
+    query: (text, values) => { return pool.query(text, values) }
   }
 }
