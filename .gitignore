@@ -40,9 +40,6 @@ jspm_packages
 *.swp
 *.swo
 
-# nedb databases
-*.nedb
-
 # IDE
 .vscode/
 *.code-workspace

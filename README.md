@@ -41,6 +41,15 @@ npm install
 ```
 
 # Setup
+Configure your environment with the following keys:
+* `NODE_ENV`: `production` or `development`
+* `PORT`: target HTTP port for Node server
+* `PGURI`: PostgreSQL endpoint, e.g. `postgres://<user>:<password>@<host>:<port>/<database>`
+```
+Mac/Linux: `export KEY = VALUE`
+Windows: `$env:KEY = VALUE`
+```
+
 Insert draft and movie information into the database with CLI scripts prior to running the server.
 Example:
 ```
@@ -61,9 +70,6 @@ Adds movies to an existing draft. This is the most time-consuming part. You'll n
 
 ## editMovies.js
 Prompts for an existing draft, then cycles through the draft's movies one field at a time to make changes as desired.
-
-#### Special Note
-NeDB persists in memory, so you may need to restart the app (provided it was running) after using the CLI scripts.
 
 # Running
 Launch the server:
