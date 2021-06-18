@@ -1,163 +1,83 @@
-const async = require('async')
 const db = require('../db')
-const fs = require('fs')
 const https = require('https')
-const path = require('path')
 const helpers = require('../modules/helpers.js')
 
-var currentDraft = helpers.currentDraft()
-var now = new Date()
+const currentDraft = helpers.currentDraft()
+const now = new Date()
 
-db.movie.find(currentDraft, function (err, movies) {
-  if (err) {
-    console.log('db find error: ', err)
-  }
-  // decide which movies to scrape then scrape in a waterfall
-  async.waterfall([
-    async.apply(determineOpenMovies, movies),
-    scrape
-  ], function (err, result) {
-    if (err) {
-      console.log('waterfall error: ', err)
-    }
-
-    db.draft.update(currentDraft, {
-      $set: {
-        lastScrape: now
+db.pg
+  .query('SELECT m.* FROM movie AS m INNER JOIN draft AS d ON(m.draft_id = d.id) WHERE d.season = $1 and d.year = $2', [currentDraft.season, currentDraft.year])
+  .then(res => {
+    // filter out movies not yet released
+    const openMovies = []
+    res.rows.forEach(m => {
+      if (m.release_date <= now) {
+        openMovies.push(m)
       }
-    }, {}, function (err, numUpdated) {
-      if (err) {
-        console.log('Unable to update the last scrape date', err)
-        process.exit(1)
-      }
-
-      console.log('Updated ' + numUpdated + ' draft documents')
     })
+    console.log(`Found ${openMovies.length} movies to scrape.`)
+
+    // begin scraping released movies
+    console.log('Initiating scrape sequence…')
+    for (let i = 0; i < openMovies.length; i++) {
+      scrape(openMovies[i])
+    }
+  })
+  .catch(err => {
+    console.error('Error getting movies from draft.\n', err)
   })
 
-  function determineOpenMovies (movies, callback) {
-    // these are the movies that are open
-    var openMovies = []
+function sleep (ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
-    for (var i = 0; i < movies.length; i++) {
-      if (now >= movies[i].releaseDate) {
-        openMovies.push(movies[i])
-      }
+function getRandom (min, max) {
+  min = Math.floor(min)
+  max = Math.floor(max)
+  const value = Math.random() * (max - min) + min
+  return Math.floor(value)
+}
+
+async function scrape (movie) {
+  const delay = getRandom(0, 30000)
+  sleep(delay).then(() => {
+    console.log(`Scraping ${movie.name} after ${delay}ms delay`)
+    // set the unique path for this movie
+    const moviePath = '/title/' + movie.imdb_id + '/'
+
+    // set the options for the get request
+    const options = {
+      host: 'www.imdb.com',
+      headers: {
+        'user-agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
+      },
+      path: moviePath
     }
 
-    console.log('Found ' + openMovies.length + ' movies to scrape')
-    callback(null, openMovies)
-  }
-
-  function scrape (openMovies, callback) {
-    for (var j = 0; j < openMovies.length; j++) {
-      console.log('Scraping ' + openMovies[j].name)
-      var scrapeDelayer = function (movie) {
-        var min = 7
-        var max = 34
-        var seconds = Math.floor((Math.random() * (max - min + 1) + min) * 1000)
-        console.log('\t' + seconds + 'ms delay')
-
-        setTimeout(function () {
-          // set the unique path for this movie
-          var moviePath = '/title/' + movie.imdbId + '/'
-
-          // set the options for the get request
-          var options = {
-            host: 'www.imdb.com',
-            headers: {
-              'user-agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
-            },
-            path: moviePath
+    https
+      .get(options, res => {
+        res.setEncoding('utf8')
+        res.on('data', function (body) {
+          const lines = body.split(/\r?\n/)
+          for (let k = 0; k < lines.length; k++) {
+            if (typeof lines[k] === 'string' && lines[k].match(/.*Gross USA.*/)) {
+              const gross = lines[k].replace(/^.*Gross USA.+?\$([0-9,]+).+$/i, '$1').replace(/\D/g, '')
+              console.log(`${movie.name}: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(gross)}`)
+              db.pg
+                .query('UPDATE movie SET gross = $1 WHERE id = $2 RETURNING id', [gross, movie.id])
+                .then(res => {
+                  console.log(res.rows)
+                })
+                .catch(err => {
+                  console.error('Error updating movie gross.\n', err)
+                  process.exit(1)
+                })
+            }
           }
-
-          https.get(options, function (res) {
-            res.setEncoding('utf8')
-            res.on('data', function (body) {
-              var lines = body.split(/\r?\n/)
-
-              for (var k = 0; k < lines.length; k++) {
-                (function (movie) {
-                  if (typeof lines[k] === 'string' && lines[k].match(/.*Gross USA.*/)) {
-                    var gross = lines[k].replace(/^.*Gross USA.+?\$([0-9,]+).+$/i, '$1')
-                    gross = gross.replace(/\D/g, '')
-                    console.log(movie.name + ' gross: ' + gross)
-
-                    var movieDoc = {
-                      id: now + '-' + movie.id,
-                      movieId: movie.id,
-                      scrapeDate: now,
-                      gross: gross
-                    }
-
-                    db.value.count({
-                      id: movieDoc.id
-                    }, function (err, count) {
-                      if (err) {
-                        console.log('Unable to insert value doc', err)
-                        process.exit(1)
-                      }
-
-                      if (count > 0) {
-                        db.value.update({
-                          id: movieDoc.id
-                        }, {
-                          $set: {
-                            gross: gross
-                          }
-                        }, {}, function (err, numUpdated) {
-                          if (err) {
-                            console.log('Unable to update the last scrape date', err)
-                            process.exit(1)
-                          }
-                          console.log('Updated the gross for ' + numUpdated + ' value documents')
-                        })
-                      } else {
-                        db.value.insert(movieDoc, function (err, newDoc) {
-                          if (err) {
-                            console.log('Unable to insert value doc', err)
-                            process.exit(1)
-                          }
-                          console.log('Value document inserted')
-                        })
-                      }
-                    })
-
-                    db.movie.update({
-                      id: movie.id
-                    }, {
-                      $set: {
-                        lastGross: gross
-                      }
-                    }, {}, function (err, numUpdated) {
-                      if (err) {
-                        console.log('Unable to update the last scrape date', err)
-                        process.exit(1)
-                      }
-
-                      console.log('Updated ' + numUpdated + ' movie documents')
-
-                      // we write a tracking file. This will automatically cause the server to restart if using nodemon - this is desired behavior
-                      fs.writeFile(path.win32.resolve(__dirname, '../modules/scrapeTrack.js'), 'var scrapeTrack = {}; scrapeTrack.lastScrape = ' + now + '; module.exports = scrapeTrack;', function (err) {
-                        if (err) {
-                          console.log(err)
-                        } else {
-                          console.log('tracking file updated')
-                        }
-                      })
-                    })
-                  }
-                })(movie)
-              }
-            })
-          }).on('error', function (err) {
-            console.log('error: ', err)
-          })
-        }, seconds)
-      }
-      scrapeDelayer(openMovies[j])
-    }
-
-    callback(null, null)
-  }
-})
+        })
+      })
+      .on('error', err => {
+        console.error('Error requesting IMDb page.\n', err)
+      })
+  })
+}
