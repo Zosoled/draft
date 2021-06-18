@@ -56,60 +56,63 @@ router.get('/', function (request, response, next) {
 
 // GET team additions page
 router.get('/team/:id', function (request, response, next) {
-  var selectionDraft = helpers.currentDraft()
-  var teamId = request.params.id
+  const selectionDraft = helpers.currentDraft()
+  const teamId = request.params.id
 
-  db.draft.findOne(selectionDraft, function (err, draftDoc) {
-    if (err) {
-      console.error('Unable to get movie documents', err)
-      process.exit(1)
-    }
-    if (draftDoc === null) {
-      response.render('team', { title: 'Team not found', found: false })
-    } else {
-      db.movie.find(selectionDraft).sort({ releaseDate: 1 }).exec(function (err, movieDocs) {
-        if (err) { console.error('Unable to get movie documents', err); process.exit(1) }
-        db.team.findOne({ id: teamId }).sort({ releaseDate: 1 }).exec(function (err, teamDoc) {
-          if (err) {
-            console.error('Unable to get team', err)
-            process.exit(1)
-          }
-          var found = false
-          var title = 'Team not found'
-          var ownerList = {}
+  db.pg
+    .query('SELECT * FROM draft WHERE season = $1 AND year = $2', [selectionDraft.season, selectionDraft.year])
+    .then(result => {
+      if (result.rows.length < 1) {
+        response.render('team', { title: 'Draft not found', found: false })
+      } else {
+        const draft = result.rows[0]
+        db.movie.find(selectionDraft).sort({ releaseDate: 1 }).exec(function (err, movieDocs) {
+          if (err) { console.error('Unable to get movie documents', err); process.exit(1) }
+          db.team.findOne({ id: teamId }).sort({ releaseDate: 1 }).exec(function (err, teamDoc) {
+            if (err) {
+              console.error('Unable to get team', err)
+              process.exit(1)
+            }
+            var found = false
+            var title = 'Team not found'
+            var ownerList = {}
 
-          if (teamDoc !== null) {
-            found = true
-            title = teamDoc.teamName
+            if (teamDoc !== null) {
+              found = true
+              title = teamDoc.teamName
 
-            for (var i = 0; i < teamDoc.member.length; i++) {
-              // compute total gross for each person in the team
-              teamDoc.member[i].totalGross = 0
+              for (var i = 0; i < teamDoc.member.length; i++) {
+                // compute total gross for each person in the team
+                teamDoc.member[i].totalGross = 0
 
-              if (teamDoc.member[i].movies) {
-                for (var j = 0; j < teamDoc.member[i].movies.length; j++) {
-                  for (var k = 0; k < movieDocs.length; k++) {
-                    if (movieDocs[k].id === teamDoc.member[i].movies[j].movieId) {
-                      if (movieDocs[k].lastGross) {
-                        teamDoc.member[i].totalGross += (movieDocs[k].lastGross * (teamDoc.member[i].movies[j].percent / 100))
+                if (teamDoc.member[i].movies) {
+                  for (var j = 0; j < teamDoc.member[i].movies.length; j++) {
+                    for (var k = 0; k < movieDocs.length; k++) {
+                      if (movieDocs[k].id === teamDoc.member[i].movies[j].movieId) {
+                        if (movieDocs[k].lastGross) {
+                          teamDoc.member[i].totalGross += (movieDocs[k].lastGross * (teamDoc.member[i].movies[j].percent / 100))
+                        }
                       }
                     }
-                  }
 
-                  ownerList[teamDoc.member[i].movies[j].movieId] = {
-                    memberName: teamDoc.member[i].name,
-                    bid: teamDoc.member[i].movies[j].bid,
-                    percent: teamDoc.member[i].movies[j].percent
+                    ownerList[teamDoc.member[i].movies[j].movieId] = {
+                      memberName: teamDoc.member[i].name,
+                      bid: teamDoc.member[i].movies[j].bid,
+                      percent: teamDoc.member[i].movies[j].percent
+                    }
                   }
                 }
               }
             }
-          }
-          response.render('team', { title: title, found: found, draft: draftDoc, team: teamDoc, movies: movieDocs, winnerInfo: ownerList, showGross: true })
+            response.render('team', { title: title, found: found, draft: draft, team: teamDoc, movies: movieDocs, winnerInfo: ownerList, showGross: true })
+          })
         })
-      })
-    }
-  })
+      }
+    })
+    .catch(err => {
+      console.error('Unable to get movie documents', err)
+      process.exit(1)
+    })
 })
 
 // POST process form submission from the draft page
