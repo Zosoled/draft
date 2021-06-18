@@ -28,7 +28,8 @@ const pgSchema = [
       'release_date date,' +
       'imdb_id text,' +
       'poster_url text,' +
-      'youtube_id text' +
+      'youtube_id text,' +
+      'gross money' +
     ');'
   },
   {
