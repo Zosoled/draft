@@ -23,7 +23,7 @@ block content
                                     a(href="/team/" + team.id) #{team.teamName}
                                 td #{team.member.length}
                                 if team.draftComplete === false
-                                    if currentDraft.draftStart <= today && today <= currentDraft.draftEnd 
+                                    if thisDraft.draft_start <= today && today <= thisDraft.draft_end 
                                         if team.draftPosition == 0
                                             td
                                                 a(href="/draft/" + team.id + "/0/") Not Started
@@ -33,14 +33,14 @@ block content
                                     else
                                         td Incomplete
                                 else
-                                        if currentDraft.draftEnd < today
+                                        if thisDraft.draft_end < today
                                             td
                                                 a(href="/draft/" + team.id + "/0/") Draft Complete
                                         else
                                             td Draft Complete
                                 td None
 
-            if currentDraft.draftStart <= today && today <= currentDraft.draftEnd 
+            if thisDraft.draft_start <= today && today <= thisDraft.draft_end 
                 div#team_action
                     br
                     a#add_team_button(href='/add_team') Add Team
@@ -60,12 +60,12 @@ block content
                             i Not Found
                 div#current_draft
                     h3 Current Draft
-                    p #{currentDraft.season} #{currentDraft.year}
+                    p #{thisDraft.season} #{thisDraft.year}
                     ul
-                        li Drafting Starts: #{prettyDate(currentDraft.draftStart)}
-                        li Drafting Ends: #{prettyDate(currentDraft.draftEnd)}
-                        li First Movie Opens: #{prettyDate(currentDraft.seasonStart)}
-                        li End of Game: #{prettyDate(currentDraft.seasonEnd)}
+                        li Drafting Starts: #{prettyDate(thisDraft.draft_start)}
+                        li Drafting Ends: #{prettyDate(thisDraft.draft_end)}
+                        li First Movie Opens: #{prettyDate(thisDraft.season_start)}
+                        li End of Game: #{prettyDate(thisDraft.season_end)}
                 div#next_draft
                     h3 Next Draft
                     if (typeof nextDraft == "object")
