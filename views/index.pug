@@ -17,6 +17,7 @@ block content
                             th Status
                             th Leader
                     tbody
+                    if (typeof teams !== "object")
                         each team in teams
                             tr
                                 td
@@ -39,6 +40,10 @@ block content
                                         else
                                             td Draft Complete
                                 td None
+                    else
+                        tr
+                            td(colspan=4 style='text-align:center')
+                                i Not Found
 
             if thisDraft.draft_start <= today && today <= thisDraft.draft_end 
                 div#team_action
