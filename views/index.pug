@@ -46,15 +46,15 @@ block content
                     a#add_team_button(href='/add_team') Add Team
             div#draft_details
                 h2 Draft Details
-                div#previous_draft
+                div#lastDraft
                     h3 Previous Draft
-                    if (typeof previousDraft == "object")
-                        p #{previousDraft.season} #{previousDraft.year}
+                    if (typeof lastDraft == "object")
+                        p #{lastDraft.season} #{lastDraft.year}
                         ul
-                            li Drafting Started: #{prettyDate(previousDraft.draftStart)}
-                            li Drafting Ended: #{prettyDate(previousDraft.draftEnd)}
-                            li First Movie Opened: #{prettyDate(previousDraft.seasonStart)}
-                            li Game Ended: #{prettyDate(previousDraft.seasonEnd)}
+                            li Drafting Started: #{prettyDate(lastDraft.draftStart)}
+                            li Drafting Ended: #{prettyDate(lastDraft.draftEnd)}
+                            li First Movie Opened: #{prettyDate(lastDraft.seasonStart)}
+                            li Game Ended: #{prettyDate(lastDraft.seasonEnd)}
                     else
                         p
                             i Not Found
