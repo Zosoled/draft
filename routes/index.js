@@ -16,11 +16,9 @@ router.get('/', function (request, response, next) {
     .query('SELECT * FROM draft WHERE season = $1 AND year = $2', [selectionDraft.season, selectionDraft.year])
     .then(result => {
       if (result.rows.length < 1) {
-        console.error('No drafts found.')
-        process.exit(1)
+        response.render('index', { title: 'No draft found. Use createDraft script.' })
       } else if (result.rows.length > 1) {
-        console.error(`Found ${result.rows.length} drafts, expected 1.`)
-        process.exit(1)
+        response.render('index', { title: 'Database error. Multiple drafts for current season found. Try createDraft script again.' })
       } else {
         const draft = result.rows[0]
         // get draft's movies
@@ -28,8 +26,7 @@ router.get('/', function (request, response, next) {
           .query('SELECT * FROM movie WHERE draft_id = $1 ORDER BY release_date ASC', [draft.id])
           .then(result => {
             if (result.rows.length < 1) {
-              console.error('No movies found.')
-              process.exit(1)
+              response.render('index', { title: 'No movies found. Use addMovies script.', thisDraft: draft })
             } else {
               const movies = result.rows
               // get draft's teams
